@@ -1,7 +1,0 @@
-{
-  "name" : "kfBasic",
-  "repositories" : [ {
-    "type" : "composer",
-    "url" : "https://packagist.org/"
-  } ]
-}
