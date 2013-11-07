@@ -141,3 +141,27 @@ Version: '5.6.13'  socket: ''  port: 3307  MySQL Community Server (GPL)
 2013-11-07 06:52:54 13592 [Note] Event Scheduler: Loaded 0 events
 2013-11-07 06:52:54 13592 [Note] D:\Repositories\CMS\localWBkitFramework/mysql/bin/mysqld_usbwv8.exe: ready for connections.
 Version: '5.6.13'  socket: ''  port: 3307  MySQL Community Server (GPL)
+2013-11-07 16:05:20 13296 [Note] Plugin 'FEDERATED' is disabled.
+2013-11-07 16:05:20 13296 [Note] InnoDB: The InnoDB memory heap is disabled
+2013-11-07 16:05:20 13296 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2013-11-07 16:05:20 13296 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2013-11-07 16:05:20 13296 [Note] InnoDB: Not using CPU crc32 instructions
+2013-11-07 16:05:20 13296 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2013-11-07 16:05:20 13296 [Note] InnoDB: Completed initialization of buffer pool
+2013-11-07 16:05:20 13296 [Note] InnoDB: Highest supported file format is Barracuda.
+2013-11-07 16:05:20 13296 [Note] InnoDB: The log sequence numbers 1626134 and 1626134 in ibdata files do not match the log sequence number 3319869 in the ib_logfiles!
+2013-11-07 16:05:20 13296 [Note] InnoDB: Database was not shutdown normally!
+2013-11-07 16:05:20 13296 [Note] InnoDB: Starting crash recovery.
+2013-11-07 16:05:20 13296 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2013-11-07 16:05:20 13296 [Note] InnoDB: Restoring possible half-written data pages 
+2013-11-07 16:05:20 13296 [Note] InnoDB: from the doublewrite buffer...
+2013-11-07 16:05:21 13296 [Note] InnoDB: 128 rollback segment(s) are active.
+2013-11-07 16:05:21 13296 [Note] InnoDB: Waiting for purge to start
+2013-11-07 16:05:21 13296 [Note] InnoDB: 5.6.13 started; log sequence number 3319869
+2013-11-07 16:05:21 13296 [Note] Server hostname (bind-address): '*'; port: 3307
+2013-11-07 16:05:21 13296 [Note] IPv6 is available.
+2013-11-07 16:05:21 13296 [Note]   - '::' resolves to '::';
+2013-11-07 16:05:21 13296 [Note] Server socket created on IP: '::'.
+2013-11-07 16:05:21 13296 [Note] Event Scheduler: Loaded 0 events
+2013-11-07 16:05:21 13296 [Note] D:\Repositories\CMS\localWBkitFramework/mysql/bin/mysqld_usbwv8.exe: ready for connections.
+Version: '5.6.13'  socket: ''  port: 3307  MySQL Community Server (GPL)
