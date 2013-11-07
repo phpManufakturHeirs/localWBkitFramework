@@ -1,0 +1,33 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+<div id="contact_list">
+  <table>
+    <thead>
+      <th>{{ 'ID'|trans }}</th>
+      <th>{{ 'Tag'|trans }}</th>
+      <th>{{ 'Tag (translated)'|trans }}</th>
+      <th>{{ 'Description'|trans }}</th>
+      <th>{{ 'Description (translated)'|trans }}</th>
+    </thead>
+    <tbody>
+      {% set i = 0 %}
+      {% for tag in tags %}
+        <tr class="{{ cycle(['flop','flip'], i) }}">
+          <td class="tag_type_id"><a href="{{ FRAMEWORK_URL }}{{ route.edit|replace({'{tag_id}':tag.tag_type_id}) }}">{{ '%03d'|format(tag.tag_type_id) }}</a></td>
+          <td class="tag_name"><a href="{{ FRAMEWORK_URL }}{{ route.edit|replace({'{tag_id}':tag.tag_type_id}) }}">{{ tag.tag_name|upper }}</a></td>
+          <td class="tag_name translated">{{ tag.tag_name|capitalize }} &rArr; {{ tag.tag_name|trans }}</td>
+          <td class="tag_description">{{ tag.tag_description }}</td>
+          <td class="tag_description translated">{{ tag.tag_description|trans }}</td>
+        </tr>
+        {% set i = i+1 %}
+      {% endfor %}
+    </tbody>
+  </table>    
+</div>

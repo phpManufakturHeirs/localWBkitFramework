@@ -1,0 +1,16 @@
+{# 
+  kfHelloWorld
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<p>{{ 'Hello %title% %name%'|trans({'%title%':data.title|capitalize|trans, '%name%':data.last_name}) }},</p>
+<p>{{ 'thank you for submitting us the following contact data:'|trans }}</p>
+<p>{{ 'Title'|trans }}: {{ data.title|capitalize|trans }}<br />
+  {{ 'First name'|trans }}: {{ data.first_name }}<br />
+  {{ 'Last name'|trans }}: {{ data.last_name }}<br />
+  {{ 'E-Mail'|trans }}: {{ data.email }}
+</p>

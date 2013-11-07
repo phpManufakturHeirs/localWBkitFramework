@@ -1,0 +1,73 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block jquery %}
+  {{ parent() }}
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/i18n/jquery-ui-i18n.min.js"></script>
+  <script src="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/jquery/jquery-ui-timepicker-addon.js"></script>
+  <script src="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/jquery/jquery-ui-timepicker-de.js"></script>
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CKEditor/Source/ckeditor.js"></script>
+{% endblock jquery %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" media="screen, projection" />
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/jquery-ui-timepicker-addon.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.edit.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  {{ parent() }}
+  <div class="contact_form">
+    <div class="small right">{{ displayname }} <a href="{{ logout_url }}">{{ 'Logout'|trans }}</a></div>
+    <h2>{{ 'Edit event'|trans }}</h2>
+    <p>&nbsp;</p>
+    {% include '@phpManufaktur/Event/Template/default/command/item/event.edit.twig' %}
+  </div>
+{% endblock %}
+{% block footer %}
+  {# add the height of CKE's to the iframe_add_height (default = 30) #}
+  {% set iframe_add_height = 250 %}
+  {{ parent() }}
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      $(document).ready(function() {
+        $.datepicker.setDefaults($.datepicker.regional['{{ app.translator.locale }}']);
+        $.timepicker.setDefaults($.timepicker.regional['{{ app.translator.locale }}']);
+        $('.event_date_from').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_date_to').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_publish_from').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_publish_to').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_deadline').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+      });
+    }
+  </script>
+{% endblock footer %}

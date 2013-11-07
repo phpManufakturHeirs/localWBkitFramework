@@ -1,0 +1,30 @@
+{#
+  kfHelloWorld
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block title %}{{ 'iFrame Sample: Step 2'|trans }}{% endblock %}
+{% block description %}{{ 'kitCommand Sample for the usage of iframes'|trans }}{% endblock %}
+{% block keywords %}kitFramework,Sample,Hello World{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ THIRDPARTY_URL }}/HelloWorld/Template/default/css/hello.iframe.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  <h2>{{ 'Hello World Sample - Step 2'|trans }}</h2>
+  {{ parent() }}
+  <div class="framework_form">
+    <form action="{{ FRAMEWORK_URL }}/helloworld/iframe/step03?pid={{ basic.pid }}" method="post">
+      {{ form_widget(form) }}
+      <label for="form_submit">&nbsp;</label>
+      <input id="form_submit" type="submit" value="{{ 'Submit'|trans }}" />
+      <div class="clear"></div>
+    </form>
+  </div>
+  <div class="clear"></div>
+{% endblock content %}

@@ -1,0 +1,36 @@
+{
+  "command":"FacebookGallery",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://kit2.phpmanufaktur.de/FacebookGallery"
+    },
+  "name": {
+    "en":"Access a FacebookGallery",
+    "de":"Facebook Galerie einbinden"
+  },
+  "description": {
+    "en":"Enable to show a Facebook gallery within your website",
+    "de":"Ermöglicht Ihnen die Einbindung einer Facebook Galerie innerhalb Ihrer Website"
+  },
+  "help": {
+    "en": {
+      "link":"https://gist.github.com/hertsch/5581520",
+      "gist_id":"5581520"
+    }
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  },
+  "issues": {
+    "en": {
+      "link":"https://github.com/phpManufaktur/kfFacebookGallery/issues"
+    }
+  },
+  "support": {
+    "en": {
+      "link":"https://support.phpmanufaktur.de"
+    }
+  }
+}

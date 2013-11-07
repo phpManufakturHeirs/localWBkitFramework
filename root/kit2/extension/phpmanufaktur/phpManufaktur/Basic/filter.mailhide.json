@@ -1,0 +1,29 @@
+{
+  "command":"filter:MailHide",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://phpmanufaktur.de"
+    },
+  "name": {
+    "en":"ReCaptcha MailHide Filter",
+    "de":"ReCaptcha MailHide Filter"
+  },
+  "description": {
+    "en":"This filter hides email addresses and prompt for a ReCaptcha to make them visible",
+    "de":"Dieser Filter versteckt E-Mail Adressen und fordert zur Eingabe eines ReCaptcha Code auf um sie sichtbar zu machen."
+  },
+  "help": {
+    "en": {
+      "link":"https://gist.github.com/hertsch/6562587",
+      "gist_id":"6562587",
+      "file": {
+        "help":"kitfilter_mailhide_en.md"
+      }
+    }
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  }
+}

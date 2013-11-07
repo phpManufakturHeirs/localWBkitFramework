@@ -1,0 +1,65 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.list.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+{% endblock stylesheet %}
+{% block content %}
+  {{ parent() }}
+  <div class="search-container">
+    <h2>{{ 'Search'|trans }}</h2>
+    {% if basic.message|length > 0 %}
+      <div class="message">{{ basic.message }}</div>
+    {% endif %}
+    <form action="{{ FRAMEWORK_URL ~ '/event/search?pid=' ~ basic.pid }}" method="post" >
+      <input type="hidden" name="groups" value="{{ groups }}" />
+      <input type="text" name="search" /><input type="submit" value="{{ 'Search'|trans }}" />
+    </form>    
+  </div>
+  <div class="event list container" >
+    {% if events|length > 0 %}
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'event_date_from'|trans }}</th>
+            <th>{{ 'event_date_to'|trans }}</th>
+            <th>{{ 'description_title'|trans }}</th>
+            <th>{{ 'zip'|trans }}</th>
+            <th>{{ 'location'|trans }}</th>
+            <th>{{ 'organizer'|trans }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for event in events %}
+            <tr>
+              <td>{{ event.event_date_from|date('DATE_FORMAT'|trans) }}</td>
+              <td>{{ event.event_date_to|date('DATE_FORMAT'|trans) }}</td>
+              <td><a href="{{ FRAMEWORK_URL }}/event/perma/id/{{ event.event_id }}?pid={{ basic.pid }}" target="_top">{{ event.description_title }}</a></td>            
+              <td>{{ event.contact.location.address.0.address_zip }}</td>
+              <td>{{ event.contact.location.address.0.address_city }}</td>
+              <td>
+                {% if event.contact.location.contact.contact_type == 'COMPANY' %}
+                  {{ event.contact.location.company.0.company_name }}
+                {% else %}
+                  {{ event.contact.location.person.0.person_last_name }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      {# here you can place a prompt if no search result exists #}
+    {% endif %}
+  </div>
+
+{% endblock %}

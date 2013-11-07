@@ -1,0 +1,108 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.propose.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+{% endblock stylesheet %}
+{% block content %}
+  
+  {% if app.translator.locale == 'de' %}
+    {# german translation #}
+    {% if form.create_type.vars.value == 'organizer' %}
+      <h2>Veranstalter anlegen</h2>
+      {{ parent() }}
+      {% if basic.message|length < 1 %}
+        <div class="iframe_content message">
+          <p>Bitte geben Sie uns zu dem Veranstalter so viele Informationen wie möglich.</p>
+        </div>
+      {% endif %}
+    {% else %}
+      <h2>Veranstaltungsort anlegen</h2>
+      {{ parent() }}
+      {% if basic.message|length < 1 %}
+        <div class="iframe_content message">
+          <p>Bitte geben Sie uns zu dem Veranstaltungsort so viele Informationen wie möglich.</p>
+        </div>
+      {% endif %}
+    {% endif %}    
+  {% else %}
+    {# english language #}
+    {% if form.create_type.vars.value == 'organizer' %}
+      <h2>Create a organizer</h2>
+      {{ parent() }}
+      {% if basic.message|length < 1 %}
+        <div class="iframe_content message">
+          <p>Please give us as much as possible information about the organizer</p>
+        </div>
+      {% endif %}
+    {% else %}
+      <h2>Create a location</h2>
+      {{ parent() }}
+      {% if basic.message|length < 1 %}
+        <div class="iframe_content message">
+          <p>Please give us as much as possible information about the location</p>
+        </div>
+      {% endif %}
+    {% endif %}  
+  {% endif %}
+    
+  <div class="contact_form">
+    <form action="{{ FRAMEWORK_URL ~ route.contact.check ~ '?pid=' ~ basic.pid }}" method="post">
+      {#{ form_widget(form) }#}
+      
+      {{ form_row(form.contact_type) }}
+      
+      <fieldset>
+        <legend>{{ 'natural person'|trans }}</legend>
+        {{ form_row(form.person_gender) }}
+        {{ form_row(form.person_first_name) }}
+        {{ form_row(form.person_last_name) }}
+      </fieldset>
+      
+      <fieldset>
+        <legend>{{ 'company, institution or association'|trans }}</legend>
+        {{ form_row(form.company_name) }}
+        {{ form_row(form.company_department) }}
+      </fieldset>
+      
+      <fieldset>
+        <legend>{{ 'Communication'|trans }}</legend>
+        {{ form_row(form.email) }}
+        {{ form_row(form.phone) }}
+        {{ form_row(form.url) }}
+      </fieldset>
+      
+      <fieldset>
+        <legend>{{ 'Address'|trans }}</legend>
+        {{ form_row(form.address_street) }}
+        {{ form_row(form.address_zip) }}
+        {{ form_row(form.address_city) }}
+        {{ form_row(form.address_state) }}
+        {{ form_row(form.address_country) }}
+      </fieldset>  
+      
+      <fieldset>
+        <legend>{{ 'Note'|trans }}</legend>
+        {{ form_row(form.note) }}
+      </fieldset>
+      
+      {{ form_rest(form) }}
+      
+      <div>
+        <label for="submit">&nbsp;</label>
+        <input type="submit" name="submit" />
+      </div>
+      <div class="clear"></div>
+    </form>
+  </div>
+{% endblock %}

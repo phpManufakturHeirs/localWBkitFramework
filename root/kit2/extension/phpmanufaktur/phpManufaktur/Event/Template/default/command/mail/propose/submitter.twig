@@ -1,0 +1,83 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<p>{{ 'Thank you for proposing the following event'|trans }}:</p>
+<div>{{ 'Organizer'|trans }}:<br />
+  {% if event.contact.organizer.contact.contact_type == 'COMPANY' %}
+    {{ event.contact.organizer.company.0.company_name }}
+  {% else %}
+    {% set person = event.contact.organizer.person.0 %}
+    {{ person.person_gender|trans }}
+    {% if person.person_first_name|length > 0 %}{{ person.person_first_name }} {% endif %}
+    {{ person.last_name }}
+  {% endif %}
+</div>
+<div>{{ 'Event location'|trans }}:<br />
+  {% if event.contact.location.contact.contact_type == 'COMPANY' %}
+    {% set phone_id = event.contact.location.company.0.company_primary_phone_id %}
+    {% set email_id = event.contact.location.company.0.company_primary_email_id %}
+    {{ event.contact.location.company.0.company_name }}<br />
+  {% else %}
+    {% set phone_id = event.contact.location.person.0.person_primary_phone_id %}
+    {% set email_id = event.contact.location.person.0.person_primary_email_id %}
+    {{ event.contact.location.person.0.person_last_name }}<br />
+  {% endif %}
+
+  {% set address = event.contact.location.address.0 %}
+  {% if address.address_street|length > 0 %}{{ address.address_street }}<br />{% endif %}
+  {% if address.address_zip|length > 0 %}{{ address.address_zip }} {% endif %}
+  {% if address.address_city|length > 0 %}{{ address.address_city }}<br />{% endif %}
+
+  {# get the primary phone #}
+  {% if phone_id > 0 %}
+    {% for phone in event.contact.location.communication %}
+      {% if phone.communication_id == phone_id %}
+        {{ 'Phone'|trans }}: {{ phone.communication_value }}<br />
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {# get the primary email #}
+  {% if email_id > 0 %}
+    {% for email in event.contact.location.communication %}
+      {% if email.communication_id == email_id %}
+        {{ 'email'|trans }}: {{ email.communication_value }}<br />
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {# loop for a URL #}
+  {% set isset_url = 0 %}
+  {% for url in event.contact.location.communication %}
+    {% if ((url.communication_type == 'URL') and (isset_url == 0)) %}
+      {% set isset_url = 1 %}
+        {{ 'Homepage'|trans }}: {{ url.communication_value }}<br />
+    {% endif %}
+  {% endfor %}
+</div>
+<div>
+  {{ 'Event'|trans }}:<br />
+  {{ event.description_title }}<br />
+  {{ 'Date'|trans }}: {{ event.event_date_from|date('DATETIME_FORMAT'|trans) }} - {{ event.event_date_to|date('DATETIME_FORMAT'|trans) }}<br />
+  {{ 'Short description'|trans }}:<br />
+  {{ event.description_short|striptags }}<br />
+  {{ 'Long description'|trans }}:<br />
+  {{ event.description_long|striptags }}<br />
+  {{ 'Publish'|trans }}: {{ event.event_publish_from|date('DATETIME_FORMAT'|trans) }} - {{ event.event_publish_to|date('DATETIME_FORMAT'|trans) }}<br />
+  {{ 'Deadline'|trans }}: {% if event.event_deadline != '0000-00-00 00:00:00' %}{{ event.event_deadline|date('DATETIME_FORMAT'|trans) }}{% endif %}<br />
+  {{ 'Participants maximum'|trans }}: {{ event.event_participants_max }}<br />
+  {{ 'Costs'|trans }}: {{ event.event_costs|number_format(2,',','.') }} {{ 'CURRENCY_SYMBOL'|trans }}
+</div>
+<div>
+  <p>{{ 'Please check the event data and use one of the following action links'|trans }}:</p>
+  <p>{{ 'Publish the event'|trans }}:<br />
+    {{ action.link.publish }}</p>
+  <p>{{ 'Do not publish the event'|trans }}:<br />
+    {{ action.link.cancel }}</p>
+</div>

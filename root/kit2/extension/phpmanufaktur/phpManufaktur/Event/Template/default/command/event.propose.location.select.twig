@@ -1,0 +1,61 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.propose.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+{% endblock stylesheet %}
+{% block content %}
+  
+  {% if app.translator.locale == 'de' %}
+    {# german translation #}
+    <h2>Veranstaltungsort auswählen</h2>
+    {{ parent() }}
+    {% if basic.message|length < 1 %}
+      <div class="iframe_content message">
+        <p>Zu dem Suchbegriff <i>{{ search_term }}</i> wurden {{ locations|length }} Veranstaltungsorte gefunden.</p>
+        <p>Bitte wählen Sie den passenden Veranstaltungsort aus, <a href="{{ FRAMEWORK_URL ~ route.location.search ~ '?pid=' ~ basic.pid }}">wiederholen Sie die Suche</a> oder <a href="{{ FRAMEWORK_URL ~ route.location.create ~ '?pid=' ~ basic.pid }}">legen Sie einen neuen Veranstaltungsort an</a>.</p>
+      </div>
+    {% endif %}
+  {% else %}
+    {# english language #}
+    <h2>Select Location</h2>
+    {{ parent() }}
+    {% if basic.message|length < 1 %}
+      <div class="iframe_content message">
+        <p>We found {{ locations|length }} locations matching to the search term {{ search_term }}.</p>
+        <p>Please select the matching location, <a href="{{ FRAMEWORK_URL ~ route.location.search ~ '?pid=' ~ basic.pid }}">repeat the search</a> or <a href="{{ FRAMEWORK_URL ~ route.location.create ~ '?pid=' ~ basic.pid }}">create a new organizer record</a>.</p>
+      </div>
+    {% endif %}
+  {% endif %}
+  
+  <table>
+    <thead>
+      <tr>
+        <td>{{ 'Identifier'|trans }}</td>
+        <td>{{ 'Zip'|trans }}</td>
+        <td>{{ 'City'|trans }}</td>
+        <td>{{ 'Street'|trans }}</td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for location in locations %}
+        <tr>
+          <td><a href="{{ FRAMEWORK_URL ~ route.location.id|replace({'{contact_id}':location.contact_id}) ~ '?pid=' ~ basic.pid }}">{{ location.contact_name }}</a></td>
+          <td>{{ location.address_zip }}</td>
+          <td>{{ location.address_city }}</td>
+          <td>{{ location.address_street }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>  
+{% endblock %}

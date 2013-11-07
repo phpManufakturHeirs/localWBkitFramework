@@ -1,0 +1,57 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.propose.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+{% endblock stylesheet %}
+{% block content %}
+  
+  {% if app.translator.locale == 'de' %}
+    {# german translation #}
+    <h2>Veranstaltungsort auswählen</h2>
+    {{ parent() }}
+    {% if basic.message|length < 1 %}
+      <div class="iframe_content message">
+        <p>Bitte nutzen Sie die Suchfunktion um zu überprüfen ob sich ein Veranstaltungsort bereits in unserer Datenbank befindet und direkt übernommen werden kann.</p>
+        <p>Falls Sie sicher sind, dass der Veranstaltungsort noch nicht vorhanden ist, haken Sie bitte die Checkbox an um eine neue Adresse anzulegen.</p>
+      </div>
+    {% endif %}
+  {% else %}
+    {# english language #}
+    <h2>Search Location</h2>
+    {{ parent() }}
+    {% if basic.message|length < 1 %}
+      <div class="iframe_content message">
+        <p>Please use always the search function to check if a location already exists in our database.</p>
+        <p>If you are shure, that a location does not exists check the box below and create a new one.</p>
+      </div>
+    {% endif %}
+  {% endif %}
+    
+  <div class="contact_form">
+    <form action="{{ FRAMEWORK_URL ~ route.location.select ~ '?pid=' ~ basic.pid }}" method="post">
+      {#{ form_widget(form) }#}
+      {{ form_row(form.search) }}
+      <div>
+        <label for="new_organizer">&nbsp;</label>
+        {{ form_widget(form.new_location) }}<div class="checkbox_label">{{ 'Create a new Location record'|trans }}</div>
+      </div>
+      {{ form_rest(form) }}
+      <div>
+        <label for="submit">&nbsp;</label>
+        <input type="submit" name="submit" />
+      </div>
+      <div class="clear"></div>
+    </form>
+  </div>
+{% endblock %}

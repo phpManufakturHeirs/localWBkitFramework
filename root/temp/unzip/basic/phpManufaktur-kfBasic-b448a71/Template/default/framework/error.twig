@@ -1,0 +1,29 @@
+{# 
+  kitFramework::Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ 'kitFramework Error'|trans }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/css/error.css" media="screen, projection" />
+  </head>
+  <body>
+    <div id="error">
+      <div class="message">
+        <b>{{ code }}</b> - {% if message.short|length > 0 %}{{ message.full }}{% else %}{{ message.full }}{% endif %}
+      </div>
+      <div class="file">[{{ line }}] {{ file }}</div>
+      <div class="report">        
+        <p>{{ 'Need help? Please visit the <a href="%url%" target="_blank">phpManufaktur Support Group</a>.'|trans({'%url%':'https://support.phpmanufaktur.de'}) }}</p>
+      </div>
+    </div>
+  </body>
+</html>      

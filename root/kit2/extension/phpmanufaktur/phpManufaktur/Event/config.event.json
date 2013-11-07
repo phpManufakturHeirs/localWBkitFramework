@@ -1,0 +1,108 @@
+{
+  "general": {
+    "max_execution_time": 60
+  },
+  "event": {
+    "microdata": {
+      "offer_count_unlimited": 20
+    },
+    "subscription": {
+      "confirm": {
+        "double_opt_in": false,
+        "mail_to": [
+          "contact",
+          "provider",
+          "organizer"
+        ]
+      }
+    },
+    "description": {
+      "title": {
+        "required": true,
+        "min_length": 5
+      },
+      "short": {
+        "required": true,
+        "min_length": 30
+      },
+      "long": {
+        "required": true,
+        "min_length": 50
+      }
+    },
+    "date": {
+      "event_date_from": {
+        "allow_date_in_past": false
+      },
+      "event_date_to": [
+        
+      ],
+      "event_publish_from": {
+        "subtract_days": 21
+      },
+      "event_publish_to": {
+        "add_days": 7
+      }
+    },
+    "edit": {
+      "frontend": true
+    },
+    "propose": {
+      "confirm": {
+        "mail_to": [
+          "provider"
+        ]
+      }
+    }
+  },
+  "account": {
+    "confirm": {
+      "mail_to": [
+        "provider"
+      ]
+    }
+  },
+  "contact": {
+    "confirm": {
+      "double_opt_in": true,
+      "mail_to": [
+        "contact",
+        "provider"
+      ]
+    }
+  },
+  "permalink": {
+    "cms": {
+      "url": "http://localhost:8080/pages/permalink.php"
+    }
+  },
+  "ical": {
+    "active": true,
+    "framework": {
+      "path": "\/media\/protected\/event\/ical"
+    }
+  },
+  "qrcode": {
+    "active": false,
+    "framework": {
+      "path": {
+        "link": "\/media\/protected\/event\/qrcode\/link",
+        "ical": "\/media\/protected\/event\/qrcode\/ical"
+      }
+    },
+    "settings": {
+      "content": "link",
+      "size": 3,
+      "error_correction": 1,
+      "margin": 2
+    }
+  },
+  "rating": {
+    "active": true,
+    "type": "small",
+    "length": 5,
+    "step": true,
+    "rate_max": 5,
+    "show_rate_info": false
+  }
+}

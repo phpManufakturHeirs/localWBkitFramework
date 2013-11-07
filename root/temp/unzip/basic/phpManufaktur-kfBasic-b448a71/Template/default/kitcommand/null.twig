@@ -1,0 +1,25 @@
+{#
+  kitFramework::Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset={{ basic.page.charset|default('UTF-8') }}"/>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  </head>
+  <body>
+    {# set the parent iframe to a height of zero pixel and show nothing #}
+    <script type="text/javascript">
+      if (typeof 'jQuery' !== 'undefined') {
+        $(document).ready(function() {
+          parent.document.getElementById("{{ basic.frame.id }}").style.height = '0px';          
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+/**
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+*/
+
+#message-body {
+  margin: 0;
+  padding: 0 0 0 100px;
+  width: auto;
+  height: auto;
+  min-height: 80px;
+  background-image: url('../image/message.png');
+  background-position: top left;
+  background-repeat: no-repeat;
+  font-size: 11px;
+}
+#message-body h2 {
+  margin:0;
+  padding: 0 0 10px 0;
+  font-size: 13px;
+}

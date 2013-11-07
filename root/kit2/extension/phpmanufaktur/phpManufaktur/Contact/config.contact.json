@@ -1,0 +1,12 @@
+{
+  "email": {
+    "required": true
+  },
+  "countries": {
+    "preferred": [
+      "DE",
+      "CH",
+      "AT"
+    ]
+  }
+}

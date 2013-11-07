@@ -1,0 +1,18 @@
+{# 
+  kitFramework:Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<div class="kitcommand">
+  <div>
+    {{ help.content|markdown }}
+  </div>
+  <div style="margin: 20px 0 0 0; padding:0; color:#333; background-color: transparent; font-size: 11px;">
+    {% if help.command != 'help' %}<p>{{ 'Use <code>~~ help ~~</code> to view the <a href="%link%">general help file for the kitCommands</a>.'|trans({'%link%':help.help}) }}</p>{% endif %}
+    {% if help.link|length > 0 %}<p>{{ 'Please <a href="%link%" target="_blank">comment this help</a> to improve the kitCommand <b>%command%</b>.'|trans({'%link%':help.link,'%command%':help.command}) }}</p>{% endif %}    
+  </div>
+</div>

@@ -1,0 +1,15 @@
+{
+  "CMS_PATH": "D:\\Repositories\\CMS\\localWBkitFramework\\root",
+  "CMS_URL": "http:\/\/localhost:8080",
+  "CMS_MEDIA_PATH": "D:\\Repositories\\CMS\\localWBkitFramework\\root\/media",
+  "CMS_MEDIA_URL": "http:\/\/localhost:8080\/media",
+  "CMS_TEMP_PATH": "D:\\Repositories\\CMS\\localWBkitFramework\\root\/temp",
+  "CMS_TEMP_URL": "http:\/\/localhost:8080\/temp",
+  "CMS_ADMIN_PATH": "D:\\Repositories\\CMS\\localWBkitFramework\\root\/admin",
+  "CMS_ADMIN_URL": "http:\/\/localhost:8080\/admin",
+  "CMS_TYPE": "WebsiteBaker",
+  "CMS_VERSION": "2.8.3",
+  "OUTPUT_FILTER": {
+    "METHOD": "STANDARD"
+  }
+}

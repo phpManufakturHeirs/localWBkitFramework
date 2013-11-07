@@ -1,0 +1,176 @@
+/**
+ * kitFramework
+ *
+ * @author Team phpManufaktur <team@phpmanufaktur.de>
+ * @link https://kit2.phpmanufaktur.de/FacebookGallery
+ * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  font-size: 13px;
+  color: #363636;
+  background-color: #fff;
+}
+
+h1,h2,h3 {
+  margin: 0 0 15px 0;
+  padding: 0;
+}
+p {
+  margin: 0 0 5px 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+a:link,
+a:visited {
+  color: #da251d;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:hover,
+a:active {
+  color: #da251d;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+#framework_body {
+  position: relative;
+  margin: 0 auto 0 auto;
+  padding: 0;
+  width: 960px;
+  height: auto;
+}
+
+#logo {
+  width: 960px;
+  height: 150px;
+  margin: 0 0 30px 0;
+  padding: 0;
+  background-color: transparent;
+  background-image: url('../image/kitframework_logo.png');
+  background-position: top left;
+  background-repeat: no-repeat;
+}
+
+#navigation {
+  float: left;
+  width: 160px;
+  height: auto;
+  margin: 0;
+  padding: 50px 0 0 0;
+  
+}
+#content {
+  float: left;
+  width: 800px;
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+#footer {
+  clear: both;
+  width: auto;
+  height: 50px;
+  margin: 0;
+  padding: 30px 0 0 0;
+  text-align: center;
+  font-size: 10px;
+  color: #666666;
+  background-color: transparent;
+}
+
+.menu-item a {
+  text-decoration: none;
+  display: inline-block;
+  width: 160px;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  color: #333;
+  background-color: transparent;
+}
+.menu-item.menu-0 a {
+  width: 160px;
+  height: auto;
+  padding: 0;
+  margin: 2px 0 3px 0;
+}
+.menu-item.menu-5 a,
+.menu-item.menu-4 a,
+.menu-item.menu-3 a,
+.menu-item.menu-2 a,
+.menu-item.menu-1 a {
+  width: 160px;
+  height: auto;
+  padding: 0;
+  margin: 2px 0 3px 0;
+  color: #333;
+  background-color: transparent;
+  border-bottom: 1px solid #ccc;  
+}
+.menu-item.menu-2 a {
+  width: 150px;
+  padding: 0 0 0 10px;
+  border-bottom: none;
+  font-size: 12px;
+}
+.menu-item.menu-5 a,
+.menu-item.menu-4 a,
+.menu-item.menu-3 a {
+  width: 140px;
+  padding: 0 0 0 20px;
+  border-bottom: none;
+  font-size: 11px;
+}
+.menu-item.menu-4 a {
+  width: 140px;
+  padding: 0 0 0 30px;
+}
+.menu-item.menu-5 a {
+  width: 100px;
+  padding: 0 0 0 60px;
+}
+
+.menu-item a:link,
+.menu-item a:visited {
+  color: #333;
+  background-color: transparent;
+}
+.menu-item a:hover,
+.menu-item a:active {
+  color: #da251d;
+  background-color: transparent;
+}
+.menu-item.menu-current > a:link,
+.menu-item.menu-current > a:visited {
+  color: #da251d;
+  background-color: transparent;
+}
+.menu-item.menu-addon a:link,
+.menu-item.menu-addon a:visited {
+  font-size: 11px;
+  text-decoration: none;
+  color: #333;
+  background-color: transparent;
+}
+.menu-item.menu-addon.menu-parent a:link,
+.menu-item.menu-addon.menu-parent a:visited,
+.menu-item.menu-addon a:hover,
+.menu-item.menu-addon a:active {
+  font-size: 11px;
+  color: #da251d;
+  background-color: transparent;
+}
+.copy_clipboard:hover {
+  background-image: url('../image/copy_active.png');
+  cursor: pointer;
+}

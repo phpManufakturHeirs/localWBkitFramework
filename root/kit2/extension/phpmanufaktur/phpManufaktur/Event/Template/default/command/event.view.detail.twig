@@ -1,0 +1,54 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block title %}{{ event.description_title|striptags|escape }}{% endblock %}
+{% block description %}{{ event.description_short|striptags|escape }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.view.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  
+{% endblock stylesheet %}
+{% block jquery %}
+  {{ parent() }}
+  {% if config.rating.active and parameter.rating %}
+    <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CommandCollection/Template/Rating/default/jquery/jRating.jquery.js"></script>
+  {% endif %}  
+{% endblock jquery %}
+{% block content %}
+  {{ parent() }}
+  <div class="event view container" >
+    {% include '@phpManufaktur/Event/Template/default/command/item/event.detail.twig' %}
+  </div>
+{% endblock %}
+{% block footer %}
+  {% set iframe_add_height = 20 %}  
+  {{ parent() }} 
+  {% if config.rating.active and parameter.rating %}
+    <script type="text/javascript">
+      if (typeof 'jQuery' !== 'undefined') {
+        $(document).ready(function() {        
+          $(".rating_{{ event.rating.identifier_id }}").jRating({
+            bigStarsPath: '{{ MANUFAKTUR_URL }}/CommandCollection/Template/Rating/default/css/icons/stars.png',
+            smallStarsPath: '{{ MANUFAKTUR_URL }}/CommandCollection/Template/Rating/default/css/icons/small.png',
+            phpPath: '{{ FRAMEWORK_URL }}/collection/rating/response',
+            type: '{{ config.rating.type }}',
+            length : {{ config.rating.length }},
+            step: {{ config.rating.step }},
+            rateMax: {{ config.rating.rate_max }},
+            showRateInfo: {% if config.rating.show_rate_info %}true{% else %}false{% endif %},
+            {% if event.rating is defined and event.rating.is_disabled %}isDisabled: true,{% endif %}
+          });
+        });
+      }
+    </script>
+  {% endif %}
+{% endblock footer %}    
+

@@ -1,0 +1,59 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+<div class="contact_form">
+  <form action="{{ FRAMEWORK_URL ~ route.action }}" method="post" {{ form_enctype(form) }}>
+    {{ form_errors(form) }}
+
+    {{ form_row(form.title_id) }}
+    <div>
+      <label>{{ 'title_id'|trans }}</label>
+      <div class="value">
+        {% if form.vars.value.title_id > 0 %}
+          {{ '%03d'|format(form.vars.value.title_id) }}
+        {% else %}
+          {{ '- new title -'|trans }}
+        {% endif %}
+     </div>
+    </div>
+      
+    {{ form_row(form.title_identifier) }}
+    {{ form_row(form.title_short) }}
+    {% if form.vars.value.title_id > 0 %}  
+      <div>
+        <label>{{ 'Short name (translated)'|trans }}</label>
+        <div class="value">{{ form.vars.value.title_short }} &rArr; {{ form.vars.value.title_short|trans }}</div>
+      </div>
+    {% endif %}
+      
+    {{ form_row(form.title_long) }}
+    {% if form.vars.value.title_id > 0 %}
+      <div>
+        <label>{{ 'Long name (translated)'|trans }}</label>
+        <div class="value">{{ form.vars.value.title_long }} &rArr; {{ form.vars.value.title_long|trans }}</div>
+      </div>
+    {% endif %}  
+      
+    {{ form_rest(form) }}
+    
+    {% if form.vars.value.title_id > 0 %}
+      <div class="clear"></div>
+      <div>
+        <label>&nbsp;</label>
+        <input type="checkbox" name="delete" value="1" />&nbsp;{{ 'delete the title <b>%title_identifier%</b>'|trans({'%title_identifier%':form.vars.value.title_identifier}) }}
+      </div>
+    {% endif %}
+
+    <div>
+      <label for="submit">&nbsp;</label>
+      <input type="submit" name="submit" />
+    </div>
+    <div class="clear"></div>  
+  </form>
+</div>

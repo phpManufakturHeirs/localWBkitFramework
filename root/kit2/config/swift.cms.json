@@ -1,0 +1,8 @@
+{
+  "SERVER_EMAIL": "admin@local.tld",
+  "SERVER_NAME": "LOCAL",
+  "SMTP_HOST": "",
+  "SMTP_PORT": 25,
+  "SMTP_USERNAME": "",
+  "SMTP_PASSWORD": ""
+}

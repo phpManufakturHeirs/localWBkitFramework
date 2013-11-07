@@ -1,0 +1,129 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'backend/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'Event - About'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if usage == 'framework' %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/backend.css" media="screen, projection" />
+  {% endif %}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/about.css" media="screen, projection" />
+{% endblock stylesheet %}
+
+{% block content %}
+  <div id="event_content">
+    {% include '@phpManufaktur/Event/Template/default/backend/toolbar.twig' %}
+
+    <div class="about">
+      <div class="logo">
+        <img src="{{ FRAMEWORK_URL ~ extension.path ~ '/extension.jpg' }}" width="200" height="200" title="{{ extension.name }}" alt="{{ extension.name }}" />
+      </div>
+      <div class="info">
+        <h2>{{ extension.name }}</h2>
+        <div class="release">
+          {{ 'Release'|trans }} <strong>{{ extension.release.number }}</strong>
+        </div>
+        <div class="license">
+          {% if extension.license.name is defined %}
+            {% if extension.license.url is defined %}
+              {{ 'published at'|trans }} <b>{{ extension.release.date|date('DATE_FORMAT'|trans) }}</b>, {{ 'License'|trans }}: <a href="{{ extension.license.url }}" target="_blank">{{ extension.license.name }}</a>
+            {% else %}
+              {{ 'published at'|trans }} <b>{{ extension.release.date|date('DATE_FORMAT'|trans) }}</b>, {{ 'License'|trans }}: {{ extension.license.name }}
+            {% endif %}
+          {% else %}
+            {{ 'published at'|trans }} <b>{{ extension.release.date|date('DATE_FORMAT'|trans) }}</b>  
+          {% endif %}
+        </div>
+        <div class="description">
+          {% if attribute(extension.description, app.translator.locale).long is defined %}
+            {{ attribute(extension.description, app.translator.locale).long }}
+          {% elseif extension.description.en.long is defined %}
+            {{ extension.description.en.long }}
+          {% endif %}
+        </div>
+        <div class="vendor">
+          <div class="name">{{ extension.vendor.name }}</div>
+          {% if extension.vendor.address.street is defined %}
+            <div class="street">{{ extension.vendor.address.street }}</div>
+          {% endif %}
+          {% if extension.vendor.address.zip is defined and extension.vendor.address.city is defined %}
+            <div class="city">{{ extension.vendor.address.zip }} {{ extension.vendor.address.city }}</div>
+          {% endif %}
+          {% if extension.vendor.address.country is defined %}
+            <div class="country">{{ extension.vendor.address.country }}</div>
+          {% endif %}
+          {% if extension.vendor.phone is defined %}
+            <div class="phone">{{ extension.vendor.phone }}</div>
+          {% endif %}  
+          {% if extension.vendor.email is defined %}
+            <div class="email">{{ extension.vendor.email }}</div>
+          {% endif %}  
+          {% if extension.vendor.url is defined %}
+            <div class="url"><a href="{{ extension.vendor.url }}" traget="_blank">{{ extension.vendor.url }}</a></div>
+          {% endif %}             
+        </div>
+        
+        <div class="gethelp">
+          {% if attribute(extension.firststeps, app.translator.locale).url is defined %}
+            <div class="firststeps">
+              <label>{{ 'First steps'|trans }}</label><a href="{{ attribute(extension.firststeps, app.translator.locale).url }}" target="_blank">{{ attribute(extension.firststeps, app.translator.locale).url }}</a>
+            </div>
+          {% elseif extension.firststeps.en.url is defined %}
+            <div class="firststeps">
+              <label>{{ 'First steps'|trans }}</label><a href="{{ extension.firststeps.en.url }}" target="_blank">{{ extension.firststeps.en.url }}</a>
+            </div>
+          {% endif %}
+          {% if attribute(extension.wiki, app.translator.locale).url is defined %}
+            <div class="wiki">
+              <label>{{ 'Documentation'|trans }}</label><a href="{{ attribute(extension.wiki, app.translator.locale).url }}" target="_blank">{{ attribute(extension.wiki, app.translator.locale).url }}</a>
+            </div>
+          {% elseif extension.wiki.en.url is defined %}
+            <div class="wiki">
+              <label>{{ 'Documentation'|trans }}</label><a href="{{ extension.wiki.en.url }}" target="_blank">{{ extension.wiki.en.url }}</a>
+            </div>
+          {% endif %}
+          {% if attribute(extension.issues, app.translator.locale).url is defined %}
+            <div class="issues">
+              <label>{{ 'Report problems'|trans }}</label><a href="{{ attribute(extension.issues, app.translator.locale).url }}" target="_blank">{{ attribute(extension.issues, app.translator.locale).url }}</a>
+            </div>
+          {% elseif extension.issues.en.url is defined %}
+            <div class="issues">
+              <label>{{ 'Report problems'|trans }}</label><a href="{{ extension.issues.en.url }}" target="_blank">{{ extension.issues.en.url }}</a>
+            </div>
+          {% endif %}
+          {% if attribute(extension.support, app.translator.locale).url is defined %}
+            <div class="support">
+              <label>{{ 'Support'|trans }}</label><a href="{{ attribute(extension.support, app.translator.locale).url }}" target="_blank">{{ attribute(extension.support, app.translator.locale).url }}</a>
+            </div>
+          {% elseif extension.support.en.url is defined %}
+            <div class="support">
+              <label>{{ 'Support'|trans }}</label><a href="{{ extension.support.en.url }}" target="_blank">{{ extension.support.en.url }}</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    
+    {#
+    <div class="event_logo">
+      <img src="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/image/logo_375x250.jpg" width="375" height="250" alt="Event for kitFramework" />
+    </div>
+    <p>@todo: About Event</p>
+#}
+  </div>
+{% endblock content %}

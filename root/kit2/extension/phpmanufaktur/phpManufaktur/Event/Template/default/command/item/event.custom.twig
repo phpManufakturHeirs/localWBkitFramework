@@ -1,0 +1,37 @@
+<div class="event item container">
+  {% include '@phpManufaktur/Event/Template/default/command/item/event.schema.org.twig' %}
+  <h2>CUSTOM {{ event.description_title }}</h2>
+  <div class="event view date">{{ event.event_date_from|date('d.m.Y') }}</div>
+  <div class="event view description short">{{ kitCommandParser(event.description_short) }}</div>
+
+  <div class="table">
+    <div class="row">
+      <div class="cell width-150">{{ 'Participants, maximum'|trans }}</div>
+      <div class="cell width-100">
+        {% if event.event_participants_max < 0 %}
+          {{ 'unlimited'|trans }}
+        {% elseif event.event_participants_max == 0 %}
+          {{ 'closed'|trans }}
+        {% else %}
+          {{ event.event_participants_max }}
+        {% endif %}
+      </div>
+      <div class="cell width-150">{{ 'Participants, total'|trans }}</div>
+      <div class="cell width-100">
+        {{ event.participants.confirmed }}
+        {% if event.participants.pending > 0 %}
+          &nbsp;({{ event.participants.confirmed + event.participants.pending }})
+        {% endif %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="cell"></div>
+    </div>
+  </div>
+
+  <div class="navigation">
+    {% if parameter.link.detail.active and parameter.view != 'detail' %}
+      <a href="{{ parameter.link.detail.url }}" target="{{ parameter.link.detail.target }}">{{ 'Show detailed information'|trans }}</a>
+    {% endif %}
+  </div>
+</div>

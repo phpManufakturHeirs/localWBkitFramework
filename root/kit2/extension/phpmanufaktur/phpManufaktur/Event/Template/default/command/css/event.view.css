@@ -1,0 +1,114 @@
+/**
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+*/
+
+a {
+  text-decoration: none;
+}
+a:link,
+a:visited {
+  color: #da251d;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:hover,
+a:active {
+  color: #da251d;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+.event.view.container {
+  margin: 0;
+  padding: 0;
+  width: auto;
+  height: auto;
+  font-size: 11px;
+}
+.event.view.date {
+  font-size: 12px;
+  font-weight: bold;
+}
+.event.view.description.short {
+  font-style: italic;
+}
+
+.event.view {
+  clear: both;
+  width: 100%;
+}
+.table {
+  display: table;
+  width: auto;
+}
+.row {
+  display: table-row;
+  width: auto;
+}
+.cell {
+  display: table-cell;
+  width: 100px;
+  padding: 3px 5px 3px 0;
+  margin: 0;
+  vertical-align: top;
+}
+.width-100 {
+  width: 100px;
+}
+.width-150 {
+  width: 150px;
+}
+.width-200 {
+  width: 200px;
+}
+.width-300 {
+  width: 300px;
+}
+.right {
+  text-align: right;
+}
+.schema_org {
+  width: 0;
+  height: 0;
+}
+.rating-container {
+   float: left;
+   width: 20%;
+   height: 20px;
+   margin: 0;
+   padding: 0;
+   text-align: right;
+}  
+ .jRatingAverage {
+	background-color: #cd853f;
+	position:relative;
+	top:0;
+	left:0;
+	z-index:2;
+	height:100%;
+}
+.jRatingColor {
+	background-color: #f4c239;
+	position:relative;
+	top:0;
+	left:0;
+	z-index:2;
+	height:100%;
+}
+.jStar {
+	position:relative;
+	left:0;
+	z-index:3;
+}
+
+.edit {
+  float: right;
+  margin: 0;
+  padding: 0;
+}

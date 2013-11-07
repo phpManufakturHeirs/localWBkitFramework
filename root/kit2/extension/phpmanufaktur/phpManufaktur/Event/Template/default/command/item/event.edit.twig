@@ -1,0 +1,103 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+<form action="{{ FRAMEWORK_URL ~ route.event.check ~ '?pid=' ~ basic.pid }}" method="post">
+  {#{ form_widget(form) }#}
+
+  <div>
+    <label>{{ 'Organizer'|trans }}</label>
+    <div class="address_info">
+      {% if organizer.contact_type == 'COMPANY' %}
+        {{ organizer.company_name }}<br />
+      {% else %}
+        {{ organizer.person_gender|trans }}
+        {% if organizer.person_first_name|length > 0 %}{{ organizer.person_first_name }} {% endif %}
+        {{ organizer.person_last_name }}<br />
+      {% endif %}
+      {% if organizer.address_street|length > 0 %}{{ organizer.address_street }}<br />{% endif %}  
+      {{ organizer.address_country_code }} {{ organizer.address_zip }} {{ organizer.address_city }}<br />
+      {% if organizer.communication_phone|length > 0 %}<i class="icon-phone"></i> {{ organizer.communication_phone }}<br />{% endif %}
+      {% if organizer.communication_email|length > 0 %}<i class="icon-envelope"></i> <a href="mailto:{{ organizer.communication_email }}">{{ organizer.communication_email }}</a>{% endif %}
+    </div>
+  </div>
+  <div class="clear"></div>
+  <div>&nbsp;</div>
+  <div>
+    <label>{{ 'Event location'|trans }}</label>
+    <div class="address_info">
+      {% if location.contact_type == 'COMPANY' %}
+        {{ location.company_name }}<br />
+      {% else %}
+        {{ location.person_gender|trans }}
+        {% if location.person_first_name|length > 0 %}{{ location.person_first_name }} {% endif %}
+        {{ location.person_last_name }}<br />
+      {% endif %}
+      {% if location.address_street|length > 0 %}{{ location.address_street }}<br />{% endif %}  
+      {{ location.address_country_code }} {{ location.address_zip }} {{ location.address_city }}<br />
+      {% if location.communication_phone|length > 0 %}<i class="icon-phone"></i> {{ location.communication_phone }}<br />{% endif %}
+      {% if location.communication_email|length > 0 %}<i class="icon-envelope"></i> <a href="mailto:{{ location.communication_email }}">{{ location.communication_email }}</a>{% endif %}
+    </div>
+  </div>
+  <div class="clear"></div>
+  <div>&nbsp;</div>
+  {{ form_row(form._token) }}
+
+  {{ form_row(form.event_id) }}
+  {{ form_row(form.event_organizer) }}
+  {{ form_row(form.event_location) }}
+  
+  {{ form_row(form.event_date_from) }}
+  {{ form_row(form.event_date_to) }}
+
+  {{ form_row(form.event_publish_from) }}
+  {{ form_row(form.event_publish_to) }}
+  {{ form_row(form.event_deadline) }}
+
+  {{ form_row(form.event_url) }}
+  {{ form_row(form.event_costs) }}
+
+  {{ form_row(form.event_participants_max) }}
+
+  {{ form_row(form.description_title) }}
+
+  <div class="clear"></div>
+  <div>
+    <div class="label{% if config.event.description.short.required %} required{% endif %}">{{ form.description_short.vars.label|trans }}</div>
+    <div class="value">
+      {{ CKEditor(
+            form.description_short.vars.id,
+            form.description_short.vars.full_name,
+            form.description_short.vars.value,
+            '98%', '100px',
+            MANUFAKTUR_URL ~ '/Event/Template/default/command/ckeditor.config.simple.js'
+      ) }}
+    </div>
+  </div>
+  <div class="clear"></div>
+  <div>
+    <div class="label{% if config.event.description.long.required %} required{% endif %}">{{ form.description_long.vars.label|trans }}</div>
+    <div class="value">
+      {{ CKEditor(
+            form.description_long.vars.id,
+            form.description_long.vars.full_name,
+            form.description_long.vars.value,
+            '98%', '250px',
+            MANUFAKTUR_URL ~ '/Event/Template/default/command/ckeditor.config.simple.js'
+      ) }}
+    </div>
+  </div>
+  <div>&nbsp;</div>
+  <div>
+    <label for="submit">&nbsp;</label>
+    <input type="submit" name="submit" />
+  </div>
+  <div class="clear"></div>
+  {#{ form_rest(form) }#}
+</form>

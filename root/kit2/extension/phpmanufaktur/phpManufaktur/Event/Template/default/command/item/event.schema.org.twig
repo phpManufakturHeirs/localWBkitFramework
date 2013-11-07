@@ -1,0 +1,76 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<div class="schema_org" itemscope itemtype="http://schema.org/Event">
+  <meta itemprop="startDate" content="{{ event.event_date_from|date('c') }}">
+  <meta itemprop="endDate" content="{{ event.event_date_to|date('c') }}">
+  <meta itemprop="name" content="{{ event.description_title }}">
+  <meta itemprop="description" content="{{ event.description_short|striptags }}">
+  {% if event.contact.organizer.contact.contact_type == 'COMPANY' %}
+    {% set organizer = event.contact.organizer.company.0.company_name %}
+  {% else %}
+    {% set person = event.contact.organizer.person.0 %}
+    {% set organizer = person.person_gender|trans %}
+    {% if person.person_first_name|length > 0 %}
+      {% set organizer = organizer ~ person.person_first_name ~ ' ' %}
+    {% endif %}
+    {% set organizer = organizer ~ person.person_last_name %}
+  {% endif %}
+  <meta itemprop="performer" content="{{ organizer }}">
+  {% if event.contact.location.contact.contact_type == 'COMPANY' %}
+    {% set phone_id = event.contact.location.company.0.company_primary_phone_id %}
+    {% set email_id = event.contact.location.company.0.company_primary_email_id %}
+    {% set location = event.contact.location.company.0.company_name %}
+  {% else %}
+    {% set phone_id = event.contact.location.person.0.person_primary_phone_id %}
+    {% set email_id = event.contact.location.person.0.person_primary_email_id %}
+    {% set location = event.contact.location.person.0.person_gender|trans ~ ' ' ~ event.contact.location.person.0.last_name %}
+  {% endif %}
+
+  <div itemprop="location" >
+    <meta itemprop="name" content="{{ location }}">
+    <div itemscope itemtype="http://schema.org/PostalAddress">
+      <meta itemprop="streetAddress" content="{{ event.contact.location.address.0.address_street }}">
+      <meta itemprop="addressCountry" content="{{ event.contact.location.address.0.address_country_code|upper|trans }}">
+      <meta itemprop="addressLocality" content="{{ event.contact.location.address.0.address_city }}">
+      <meta itemprop="addressRegion" content="{{ event.contact.location.address.0.address_state }}">
+      <meta itemprop="postalCode" content="{{ event.contact.location.address.0.address_zip }}">
+
+    {% if phone_id > 0 %}
+      {% for phone in event.contact.location.communication %}
+        {% if phone.communication_id == phone_id %}
+          <meta itemprop="telephone" content="{{ phone.communication_value }}">
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    {% if email_id > 0 %}
+      {% for email in event.contact.location.communication %}
+        {% if email.communication_id == email_id %}
+          <meta itemprop="email" content="{{ email.communication_value }}">
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    {% set isset_url = 0 %}
+    {% for url in event.contact.location.communication %}
+      {% if ((url.communication_type == 'URL') and (isset_url == 0)) %}
+        {% set isset_url = 1 %}
+        <meta itemprop="url" content="{{ url.communication_value }}">
+      {% endif %}
+    {% endfor %}
+        </div>
+
+  </div>
+
+  <div itemprop="offers" itemscope itemtype="http://schema.org/AggregateOffer">
+    <meta itemprop="lowPrice" content="{%if event.event_costs > 0 %}{{ event.event_costs|number_format(2,',','.') }} &euro;{% else %}0,00 &euro;{% endif %}">
+    <meta itemprop="offerCount" content="{% if event.event_participants_max < 0 %}{{ config.event.microdata.offer_count_unlimited }}{% else %}{{ event.event_participants_max - event.event_participants_total }}{% endif %}">
+  </div>
+</div>

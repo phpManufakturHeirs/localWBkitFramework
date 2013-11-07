@@ -1,0 +1,117 @@
+.clear {
+  clear: both;
+  width: 0;
+  height: 0;
+}
+
+.event_form {
+  margin: 40px 0 20px 0;
+  padding: 0;
+  width: 100%;
+}
+.event_form label {
+  clear: both;
+  float: left;
+  width: 30%;
+  text-align: right;
+  margin: 0 0 10px 0;
+  padding: 3px 5px 0 0;
+}
+.event_form label.required:after {
+  content: '*';
+  color: #da251d;
+  background-color: transparent;
+  font-weight: bold;
+}
+#recaptcha,
+.event_form input {
+  float: left;
+  width: 60%;
+  margin: 0 0 10px 0;
+}
+.event_form input[type=submit] {
+  width: 150px;
+}
+
+.contact_form {
+  margin: 0;
+  padding: 0;
+  width: auto;
+  height: auto;
+}
+.contact_form label {
+  clear: both;
+  float: left;
+  width: 200px;
+  text-align: right;
+  margin: 0 0 10px 0;
+  padding: 3px 5px 0 0;
+}
+label[for=form_password_first] {
+  display: none;
+}
+.contact_form label.required:after {
+  content: '*';
+  color: #da251d;
+  background-color: transparent;
+  font-weight: bold;
+}
+.contact_form select,
+.contact_form input {
+  float: left;
+  width: 150px;
+  margin: 0 0 10px 0;
+}
+.contact_form textarea {
+  float: left;
+  width: 300px;
+  height: 100px;
+  margin: 0 0 10px 0;
+}
+
+input#form_zip {
+  width: 40px;
+}
+input#form_city {
+  width: 100px;
+  margin: 0 0 10px 5px;
+}
+.contact_form input[type=submit] {
+  width: 150px;
+}
+.contact_form input[type=checkbox] {
+  float: left;
+  width: 15px;
+  padding: 0;
+  margin: 0 10px 0 0;
+}
+
+#form_subscribe,
+#form_person_gender {
+  float: left;
+  width: 300px;
+}
+#form_subscribe input,
+#form_person_gender input {
+  clear: left;
+  float:left;
+  width: 15px;
+  margin: 5px 10px 0 0;
+  padding: 0;
+}
+#form_subscribe label,
+#form_person_gender label {
+  clear: none;
+  float: left;
+  width: 250px;
+  text-align: left;
+}
+#form_subscribe label.required:after,
+#form_person_gender label.required:after {
+  content: none;
+}
+
+.subscribe {
+  margin: 0;
+  padding: 20px 0 20px 0;
+}

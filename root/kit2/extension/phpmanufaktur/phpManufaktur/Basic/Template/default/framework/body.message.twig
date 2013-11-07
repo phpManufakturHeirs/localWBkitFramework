@@ -1,0 +1,20 @@
+{# 
+  kitFramework
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'framework/body.twig') %}
+{% block title %}{{ title|trans }}{% endblock %}
+{% block head %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/css/message.css" media="screen, projection" />
+{% endblock %}
+{% block content %}
+  <h1>{{ title|trans }}</h1>
+  {# don't translate the message within the dialog - it can not handle parameters! #}
+  {{ message }}
+{% endblock %}

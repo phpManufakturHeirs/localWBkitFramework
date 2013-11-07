@@ -1,0 +1,33 @@
+{#
+  FacebookGallery
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block title %}{{ 'Facebook Gallery Help'|trans }}{% endblock %}
+{% block description %}{{ 'First Steps and Helpfile for the kitFramework Facebook Gallery'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/FacebookGallery/Template/default/css/frontend.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  <div class="error_container">
+    <h2>{{ 'Facebook Gallery: Error message'|trans }}</h2>
+    <div class="error_message">
+      <div class="label">{{ 'File'|trans }}</div>
+      <div class="value">{{ error.file }}</div>
+      <div class="label">{{ 'Line'|trans }}</div>
+      <div class="value">{{ error.line }}</div>
+      <div class="label">{{ 'Message'|trans }}</div>
+      <div class="value">{{ error.message }}</div>
+    </div>
+    <div class="error_reporting">
+      {{ 'Please help to improve this free software and report the problem to the <a href="%link%" target="_blank">phpManufaktur Support Group</a>.'|trans({'%link%':'https://support.phpmanufaktur.de'}) }}
+    </div>
+  </div>
+{% endblock %}
+

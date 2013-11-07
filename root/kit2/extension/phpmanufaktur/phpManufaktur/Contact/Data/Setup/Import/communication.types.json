@@ -1,0 +1,38 @@
+[
+  {
+    "type":"PHONE",
+    "description":"description: phone"
+  },
+  {
+    "type":"FAX",
+    "description":"description: fax"
+  },
+  {
+    "type":"CELL",
+    "description":"description: cell"
+  },
+  {
+    "type":"EMAIL",
+    "description":"description: email"
+  },
+  {
+    "type":"GOOGLE+",
+    "description":"description: google+"
+  },
+  {
+    "type":"FACEBOOK",
+    "description":"description: facebook"
+  },
+  {
+    "type":"URL",
+    "description":"description: url"
+  },
+  {
+    "type":"TWITTER",
+    "description":"description: twitter"
+  },
+  {
+    "type":"XING",
+    "description":"description: xing"
+  }
+]

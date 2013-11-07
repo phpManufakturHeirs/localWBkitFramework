@@ -1,0 +1,109 @@
+{
+  "name":"Event",
+  "guid":"DC674566-0F4E-4E6D-A325-101915925BA5",
+  "category":"extension",
+  "group":"phpManufaktur",
+  "vendor":{
+      "name":"phpManufaktur",
+      "url":"https:\/\/phpmanufaktur.de",
+      "mail":"team@phpmanufaktur.de",
+      "address":{
+          "street":"Stockholmer Straße 31",
+          "zip":"13359",
+          "city":"Berlin",
+          "country":"Germany"
+      },
+      "phone":"+49 30 68813647"
+  },
+  "type":"application",
+  "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Event",
+  "namespace":"phpManufaktur\\Event",
+  "link":{
+    "about":"\/event\/about"
+  },
+  "release":{
+    "number":"2.0.21",
+    "date":"2013-11-05",
+    "status":"beta"
+  },
+  "description":{
+    "en":{
+      "title":"Event management for kitFramework",
+      "short":"A complete event management suite - former known as kitEvent",
+      "long":"Complete event management for use with the kitFramework",
+      "url":"https:\/\/kit2.phpmanufaktur.de"
+    },
+    "de": {
+      "title":"Veranstaltungskalender für das kitFramework",
+      "short":"Verwalten Sie Termine und Veranstaltungen und veröffentlichen Sie diese auf Ihrer Website",
+      "long":"Event ist eine vollständige Verwaltungssoftware für alle Termine, Kurse und Veranstaltungen.",
+      "url":"https:\/\/kit2.phpmanufaktur.de"
+    }
+  },
+  "require":{
+    "framework":{
+      "release":"0.26"
+    },
+    "extension":{
+        "phpmanufaktur":{
+            "Basic":{
+                "release":"0.49"
+            },
+            "Contact":{
+                "release":"2.0.17"
+            },
+            "CKEditor":{
+                "release":"0.15"
+            },
+            "MediaBrowser":{
+                "release":"0.19"
+            },
+            "CommandCollection":{
+                "release":"0.21"
+            }
+        }
+    }
+  },
+  "setup": {
+      "install":"\/admin\/event\/setup",
+      "update":"\/admin\/event\/update",
+      "uninstall":"\/admin\/event\/uninstall",
+      "icon_path":{
+        "BlackCat":"\/extension\/phpmanufaktur\/phpManufaktur\/Event\/Data\/Setup\/icon\/icon.jpg",
+        "WebsiteBaker":"\/extension\/phpmanufaktur\/phpManufaktur\/Event\/Data\/Setup\/icon\/tool_icon.jpg"
+      }
+  },
+  "license": {
+    "name":"MIT License",
+    "url":"https:\/\/github.com\/phpManufaktur\/kfEvent\/raw\/master\/LICENSE.md"
+  },
+  "download": {
+    "availability":"public",
+    "agreement":"free",
+    "github":{
+      "organization":"phpManufaktur",
+      "repository":"kfEvent"
+    },
+    "url":"https:\/\/github.com\/phpManufaktur\/kfEvent"
+  },
+  "wiki": {
+    "en": {
+      "url":"https:\/\/github.com/phpManufaktur\/kfEvent\/wiki"
+    }
+  },
+  "firststeps": {
+    "de": {
+      "url":"https:\/\/kit2.phpmanufaktur.de\/event\/firststeps"
+    }
+  },
+  "issues": {
+    "en": {
+      "url":"https:\/\/github.com/phpManufaktur\/kfEvent\/issues"
+    }
+  },
+  "support": {
+    "en": {
+      "url":"https:\/\/support.phpmanufaktur.de"
+    }
+  }
+}

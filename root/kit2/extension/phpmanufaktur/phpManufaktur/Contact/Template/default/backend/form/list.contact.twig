@@ -1,0 +1,110 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+<div id="contact_list">
+    
+  {% if (list|length < 1) %}
+    {# The contact list does not contain any data! #}
+    <div class="message">
+      {{ 'The contact list is empty.'|trans }}
+    </div>
+  {% else %}
+    <div class="search-container">
+      <form action="{{ FRAMEWORK_URL ~ route.contact.search }}" method="post" >
+        <input type="text" name="search" /><input type="submit" value="{{ 'Search'|trans }}" />
+      </form>
+    </div>
+    {#  
+        The pagination serve a automatic 1 2 3 ... 17 18 19 pagination and 
+        navigation for the table if it contain more rows than specified in: 
+        /Contact/Template/default/backend/simple/list.contact.json 
+        Changes here must be also done at the footer of the table !!!
+     #}  
+    {% include '@phpManufaktur/Contact/Template/default/backend/form/pagination.twig' with {
+      currentPage: current_page,
+      paginationPath: FRAMEWORK_URL ~ route.pagination|replace({'{order}':order_by|join(','), '{direction}':order_direction}),
+      lastPage: last_page,
+      showAlwaysFirstAndLast: true
+    } only %}
+
+    <table>
+      <thead>
+        <tr>  
+          {# 
+              Enable an automatic ordering of the table by the columns, just
+              clicking at the head of the column. Default order is specified in:
+              /Contact/Template/default/backend/simple/list.contact.json 
+           #}
+          {% set order_by_str = order_by|join(',') %}
+          {% for head in list.0|keys %}
+            {% if head in columns %}
+              {% set head_order = order_direction %}
+              {% set head_class = head %}
+              {% if (head == order_by_str) %}
+                {% if (head_order == 'asc') %}
+                  {% set head_order = 'desc' %}                
+                  {% set head_class = head_class ~ ' active asc' %}
+                {% else %}
+                  {% set head_order = 'asc' %}
+                  {% set head_class = head_class ~ ' active desc' %}
+                {% endif %}
+              {% endif %}  
+              <th class="{{ head_class }}">
+                {% if 'active asc' in head_class %}
+                  <i class="icon-caret-down icon-padding"></i>
+                {% elseif 'active desc' in head_class %}
+                  <i class="icon-caret-up icon-padding"></i>
+                {% endif %}
+                <a href="{{ FRAMEWORK_URL ~ route.pagination|replace({'{page}':current_page, '{order}':head, '{direction}':head_order}) }}" title="{% if head_order == 'asc' %}{{ 'Click to sort column ascending'|trans }}{% else %}{{ 'Click to sort column descending'|trans }}{% endif %}">{{ head|trans }}</a>
+              </th>  
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% set i = 0 %}
+        {% for contact in list %}
+          <tr class="{{ cycle(['flop','flip'], i) }}">
+            {% for column, value in contact %} 
+              {% if column in columns %}
+                {% if column == 'contact_id' %}
+                  <td class="{{ column }}">
+                    {% if contact.contact_type == 'PERSON' %}
+                      <a href="{{ FRAMEWORK_URL ~ route.contact.person|replace({'{contact_id}':value}) }}">{{ '%05d'|format(value) }}</a>
+                    {% else %}
+                      <a href="{{ FRAMEWORK_URL ~ route.contact.company|replace({'{contact_id}':value}) }}">{{ '%05d'|format(value) }}</a>
+                    {% endif %}
+                  </td>
+                {% elseif column == 'contact_type' %}
+                  <td class="{{ column }}">{{ value|trans }}</td>
+                {% elseif column == 'communication_email' %}
+                  <td class="{{ column }}"><a href="mailto:{{ value }}">{{ value }}</a></td>
+                {% else %}
+                  <td class="{{ column }}">{{ value }}</td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+          {% set i = i+1 %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {#
+        See top of the table for more information!
+     #}
+    {% include '@phpManufaktur/Contact/Template/default/backend/form/pagination.twig' with {
+      currentPage: current_page,
+      paginationPath: FRAMEWORK_URL ~ route.pagination|replace({'{order}':order_by|join(','), '{direction}':order_direction}),
+      lastPage: last_page,
+      showAlwaysFirstAndLast: true
+    } only %}
+  {% endif %}
+  
+</div>

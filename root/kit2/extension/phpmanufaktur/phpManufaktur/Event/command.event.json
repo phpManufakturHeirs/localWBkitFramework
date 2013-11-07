@@ -1,0 +1,39 @@
+{
+  "command":"Event",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://phpmanufaktur.de"
+    },
+  "name": {
+    "en":"Organize and publish events",
+    "de":"Verwalten und Veröffentlichen von Veranstaltungen"
+  },
+  "description": {
+    "en":"Documentation and help for Event",
+    "de":"Dokumentation zur Handhabung von Event"
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  },
+  "help": {
+    "en": {
+      "link":"https://gist.github.com/hertsch/6289857",
+      "gist_id":"6289857",
+      "file": {
+        "help":"kitcommand_event_en.md"
+      }
+    }
+  },
+  "issues": {
+    "en": {
+      "link":"https://github.com/phpManufaktur/kfEvent/issues"
+    }
+  },
+  "support": {
+    "en": {
+      "link":"https://support.phpmanufaktur.de"
+    }
+  }
+}

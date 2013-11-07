@@ -1,0 +1,16 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<p>{{ 'Hello %name%'|trans({'%name%':user.displayname}) }},</p>
+<p>{{ 'The change of your account rights is approved by admin'|trans }}.</p>
+<p>{{ 'You have now the additional right to: "%role%"'|trans({'%role%':role}) }}</p>
+<p>&nbsp;</p>
+<p>{{ 'If you are prompted to login, please use your username and password'|trans }}:</p>
+<p>{{ 'Username'|trans }}: {{ user.username }}</p>
+<p>{{ 'Password'|trans }}: {{ password }}</p>

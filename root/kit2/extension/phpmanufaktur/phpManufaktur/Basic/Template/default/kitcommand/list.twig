@@ -1,0 +1,69 @@
+{#
+  kitFramework:Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block title %}{{ 'kitCommand - General help container'|trans }}{% endblock %}
+{% block description %}{{ 'General help container for kitCommand help files'|trans }}{% endblock %}
+{% block content %}
+  {# need the parent to enable prompting messages #}
+  {{ parent() }}
+  <div class="kitcommand list">
+    <div style="">
+      {% for command in commands %}
+        <div class="list container">
+          <div class="list command">~~ {{ command.command }} ~~</div>
+          {% if command.info.vendor.name is defined %}
+            <div class="list vendor">
+              {% if command.info.vendor.url is defined %}
+                <a href="{{ command.info.vendor.url }}" target="_blank">{{ command.info.vendor.name }}</a>
+              {% else %}
+                {{ command.info.vendor.name }}
+              {% endif %}
+            </div>
+          {% endif %}
+          {% if command.info.name is defined %}
+            <div class="list name">{{ command.info.name }}</div>
+          {% endif %}
+          {% if command.info.description is defined %}
+            <div class="list description">{{ command.info.description }}</div>
+          {% endif %}
+          {% if (command.info.help.url is defined or command.info.info.url is defined or command.info.wiki.url is defined or command.info.issues.url is defined or command.info.support.url is defined) %}
+            <div class="list help">
+              {% if (command.info.info.url is defined and (command.info.info.url|length > 0)) %}
+                <div class="list help item">
+                  [ <a href="{{ command.info.info.url }}" target="_blank" title="{{ 'Get more information about %command%'|trans({'%command%':command.command}) }}">{{ 'Info'|trans }}</a> ]
+                </div>
+              {% endif %}
+              {% if (command.info.help.url is defined and (command.info.help.url|length > 0)) %}
+                <div class="list help item">
+                  [ <a href="{{ command.info.help.url }}" title="{{ 'View the helpfile for %command%'|trans({'%command%':command.command}) }}">{{ 'Help'|trans }}</a> ]
+                </div>
+              {% endif %}
+              {% if (command.info.wiki.url is defined and (command.info.wiki.url|length > 0)) %}
+                <div class="list help item">
+                  [ <a href="{{ command.info.wiki.url }}" target="_blank" title="{{ 'Visit the Wiki for %command% and learn more about it!'|trans({'%command%':command.command}) }}">{{ 'Wiki'|trans }}</a> ]
+                </div>
+              {% endif %}
+              {% if (command.info.issues.url is defined and (command.info.issues.url|length > 0)) %}
+                <div class="list help item">
+                  [ <a href="{{ command.info.issues.url }}" target="_blank" title="{{ 'Please report all issues and help to improve %command%!'|trans({'%command%':command.command}) }}">{{ 'Issues'|trans }}</a> ]
+                </div>
+              {% endif %}
+              {% if (command.info.support.url is defined and (command.info.support.url|length > 0)) %}
+                <div class="list help item">
+                  [ <a href="{{ command.info.support.url }}" target="_blank" title="{{ 'Get in touch with the developers, receive support, tipps and tricks for %command%!'|trans({'%command%':command.command}) }}">{{ 'Support'|trans }}</a> ]
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock content %}

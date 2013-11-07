@@ -1,0 +1,75 @@
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  font-size: 13px;
+  color: #363636;
+  background-color: #fff;
+}
+
+a {
+  text-decoration: none;
+}
+a:link,
+a:visited {
+  color: #da251d;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:hover,
+a:active {
+  color: #da251d;
+  background-color: transparent;
+  text-decoration: underline;
+}
+#welcome_container {
+  margin: 0;
+  padding: 10px;
+}
+.extension_container {
+  float: left;
+  width: 200px;
+  height: auto;
+  padding: 10px;
+  margin: 0 20px 20px 0;
+  border: 1px solid #e6e6e6;
+  font-size: 12px;
+}
+.extension_image,
+.extension_description,
+.extension_release,
+.extension_title {
+  width: 200px;
+  margin: 5px 0 0 0;
+  padding: 0;
+}
+.extension_title {
+  font-weight: bold;
+}
+.extension_description {
+  font-size: 11px;
+}
+.message
+{
+  border: 1px solid #ccc;
+  color: #000;
+  background-color: #fff8dc;
+  margin: 20px 0 10px 0;
+  padding: 0 10px;
+  font-size: 13px;
+  text-align: left;
+}
+.message.item {
+  border: none;
+  margin: 0;
+  padding: 10px;
+}
+.small {
+  font-size: smaller;
+}
+.clear {
+  clear: both;
+  width: 1px;
+  height: 1px;
+}

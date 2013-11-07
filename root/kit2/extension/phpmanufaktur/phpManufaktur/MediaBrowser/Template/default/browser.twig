@@ -1,0 +1,130 @@
+{#
+  MediaBrowser
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+    {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+    {% set template_file = 'framework/body.twig' %}
+{% else %}
+    {% set template_namespace = '@phpManufaktur/MediaBrowser/Template' %}
+    {% set template_file = 'backend.body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework Media Browser'|trans }}{% endblock %}
+{% block head %}
+{{ parent() }}
+<link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/css/backend.css" media="screen, projection" />
+<script src="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/jquery/jquery.masonry.min.js"></script>
+{% endblock head %}
+{% block content %}
+  <div id="content_media">
+    {% if message|length > 0 %}
+      <div class="message">{{ message|trans }}</div>
+    {% endif %}
+    {% if images|length < 1 %}
+      <div class="message">
+        {{ '<p>This directory does not contain any media files</p>'|trans }}
+      </div>
+    {% endif %}
+    <div id="media_container">
+      <div id="media_system">
+        <div id="media_directory">
+          {% for directory in directories %}
+            <div class="directory_container">
+              {% if directory.basename != '..' %}
+              <div class="link_delete">
+                <a href="{{ directory.link.delete }}" title="{{ 'Delete directory: %directory%'|trans({'%directory%':directory.basename}) }}">
+                  <img src="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/image/delete_12x12.png" width="12" height="12" alt="{{ 'Delete directory: %directory%'|trans({'%directory%':directory.basename}) }}" />
+                </a>
+              </div>
+              {% endif %}
+              <div class="directory_link{% if directory.basename == '..' %} directory_up{% endif %}">
+                <a href="{{ directory.link.change }}" title="{{ directory.basename }}">{{ directory.basename }}{% if directory.basename == '..' %} <em>({{ 'one level up'|trans }})</em>{% endif %}</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div id="media_submit">
+          <div class="file_submit">
+            <div class="link_exit">
+              <a href="{{ action.exit }}" title="{{ 'Exit MediaBrowser'|trans }}">
+                <img src="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/image/exit_16x15.png" width="16" height="15" alt="{{ 'Exit MediaBrowser'|trans }}" />
+              </a>
+            </div>
+            <form action="{{ action.upload }}" method="post" {{ form_enctype(upload) }}>
+              <div class="submit_container">
+                <div class="submit_item">
+                  {{ form_widget(upload.media_file) }}
+                </div>
+                  {{ form_errors(upload.media_file) }}
+                  {{ form_rest(upload) }}
+                <div class="submit_button">
+                  <input type="submit" value="{{ 'Submit file'|trans }}" />
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="directory_create">
+            <form action="{{ action.directory }}" method="post">
+              <div class="submit_container">
+                <div class="submit_directory">
+                  {{ form_widget(create_directory.create_directory) }}
+                </div>
+                  {{ form_errors(create_directory.create_directory) }}
+                  {{ form_rest(create_directory) }}
+                <div class="submit_button">
+                  <input type="submit" value="{{ 'Create directory'|trans }}" />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div id="media_browser">
+        {% for image in images %}
+          <div class="link_container">
+            <div class="link_delete">
+              <a href="{{ image.link.delete.url }}" title="{{ 'Delete file: %file%'|trans({'%file%':image.basename}) }}">
+                <img src="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/image/delete_12x12.png" width="12" height="12" alt="{{ 'Delete file: %file%'|trans({'%file%':image.basename}) }}" />
+              </a>
+            </div>
+            <div class="icon_container">
+              <a href="{{ image.link.select.url }}" title="{{ image.basename }}">
+                <img src="{{ image.icon.url }}" width="{{ image.icon.width }}" height="{{ image.icon.height }}" />
+              </a>
+            </div>
+            <div class="link_info" style="width:{{ image.icon.width }}px;">
+              <div class="link_info_size">{{ image.dimension.string }}</div>
+              <div class="link_info_size">{{ image.size.string }}</div>
+              <div class="link_info_date">{{ image.modified|date("d.m.Y") }}</div>
+              <div class="link_info_date">{{ image.modified|date("H:i:s") }}</div>
+              <div class="link_info_link" style="width:{{ image.icon.width }}px;">
+                <a href="{{ image.link.select.url }}" title="{{ image.basename }}">{{ image.basename }}</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+          <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+{% block footer %}
+  <script type="text/javascript">
+    if (typeof 'jQuery' != 'undefined') {
+      $(document).ready(function() {
+        $('#media_browser').masonry({
+          itemSelector: '.link_container',
+          columnWidth: 170
+        });
+      });
+    }
+  </script>
+  {{ parent() }}
+{% endblock footer %}

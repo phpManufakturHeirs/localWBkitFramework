@@ -1,0 +1,50 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'backend/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'Event - Create or edit an event'|trans }}{% endblock %}
+
+{% block stylesheet %}
+  {{ parent() }}
+  {% if usage == 'framework' %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/backend.css" media="screen, projection" />
+  {% endif %}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/event.css" media="screen, projection" />
+{% endblock stylesheet %}
+
+
+{% block content %}
+  <div id="event_content">
+    {% include '@phpManufaktur/Event/Template/default/backend/toolbar.twig' %}
+
+    <div class="event_form">
+      <form action="{{ FRAMEWORK_URL }}/admin/event/edit?usage={{ usage }}" method="post">
+        {{ form_errors(form) }}
+        {{ form_row(form._token) }}
+        {{ form_row(form.event_id) }}
+
+        {{ form_row(form.select_group) }}
+        <div>
+          <label for="submit">&nbsp;</label>
+          <input type="submit" name="submit" />
+        </div>
+        <div class="clear"></div>
+
+      </form>
+    </div>
+  </div>
+{% endblock content %}
+

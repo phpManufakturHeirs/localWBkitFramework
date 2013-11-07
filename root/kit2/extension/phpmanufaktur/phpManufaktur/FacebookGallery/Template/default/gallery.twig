@@ -1,0 +1,67 @@
+{#
+  FacebookGallery
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block title %}{{ 'Facebook Gallery Help'|trans }}{% endblock %}
+{% block description %}{{ 'First Steps and Helpfile for the kitFramework Facebook Gallery'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/FacebookGallery/Template/default/css/frontend.css" media="screen, projection" />
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/FacebookGallery/Template/default/jquery/fancybox/source/jquery.fancybox.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/FacebookGallery/Template/default/jquery/fancybox/source/jquery.fancybox.pack.js"></script>
+{% endblock jquery %}
+{% block content %}
+  {% for photo in gallery.data %}
+    <div class="photo_container">
+      {% if photo.name is defined %}
+        {% set title = photo.name %}
+      {% else %}
+        {% set title = '' %}
+      {% endif %}
+      {% if photo.images[parameter.size] is defined %}
+        {# select the image size spezified by the parameter size and set width and height #}
+        <a class="fancybox" rel="group" href="{{ photo.images.0.source }}"><img src="{{ photo.images[parameter.size].source }}" width="{{ photo.images[parameter.size].width }}" height="{{ photo.images[parameter.size].height }}" alt="{{ title }}" title="{{ title }}" /></a>
+        {% if (parameter.description and (title|length > 0)) %}
+          <div class="photo_description" style="width:{{ photo.images[parameter.size].width }}px;">
+            {{ title }}
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="photo_error">
+          {{ 'This photo is not available in size <b>%size%</b>!'|trans({'%size%':parameter.size}) }}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+  <div class="clear"></div>
+  {% if gallery.paging is defined %}
+    <div class="paging_container">
+      {% if gallery.paging.previous is defined %}
+        <div class="paging_item"><a href="{{ FRAMEWORK_URL }}/facebookgallery/exec?pid={{ basic.pid }}&limit={{ parameter.limit }}&before={{ gallery.paging.cursors.before|url_encode }}">{{ 'Previous page'|trans }}</a></div>
+      {% endif %}
+      {% if gallery.paging.next is defined %}
+        <div class="paging_item"><a href="{{ FRAMEWORK_URL }}/facebookgallery/exec?pid={{ basic.pid }}&limit={{ parameter.limit }}&after={{ gallery.paging.cursors.after|url_encode }}">{{ 'Next page'|trans }}</a></div>
+      {% endif %}
+    </div>
+    <div class="clear"></div>
+  {% endif %}
+{% endblock %}
+{% block footer %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(".fancybox").fancybox({
+
+      });
+    });
+  </script>
+  {{ parent() }}
+{% endblock %}

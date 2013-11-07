@@ -1,0 +1,6 @@
+<div id="go_back">
+  <span class="go_back_item"><a href="javascript:history.back();">{{ 'go back'|trans }}</a></span>
+  {% for link in links %}
+    <span class="go_back_item"><a href="{{ link.url }}">{{ link.text|trans }}</a></span>
+  {% endfor %}
+</div>

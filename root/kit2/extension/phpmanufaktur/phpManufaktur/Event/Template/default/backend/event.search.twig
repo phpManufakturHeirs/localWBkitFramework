@@ -1,0 +1,95 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'backend/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'Event - event groups'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if usage == 'framework' %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/backend.css" media="screen, projection" />
+  {% endif %}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/event.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+{% endblock stylesheet %}
+
+{% block content %}
+  <div id="event_content">
+    {% include '@phpManufaktur/Event/Template/default/backend/toolbar.twig' %}
+
+    {% if message|length > 0 %}
+      <div class="message">{{ message }}</div>
+    {% endif %}
+
+    <div class="search-container">
+      <form action="{{ FRAMEWORK_URL ~ route.search }}" method="post" >
+        <input type="text" name="search" /><input type="submit" value="{{ 'Search'|trans }}" />
+      </form>
+    </div>
+
+    {% if events|length > 0 %}
+      <table>
+        <thead>
+          <tr>
+            {% for head in events.0|keys %}
+              {% if head in columns %}
+                <th class="head">{{ head|trans }}</th>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% set i = 0 %}
+          {% for event in events %}
+            <tr class="{{ cycle(['flop','flip'], i) }}">
+              {% for column, value in event %}
+                {% if column in columns %}
+                  {% if column == 'event_id' %}
+                    <td class="{{ column }}">
+                      <a href="{{ FRAMEWORK_URL ~ route.edit|replace({'{event_id}':value}) }}">{{ '%05d'|format(value) }}</a>
+                    </td>
+                  {% elseif column == 'description_title' %}
+                    <td class="{{ column }}">
+                      <a href="{{ FRAMEWORK_URL ~ route.edit|replace({'{event_id}':value}) }}">{{ value }}</a>
+                    </td>
+                  {% elseif ((column == 'description_short') or (column == 'description_short')) %}
+                    <td class="{{ column }}">{{ value|striptags }}</td>
+                  {% elseif ((column == 'event_date_from') or (column == 'event_date_to') or (column == 'event_publish_from') or (column == 'event_publish_to') or (column == 'event_deadline')) %}
+                    {# formatting date and time #}
+                    {% if app.translator.locale == 'de' %}
+                      {# german date formatting #}
+                      <td class="{{ column }}">{{ value|date('d.m.Y') }}</td>
+                    {% else %}
+                      {# u.s. date formatting #}
+                      <td class="{{ column }}">{{ value|date('m/d/Y') }}</td>
+                    {% endif %}
+                  {% elseif (column == 'event_participants_max') %}
+                    <td class="{{ column }}">{% if value < 1 %}{{ 'unlimited'|trans }}{% else %}{{ value }}{% endif %}</td>
+                  {% elseif (column == 'event_status') %}
+                    {# translate this column value #}
+                    <td class="{{ column }}">{{ value|trans }}</td>
+                  {% else %}
+                    <td class="{{ column }}">{{ value }}</td>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            </tr>
+            {% set i = i+1 %}
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+{% endblock content %}

@@ -1,0 +1,22 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.account.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  {{ parent() }}
+  <div class="account_form">
+    <h2>{{ 'Received request'|trans }}</h2>
+    <p>{{ 'Thank you, one of the admins will approve your request and contact you.'|trans }}</p>
+  </div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{
+  "command":"HelloSiteModified",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://phpmanufaktur.de"
+    },
+  "name": {
+    "en":"Last modification of the site",
+    "de":"Letzte Aktualisierung der Website"
+  },
+  "description": {
+    "en":"Show the last modification date and time of the website.",
+    "de":"Zeigt das Datum und die Uhrzeit der letzten Aktualisierung der Website an."
+  },
+  "help": {
+    "en": {
+      "link":"https://gist.github.com/hertsch/5497274",
+      "gist_id":"5497274"
+    },
+    "de": {
+      "link":"https://gist.github.com/hertsch/5497318",
+      "gist_id":"5497318"
+    }
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  }
+}

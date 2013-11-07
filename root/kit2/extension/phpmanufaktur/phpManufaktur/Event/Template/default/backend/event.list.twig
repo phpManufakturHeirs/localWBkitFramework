@@ -1,0 +1,143 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'backend/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'Event - event groups'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if usage == 'framework' %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/backend.css" media="screen, projection" />
+  {% endif %}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/event.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+{% endblock stylesheet %}
+
+{% block content %}
+  <div id="event_content">
+    {% include '@phpManufaktur/Event/Template/default/backend/toolbar.twig' %}
+
+    {% if message|length > 0 %}
+      <div class="message">{{ message }}</div>
+    {% endif %}
+
+    {% if events|length > 0 %}
+      <div class="search-container">
+        <form action="{{ FRAMEWORK_URL ~ route.search }}" method="post" >
+          <input type="text" name="search" /><input type="submit" value="{{ 'Search'|trans }}" />
+        </form>
+      </div>
+      {#
+        The pagination serve a automatic 1 2 3 ... 17 18 19 pagination and
+        navigation for the table if it contain more rows than specified in:
+        /Contact/Template/default/backend/simple/list.contact.json
+        Changes here must be also done at the footer of the table !!!
+       #}
+      {% include '@phpManufaktur/Event/Template/default/backend/pagination.twig' with {
+         currentPage: current_page,
+         paginationPath: FRAMEWORK_URL ~ route.pagination|replace({'{order}':order_by|join(','), '{direction}':order_direction}),
+         lastPage: last_page,
+         showAlwaysFirstAndLast: true
+      } only %}
+
+      <table>
+        <thead>
+          <tr>
+            {#
+                Enable an automatic ordering of the table by the columns, just
+                clicking at the head of the column. Default order is specified in:
+                /Contact/Template/default/backend/simple/list.contact.json
+             #}
+            {% set order_by_str = order_by|join(',') %}
+            {% for head in events.0|keys %}
+              {% if head in columns %}
+                {% set head_order = order_direction %}
+                {% set head_class = head %}
+                {% if (head == order_by_str) %}
+                  {% if (head_order == 'asc') %}
+                    {% set head_order = 'desc' %}
+                    {% set head_class = head_class ~ ' active asc' %}
+                  {% else %}
+                    {% set head_order = 'asc' %}
+                    {% set head_class = head_class ~ ' active desc' %}
+                  {% endif %}
+                {% endif %}
+                <th class="{{ head_class }}">
+                  {% if 'active asc' in head_class %}
+                    <i class="icon-caret-down icon-padding"></i>
+                  {% elseif 'active desc' in head_class %}
+                    <i class="icon-caret-up icon-padding"></i>
+                  {% endif %}
+                  <a href="{{ FRAMEWORK_URL ~ route.pagination|replace({'{page}':current_page, '{order}':head, '{direction}':head_order}) }}" title="{% if head_order == 'asc' %}{{ 'Click to sort column ascending'|trans }}{% else %}{{ 'Click to sort column descending'|trans }}{% endif %}">{{ head|trans }}</a>
+                </th>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% set i = 0 %}
+          {% for event in events %}
+            <tr class="{{ cycle(['flop','flip'], i) }}">
+              {% for column, value in event %}
+                {% if column in columns %}
+                  {% if column == 'event_id' %}
+                    <td class="{{ column }}">
+                      <a href="{{ FRAMEWORK_URL ~ route.edit|replace({'{event_id}':value}) }}">{{ '%05d'|format(value) }}</a>
+                    </td>
+                  {% elseif column == 'description_title' %}
+                    <td class="{{ column }}">
+                      <a href="{{ FRAMEWORK_URL ~ route.edit|replace({'{event_id}':event.event_id}) }}">{{ value }}</a>
+                    </td>
+                  {% elseif ((column == 'description_short') or (column == 'description_short')) %}
+                    <td class="{{ column }}">{{ value|striptags }}</td>
+                  {% elseif ((column == 'event_date_from') or (column == 'event_date_to') or (column == 'event_publish_from') or (column == 'event_publish_to') or (column == 'event_deadline')) %}
+                    {# formatting date and time #}
+                    {% if app.translator.locale == 'de' %}
+                      {# german date formatting #}
+                      <td class="{{ column }}">{{ value|date('d.m.Y') }}</td>
+                    {% else %}
+                      {# u.s. date formatting #}
+                      <td class="{{ column }}">{{ value|date('m/d/Y') }}</td>
+                    {% endif %}
+                  {% elseif (column == 'event_participants_max') %}
+                    <td class="{{ column }}">{% if value < 1 %}{{ 'unlimited'|trans }}{% else %}{{ value }}{% endif %}</td>
+                  {% elseif (column == 'event_status') %}
+                    {# translate this column value #}
+                    <td class="{{ column }}">{{ value|trans }}</td>
+                  {% else %}
+                    <td class="{{ column }}">{{ value }}</td>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            </tr>
+            {% set i = i+1 %}
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {#
+        See top of the table for more information!
+       #}
+      {% include '@phpManufaktur/Event/Template/default/backend/pagination.twig' with {
+        currentPage: current_page,
+        paginationPath: FRAMEWORK_URL ~ route.pagination|replace({'{order}':order_by|join(','), '{direction}':order_direction}),
+        lastPage: last_page,
+        showAlwaysFirstAndLast: true
+      } only %}
+    {% else %}
+      <p>{{ 'The event list is empty, please create a event!'|trans }}</p>
+    {% endif %}
+  </div>
+{% endblock content %}

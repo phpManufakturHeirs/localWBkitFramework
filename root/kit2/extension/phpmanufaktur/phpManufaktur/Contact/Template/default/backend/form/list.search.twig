@@ -1,0 +1,76 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+<div id="contact_list">
+    
+  <div class="message">
+    {% if message|length > 0 %}
+      {{ message }}
+    {% endif %}
+    {# hint for the general search functions #}
+    {% if app.translator.locale == 'de' %}
+      {# german translation #}
+      <div class="message item">Suchbegriffe die mit einem <i>Leerzeichen</i> oder dem <code>OR</code> Operator verknüpft werden, z.B. <code>berlin mustermann</code> finden Ergebnisse die zu einem <i>beliebigen</i> Begriff passen.</div>  
+      <div class="message item">Suchbegriffe die mit einem <code>AND</code> Operator verknüpft werden, z.B. <code>berlin AND mustermann</code> finden Ergebnisse die zu <i>beiden</i> Begriffen passsen</div>
+      <div class="message item">Suchbegriffe die mit einem <code>NOT</code> Operator verknüpft werden, z.B. <code>berlin NOT mustermann</code> finden Ergebnisse die zum ersten jedoch <i>nicht</i> zum zweiten Begriff passen.</div>
+    {% else %}
+      {# english translation #}
+      <div class="message item">Search terms joined with a <i>space</i> or the <code>OR</code> operator, i.e. <code>berlin mustermann</code> will return search results which fit to <i>any</i> of the terms.</div>  
+      <div class="message item">Search terms joined with a <code>AND</code> operator, i.e. <code>berlin AND mustermann</code> will return search results which fit to <i>both</i> terms.</div>
+      <div class="message item">Search terms joined with a <code>NOT</code> operator, i.e. <code>berlin NOT mustermann</code> will return search results which fit to the first but <i>not</i> to the second term.</div>
+    {% endif %}
+  </div>
+  
+  <div class="search-container">
+    <form action="{{ FRAMEWORK_URL ~ route.contact.search }}" method="post" >
+      <input type="text" name="search" />&nbsp;<input type="submit" value="{{ 'Search'|trans }}" />
+    </form>
+  </div>
+
+  {% if (list|length > 0) %}
+    <table>
+      <thead>
+        <tr>  
+          {% for head in list.0|keys %}
+            {% if head in columns %}
+              <th class="head">{{ head|trans }}</th>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% set i = 0 %}
+        {% for contact in list %}
+          <tr class="{{ cycle(['flop','flip'], i) }}">
+            {% for column, value in contact %} 
+              {% if column in columns %}
+                {% if column == 'contact_id' %}
+                  <td class="{{ column }}">
+                    {% if contact.contact_type == 'PERSON' %}
+                      <a href="{{ FRAMEWORK_URL ~ route.contact.person|replace({'{contact_id}':value}) }}">{{ '%05d'|format(value) }}</a>
+                    {% else %}
+                      <a href="{{ FRAMEWORK_URL ~ route.contact.company|replace({'{contact_id}':value}) }}">{{ '%05d'|format(value) }}</a>
+                    {% endif %}
+                  </td>
+                {% elseif column == 'contact_type' %}
+                  <td class="{{ column }}">{{ value|trans }}</td>
+                {% elseif column == 'communication_email' %}
+                  <td class="{{ column }}"><a href="mailto:{{ value }}">{{ value }}</a></td>
+                {% else %}
+                  <td class="{{ column }}">{{ value }}</td>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </tr>
+          {% set i = i+1 %}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>

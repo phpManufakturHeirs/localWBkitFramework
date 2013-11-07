@@ -1,0 +1,60 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% if app.translator.locale == 'de' %}
+  {# GERMAN Version #}
+
+  Sehr geehrter {{ contact.person.0.person_gender|trans }} {{ contact.person.0.person_last_name }},<br />
+  {% if confirm.email %}
+    {# the contact must first confirm the email address! #}
+    Sie haben sich für die Veranstaltung {{ event.description_title }} angemeldet.</b>
+    Bitte bestätigen Sie uns, dass ihre E-Mail Adresse korrekt ist und Sie sich für die o.a. Veranstaltung angemeldet haben und klicken Sie einfach auf:<br />
+    --> {{ link.confirm }}<br />
+    Wir schalten Ihre Anmeldung danach direkt frei.<br />
+    Sollten Sie sich nicht für diese Veranstaltung angemeldet haben, ignorieren Sie bitte diese E-Mail.<br />
+  {% elseif confirm.subscription %}
+    {# the contact must confirm the event subscription #}
+    Sie haben sich für die Veranstaltung {{ event.description_title }} angemeldet.<br />
+    Damit wir Ihre Anmeldung annehmen können, bestätigen Sie sie uns bitte mit dem folgenden Link:<br />
+    --> {{ link.confirm }}<br />
+    Wir schalten Ihre Anmeldung danach direkt frei.<br />
+  {% else %}
+    {# no extra confirmation required #}
+    Wir bestätigen Ihre Anmeldung zu der Veranstaltung {{ event.description_title }}.<br />
+  {% endif %}
+  Vielen Dank!<br />
+  <i>Ihr Event Team!</i>
+  
+{% else %}
+  {# ENGLISH Version #}
+  
+  Dear {{ contact.person.0.person_gender|trans }} {{ contact.person.0.person_last_name }},<br />
+  {% if confirm.contact %}
+    {# the contact must first confirm the email address! #}
+    you have subscribed to the event {{ event.description_title }}.<br />
+    Please confirm your email address and your subscription by clicking at:<br />
+    --> {{ link.confirm }}<br />
+    We will enable your subscription immediatly.<br />
+    If you have not subscribed in any event, just ignore this email!<br />
+  {% elseif confirm.subscribe %}
+    {# the contact must confirm the event subscription #}
+    you have subscribed to the event {{ event.description_title }}.<br />
+    Please confirm your subscription by clicking at:<br />
+    --> {{ link.confirm }}<br />
+    We will enable your subscription immediatly.<br />
+    If you have not subscribed in any event, just ignore this email!<br />
+  {% else %}
+    {# no extra confirmation required #}
+    We confirm your subscription to the event {{ event.description_title }}.<br />
+  {% endif %}
+  Thank you!<br />
+  <i>Your Event team</i>
+  
+{% endif %}

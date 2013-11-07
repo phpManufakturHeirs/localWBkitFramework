@@ -1,0 +1,22 @@
+[
+  {
+    "type":"PRIVATE",
+    "description":"description: private"
+  },
+  {
+    "type":"BUSINESS",
+    "description":"description: business"
+  },
+  {
+    "type":"DELIVERY",
+    "description":"description: delivery"
+  },
+  {
+    "type":"BILLING",
+    "description":"description: billing"
+  },
+  {
+    "type":"OTHER",
+    "description":"description: other"
+  }
+]

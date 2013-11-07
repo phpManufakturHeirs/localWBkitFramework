@@ -1,0 +1,19 @@
+{#
+  kfHelloWorld
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ THIRDPARTY_URL }}/HelloWorld/Template/green/css/sample08.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  {{ parent() }}
+  <h2>{{ 'Hello World Sample %number%'|trans({'%number%':'08:Start'}) }}</h2>
+  <p>{{ 'Please click <a href="%link%">here</a> to load the next step.'|trans({'%link%':link}) }}</p>
+{% endblock content %}

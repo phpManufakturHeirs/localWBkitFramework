@@ -1,0 +1,29 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.propose.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+{% endblock stylesheet %}
+{% block content %}
+  {{ parent() }}
+  <div class="contact_form">
+    <form action="{{ FRAMEWORK_URL ~ route.organizer.search ~ '?pid=' ~ basic.pid }}" method="post">
+      {{ form_widget(form) }}
+      <div>
+        <label for="submit">&nbsp;</label>
+        <input type="submit" name="submit" />
+      </div>
+      <div class="clear"></div>
+    </form>
+  </div>
+{% endblock %}

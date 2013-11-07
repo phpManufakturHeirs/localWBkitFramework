@@ -1,0 +1,66 @@
+{#
+  kitFramework
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+    {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+    {% set template_file = 'framework/body.twig' %}
+{% else %}
+    {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+    {% set template_file = 'framework/backend.body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework - First Login'|trans }}{% endblock %}
+{% block head %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/css/login.css" media="screen, projection" />
+{% endblock %}
+{% block content %}
+  <div class="login_form">
+    <h2>{{ 'kitFramework - Login'|trans }}</h2>
+    {% if app.translator.locale == 'de' %}
+      {# GERMAN language #}
+      {% if message|length > 0 %}
+        <div class="message">{{ message }}</div>
+      {% else %}
+        <div class="message">
+          <p>Hallo {{ form.display_name.vars.value }},</p>
+          <p>sie rufen das kitFramework zum ersten Mal auf.</p>
+          <p>Sie sind bereits in {{ usage }} eingeloggt. Damit Sie künftig automatisch mit Ihrem Konto am kitFramework angemeldet werden können, müssen Sie einmalig Ihr Passwort eingeben.</p>
+        </div>
+      {% endif %}
+    {% else %}
+      {# ENGLISH language #}
+      {% if message|length > 0 %}
+        <div class="message">{{ message }}</div>
+      {% else %}
+        <div class="message">
+          <p>Hello {{ form.display_name.vars.value }},</p>
+          <p>this is the first time you are executing the kitFramework.</p>
+          <p>You are already logged in  at {{ usage }}. To enable a auto-login into the kitFramework you must authenticate with your password only one times.</p>
+        </div>
+      {% endif %}
+    {% endif %}
+    <form action="{{ FRAMEWORK_URL }}/login/first/cms/check?usage={{ usage }}" method="post" {{ form_enctype(form) }}>
+      {{ form_widget(form) }}
+      <label>&nbsp;</label><input type="submit" name="submit" />
+      <div class="clear"></div>
+    </form>
+  </div>
+{% endblock %}
+{% block footer %}
+  {{ parent() }}
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      $(document).ready(function() {
+        {# set focus to the password field #}
+        $('input[id=form_password]').focus();
+      });
+    }
+  </script>
+{% endblock footer %}

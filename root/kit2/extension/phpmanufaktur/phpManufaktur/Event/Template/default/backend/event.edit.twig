@@ -1,0 +1,227 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'backend/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'Event - Create or edit an event'|trans }}{% endblock %}
+
+{% block jquery %}
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/i18n/jquery-ui-i18n.min.js"></script>
+  <script src="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/jquery/jquery-ui-timepicker-addon.js"></script>
+  <script src="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/jquery/jquery-ui-timepicker-de.js"></script>
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CKEditor/Source/ckeditor.js"></script>
+{% endblock jquery %}
+
+{% block stylesheet %}
+  {{ parent() }}
+  {% if usage == 'framework' %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/backend.css" media="screen, projection" />
+  {% endif %}
+  <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" media="screen, projection" />
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/jquery-ui-timepicker-addon.css" media="screen, projection" />
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/event.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" />
+{% endblock stylesheet %}
+
+
+{% block content %}
+  <div id="event_content">
+    {% include '@phpManufaktur/Event/Template/default/backend/toolbar.twig' %}
+
+    {% if message|length > 0 %}
+      <div class="message">{{ message }}</div>
+    {% endif %}
+
+    <div class="event_form">
+      <form action="{{ FRAMEWORK_URL }}/admin/event/edit?usage={{ usage }}" method="post" {{ form_enctype(form) }}>
+        {{ form_errors(form) }}
+        {{ form_row(form._token) }}
+
+        <div class="left_column">
+          {{ form_row(form.event_id) }}
+          <div>
+            <label>{{ 'ID'|trans }}</label>
+            <div class="value">
+              {% if form.event_id.vars.value > 0 %}
+                {{ '%05d'|format(form.event_id.vars.value) }}
+              {% else %}
+                {{ '- new group -'|trans }}
+              {% endif %}
+            </div>
+          </div>
+
+          {{ form_row(form.event_status) }}
+
+          {{ form_row(form.group_id) }}
+          {% if form.group_name.vars.value|length > 0 %}
+            <div>
+              <label>{{ 'Group'|trans }}</label>
+              <div class="value">{{ form.group_name.vars.value|capitalize|trans }}</div>
+            </div>
+          {% endif %}
+
+          {{ form_row(form.event_organizer) }}
+          {{ form_row(form.event_location) }}
+
+          {{ form_row(form.event_date_from) }}
+          {{ form_row(form.event_date_to) }}
+
+          {{ form_row(form.event_publish_from) }}
+          {{ form_row(form.event_publish_to) }}
+          {{ form_row(form.event_deadline) }}
+          
+          {{ form_row(form.event_url) }}
+          {{ form_row(form.event_costs) }}
+          
+          {{ form_row(form.event_participants_max) }}
+          <div>
+            <label>{{ 'Participants confirmed'|trans }}</label>
+            <div class="value">{{ form.event_participants_confirmed.vars.value }}</div>
+          </div>
+          <div>
+            <label>{{ 'Participants pending'|trans }}</label>
+            <div class="value">{{ form.event_participants_pending.vars.value }}</div>
+          </div>
+          <div>
+            <label>{{ 'Participants canceled'|trans }}</label>
+            <div class="value">{{ form.event_participants_canceled.vars.value }}</div>
+          </div>
+
+          {% if images|length > 0 %}
+          <div>
+            <label>{{ 'Pictures'|trans }}</label>
+            <div class="value">
+              {% for image in images %}
+                <div class="image">
+                  <div class="close">
+                    <a href="{{ FRAMEWORK_URL }}/admin/event/image/delete/id/{{ image.image_id }}/event/{{ form.event_id.vars.value }}?usage={{ usage }}" title="{{ 'Delete this image'|trans }}"><li class="icon-remove-sign icon-large"></li></a>
+                  </div>
+                  <img src="{{ FRAMEWORK_URL ~ image.image_path }}" title="{{ image.image_title }}" />
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          <div>
+            <label>{{ 'Add a image'|trans }}</label>
+            <div class="value image">
+              <a href="{{ add_image_url }}" title="{{ 'Add a image'|trans }}"><i class="icon-picture icon-3x"></i></a>
+            </div>
+          </div>
+          {% for extra in extra_info %}
+            {% if ((extra.type != 'HTML') and (extra.type != 'TEXT')) %}
+              {{ form_row(form[extra.name]) }}
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="right_column">
+          {{ form_row(form.description_title) }}
+          <div>
+            {{ form_label(form.description_short) }}
+            <div class="value">
+              {{ CKEditor(
+                    form.description_short.vars.id,
+                    form.description_short.vars.full_name,
+                    form.description_short.vars.value,
+                    '100%', '100px',
+                    MANUFAKTUR_URL ~ '/Event/Template/default/backend/ckeditor.config.simple.js'
+              ) }}
+            </div>
+          </div>
+          <div>
+            {{ form_label(form.description_long) }}
+            <div class="value">
+              {{ CKEditor(
+                    form.description_long.vars.id,
+                    form.description_long.vars.full_name,
+                    form.description_long.vars.value,
+                    '100%', '250px',
+                    MANUFAKTUR_URL ~ '/Event/Template/default/backend/ckeditor.config.full.js'
+              ) }}
+            </div>
+          </div>
+          {% for extra in extra_info %}
+            {% if (extra.type == 'TEXT') %}
+              {{ form_row(form[extra.name]) }}
+            {% elseif (extra.type == 'HTML') %}
+              <div>
+                {{ form_label(form[extra.name]) }}
+                <div class="value">
+                  {{ CKEditor(
+                        form[extra.name].vars.id,
+                        form[extra.name].vars.full_name,
+                        form[extra.name].vars.value,
+                        '100%', '250px',
+                        MANUFAKTUR_URL ~ '/Event/Template/default/backend/ckeditor.config.full.js'
+                  ) }}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+
+          {#{ form_rest(form) }#}
+          <div>
+            <label for="submit">&nbsp;</label>
+            <input type="submit" name="submit" />
+          </div>
+        </div>
+        <div class="clear"></div>
+
+      </form>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block footer %}
+  {# add the height of CKE's to the iframe_add_height (default = 30) #}
+  {% set iframe_add_height = 380 %}
+  {{ parent() }}
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      $(document).ready(function() {
+        $.datepicker.setDefaults($.datepicker.regional['{{ app.translator.locale }}']);
+        $.timepicker.setDefaults($.timepicker.regional['{{ app.translator.locale }}']);
+        $('.event_date_from').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_date_to').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_publish_from').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_publish_to').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_deadline').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+      });
+    }
+  </script>
+{% endblock footer %}

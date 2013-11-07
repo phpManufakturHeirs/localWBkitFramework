@@ -1,0 +1,68 @@
+{# 
+  kitFramework::Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<!DOCTYPE html>
+<html>
+  {% spaceless %}
+  <head>
+    {% block head %}
+      {% if (basic.frame is defined and basic.frame.redirect.active) %}
+        {# catch the iframe content into the CMS if the URL is executed external #}
+        <script type="text/javascript">
+          if (top.location == self.location) {
+            document.location.replace("{{ basic.cms.page_url }}{% if basic.frame.redirect.route|length > 0 %}?redirect={{ basic.frame.redirect.route }}{% endif %}");
+          }
+        </script>
+      {% endif %}
+      <title>{% block title %}{{ basic.page.title|default('') }}{% endblock title %}</title>
+      <meta http-equiv="Content-Type" content="text/html; charset={{ basic.page.charset|default('UTF-8') }}"/>
+      <meta name="robots" content="{% block robots %}{{ basic.page.robots|default('index,follow') }}{% endblock %}" />
+      <meta name="description" content="{% block description %}{{ basic.page.description|default('') }}{% endblock %}" />
+      <meta name="keywords" content="{% block keywords %}{{ basic.page.keywords|default('') }}{% endblock %}" />
+      {% block stylesheet %}
+        <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/kitcommand/css/kitcommand.css" media="screen, projection" />
+      {% endblock stylesheet %}
+      {% block jquery %}
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      {% endblock jquery %}
+    {% endblock head %}
+  </head>
+  <body>
+    <div {% block iframe_content_attribute %}class="iframe_content"{% endblock iframe_content_attribute %}>
+      {% block content %}
+        {% if basic.message|length > 0 %}
+          <div class="iframe_content message">{{ basic.message }}</div>
+        {% endif %}
+      {% endblock content %}
+    </div>
+    {% block footer %}
+      {% if basic.frame is defined and basic.frame.auto %}
+        <script type="text/javascript">
+          if (typeof 'jQuery' !== 'undefined') {
+            $(document).ready(function() {
+              {# setting the iFrame height dynamically by the height of the inbounded document #}
+              var content_height = $('.iframe_content').height() + {{ basic.frame.add|default(20) }} + {{ iframe_add_height|default(0) }} + "px";
+              parent.document.getElementById("{{ basic.frame.id }}").style.height = content_height;
+              {% if basic.frame.scroll_to_id|length > 0 %}
+                document.getElementById('{{ basic.frame.scroll_to_id }}').scrollIntoView(true);
+              {% endif %}
+            });
+          }
+        </script>
+      {% endif %}
+    {% endblock footer %}
+    {% block tracking %}
+      {% if basic.page is defined and basic.page.tracking|length > 0 %}
+        <!-- tracking code from /kit2/config/tracking.htt -->
+        {{ basic.page.tracking }}
+      {% endif %}
+    {% endblock tracking %}
+  </body>
+  {% endspaceless %}
+</html>

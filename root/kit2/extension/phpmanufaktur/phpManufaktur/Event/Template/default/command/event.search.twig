@@ -1,0 +1,27 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/command.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  <div class="search-container">
+    <h2>{{ 'Search'|trans }}</h2>
+    {% if basic.message|length > 0 %}
+      <div class="message">{{ basic.message }}</div>
+    {% endif %}
+    <form action="{{ FRAMEWORK_URL ~ '/event/search?pid=' ~ basic.pid }}" method="post" >
+      <input type="hidden" name="groups" value="{{ groups }}" />
+      <input type="text" name="search" /><input type="submit" value="{{ 'Search'|trans }}" />
+    </form>    
+  </div>
+{% endblock %}
+

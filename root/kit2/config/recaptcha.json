@@ -1,0 +1,19 @@
+{
+  "enabled": {
+    "recaptcha": true,
+    "mailhide": true
+  },
+  "key": {
+    "recaptcha": {
+      "public": "6LctVdgSAAAAAAf0tjxxC2AGdppPV6l3Hxx54W-5",
+      "private": "6LctVdgSAAAAAL7Ff3D3k0qhnFLXn9FCShKEPoMh"
+    },
+    "mailhide": {
+      "public": "01Yv4ig9TGZTUkjQAJElwLuA==",
+      "private": "c03a995093428096066fb54530417030"
+    }
+  },
+  "use_ssl": false,
+  "theme": "red",
+  "custom_theme_widget": ""
+}

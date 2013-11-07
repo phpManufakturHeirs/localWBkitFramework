@@ -1,0 +1,20 @@
+{
+  "command":"HelloObject",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://phpmanufaktur.de"
+    },
+  "name": {
+    "en":"'Hello World', kitCommand Sample",
+    "de":"'Hello World', kitCommand Beispiel"
+  },
+  "description": {
+    "en":"'Hello World' Sample kitCommand which show how to use objects in the controllers.",
+    "de":"'Hello World' Beispiel für die Verwendung Objekten in den Kontrollern."
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  }
+}

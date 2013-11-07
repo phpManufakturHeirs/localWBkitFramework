@@ -1,0 +1,30 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.subscribe.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  {{ parent() }}
+  <div class="subscribe">
+    {% if app.translator.locale == 'de' %}
+      {# GERMAN Version #}
+      <p>Vielen Dank {{ contact.person.0.person_gender|trans }} {% if contact.person.0.person_first_name|length > 0 %}{{ contact.person.0.person_first_name }} {% endif %}{{ contact.person.0.person_last_name }},<br />
+        Sie haben sich erfolgreich für die Veranstaltung <i>{{ event.description_title }}</i> am {{ event.event_date_from|date('d.m.Y') }} angemeldet.</p>
+      <p><a href="{{ FRAMEWORK_URL ~ '/event/id/' ~ event.event_id ~ '?pid=' ~ basic.pid }}">{{ event.description_title }}</a></p>
+    {% else %}
+      {# ENGLISH Version #}
+      <p>Thank you, {{ contact.person.0.person_first_name }} {{ contact.person.0.person_last_name }}, for subscribing the event {{ event.description_title }} at {{ event.event_date_from|date('d.m.Y') }}.</p>
+      <p><a href="{{ FRAMEWORK_URL ~ '/event/id/' ~ event.event_id ~ '?pid=' ~ basic.pid }}">{{ event.description_title }}</a></p>
+    {% endif %}
+  </div>
+{% endblock %}
+

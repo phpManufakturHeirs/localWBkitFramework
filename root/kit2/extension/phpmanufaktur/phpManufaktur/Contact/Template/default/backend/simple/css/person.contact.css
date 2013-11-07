@@ -1,0 +1,56 @@
+fieldset {
+  clear: both;
+  margin: 10px 0;
+  padding: 10px;
+  width: 70%;
+}
+
+#form_tag {
+  width: 150px;
+  margin: 0;
+  padding: 0;
+  float: left;
+}
+#form_tag input {
+  float: left;
+  width: 15px;
+  padding: 0;
+  margin: 3px 10px 2px 0;
+}
+#form_tag label {
+  clear: none;
+  float: left;
+  text-align: left;
+  width: 125px;
+  margin: 1px 0 2px 0;
+  padding: 0;
+}
+
+#form_person_gender {
+  float: left;
+  width: 250px;
+}
+#form_person_gender input {
+  clear: left;
+  float:left;
+  width: 15px;
+  margin: 5px 10px 0 0;
+  padding: 0;
+}
+#form_person_gender label {
+  clear: none;
+  float: left;
+  width: 50px;
+  text-align: left;
+}
+#form_person_gender label.required:after {
+  content: none;
+}
+
+select#form_person_birthday_day,
+select#form_person_birthday_month {
+  width: 40px;
+}
+select#form_person_birthday_year {
+  width: 60px;
+}

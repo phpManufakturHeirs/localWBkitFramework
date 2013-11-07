@@ -1,0 +1,32 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if user.proposes > 0 %}
+  <p>{{ 'The user %user% has already proposed %count% events'|trans({'%user%':user.contact.contact_name, '%count%':user.proposes}) }}.</p>
+{% else %}
+  <p>{{ 'The user %user% has never proposed a event'|trans({'%user%':user.contact.contact_name}) }}.</p>
+  {% if user.status == 'GENERAL_ACCOUNT' %}
+    <p>{{ 'This user has a account but was never in contact in context with events'|trans }}.</p>
+  {% elseif user.status == 'CONTACT_ONLY' %}
+    <p>{{ 'This user has a contact record but was never in contact in context with events' }}.</p>
+  {% endif %}
+{% endif %}
+<p>&nbsp;</p>  
+<p>{{ 'The user %user% want to get the right'|trans({'%user%':user.contact.contact_name}) }}:</p>
+<p><strong>{{ user.want_account|trans }}</strong></p>
+<p>&nbsp;</p>
+<p>{{ user.contact.contact_name }}</p>
+<p>Contact ID: {{ user.contact.contact_id }}</p>
+<p>E-Mail: {{ user.contact.communication_email }}</p>
+<p>&nbsp;</p>
+<p><strong>{{ 'Please select action'|trans }}</strong></p>
+<p>{{ 'Activate the desired account role'|trans }}<br />
+  --> {{ action.link.activate }}</p>
+<p>{{ 'Reject the desired account role'|trans }}<br />
+  -->{{ action.link.reject }}</p>

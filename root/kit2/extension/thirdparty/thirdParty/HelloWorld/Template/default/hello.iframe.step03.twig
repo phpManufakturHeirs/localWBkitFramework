@@ -1,0 +1,27 @@
+{#
+  kfHelloWorld
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block title %}{{ 'iFrame Sample: Step 2'|trans }}{% endblock %}
+{% block description %}{{ 'kitCommand Sample for the usage of iframes'|trans }}{% endblock %}
+{% block keywords %}kitFramework,Sample,Hello World{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ THIRDPARTY_URL }}/HelloWorld/Template/default/css/hello.iframe.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  <h2>{{ 'Hello World Sample Step 3'|trans }}</h2>
+  {{ parent() }}
+  <p>{{ 'Thank you, %title% %name%, for submitting your contact data'|trans({'%title%':data.title|capitalize|trans, '%name%':data.last_name}) }}</p>
+  <p>{{ 'Next action'|trans }}</p>
+  <ul>
+    <li><a href="{{ FRAMEWORK_URL }}/helloworld/iframe/step04/{{ data.id }}?pid={{ basic.pid }}">{{ 'Send me a confirmation to %email%'|trans({'%email%':data.email}) }}</a></li>
+    <li><a href="{{ FRAMEWORK_URL }}/helloworld/iframe/step02?pid={{ basic.pid }}">{{ 'Submit again a form'|trans }}</a></li>
+  </ul>
+{% endblock content %}

@@ -1,0 +1,100 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.list.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+{% endblock stylesheet %}
+{% block jquery %}
+  {{ parent() }}
+  {% if config.rating.active and parameter.rating %}
+    <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CommandCollection/Template/Rating/default/jquery/jRating.jquery.js"></script>
+  {% endif %} 
+{% endblock jquery %}
+{% block content %}
+  {{ parent() }}
+  <div class="event list container" >
+    <table>
+      <thead>
+        <tr>
+          <th>{{ 'event_date_from'|trans }}</th>
+          <th>{{ 'event_date_to'|trans }}</th>
+          <th>{{ 'description_title'|trans }}</th>
+          <th>{{ 'Location'|trans }}</th>
+          <th>{{ 'Organizer'|trans }}</th>
+          {% if parameter.rating and config.rating.active %}
+            <th>{{ 'Rating'|trans }}</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% set i = 0 %}
+        {% for event in events %}
+          <tr class="{{ cycle(['flop','flip'], i) }}">
+            <td>{{ event.event_date_from|date('DATE_FORMAT'|trans) }}</td>
+            <td>{{ event.event_date_to|date('DATE_FORMAT'|trans) }}</td>
+            <td><a href="{{ FRAMEWORK_URL }}/event/perma/id/{{ event.event_id }}?pid={{ basic.pid }}" target="_top">{{ event.description_title }}</a></td>            
+            <td>
+              {% if event.contact.location.contact.contact_type == 'COMPANY' %}
+                {{ event.contact.location.company.0.company_name }}
+              {% else %}
+                {{ event.contact.location.person.0.person_last_name }}
+              {% endif %}
+            </td>
+            <td>
+              {% if event.contact.organizer.contact.contact_type == 'COMPANY' %}
+                {{ event.contact.organizer.company.0.company_name }}
+              {% else %}
+                {{ event.contact.organizer.person.0.person_last_name }}
+              {% endif %}
+            </td>
+            
+            {% if parameter.rating and config.rating.active %}
+              <td>              
+                <div class="rating-container">
+                  <div class="rating-stars rating_{{ event.rating.identifier_id }}" 
+                       data-average="{{ event.rating.average }}" 
+                       data-id="{{ event.rating.identifier_id }}" 
+                       title="{{ 'Votes: %count% - Average: %average%'|trans({'%count%':event.rating.count,'%average%':event.rating.average|number_format(2,'DECIMAL_SEPARATOR'|trans,'THOUSAND_SEPARATOR'|trans)}) }}"></div>
+                </div>
+              </td>
+           {% endif %}
+          </tr>
+          {% set i = i+1 %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+{% block footer %}
+  {{ parent() }} 
+  {% if config.rating.active and parameter.rating %}
+    <script type="text/javascript">
+      if (typeof 'jQuery' !== 'undefined') {
+        $(document).ready(function() {      
+          {% for event in events %}         
+            $(".rating_{{ event.rating.identifier_id }}").jRating({
+              bigStarsPath: '{{ MANUFAKTUR_URL }}/CommandCollection/Template/Rating/default/css/icons/stars.png',
+              smallStarsPath: '{{ MANUFAKTUR_URL }}/CommandCollection/Template/Rating/default/css/icons/small.png',
+              phpPath: '{{ FRAMEWORK_URL }}/collection/rating/response',
+              type: '{{ config.rating.type }}',
+              length : {{ config.rating.length }},
+              step: {{ config.rating.step }},
+              rateMax: {{ config.rating.rate_max }},
+              showRateInfo: {% if config.rating.show_rate_info %}true{% else %}false{% endif %},
+              {% if event.rating is defined and event.rating.is_disabled %}isDisabled: true,{% endif %}
+            });
+          {% endfor %}
+        });        
+      }
+    </script>
+  {% endif %}
+{% endblock footer %}     

@@ -1,0 +1,35 @@
+{
+  "command":"HelloWorld",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://phpmanufaktur.de"
+    },
+  "name": {
+    "en":"'Hello World', kitCommand Sample",
+    "de":"'Hello World', kitCommand Beispiel"
+  },
+  "description": {
+    "en":"'Hello World' Sample kitCommand which prompt 'Hello World!'",
+    "de":"'Hello World' Beispiel für ein kitCommand das schlicht 'Hello World!' ausgibt."
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  },
+  "wiki": {
+    "en": {
+      "link":"https://github.com/phpManufaktur/kfHelloWorld/wiki"
+    }
+  },
+  "issues": {
+    "en": {
+      "link":"https://github.com/phpManufaktur/kfHelloWorld/issues"
+    }
+  },
+  "support": {
+    "en": {
+      "link":"https://support.phpmanufaktur.de"
+    }
+  }
+}

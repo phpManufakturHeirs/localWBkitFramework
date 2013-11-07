@@ -1,0 +1,92 @@
+/*
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/FacebookGallery
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+*/
+
+a {
+  text-decoration: none;
+}
+a:link,
+a:visited {
+  color: #da251d;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:hover,
+a:active {
+  color: #da251d;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+.clear {
+  clear: both;
+  width: 1px;
+  height: 1px;
+}
+.smaller {
+  font-size: smaller;
+}
+.right {
+  text-align: right;
+}
+.account_form {
+  margin: 0;
+  padding: 0;
+  width: 500px;
+  height: auto;
+}
+.account_form label {
+  clear: both;
+  float: left;
+  width: 150px;
+  text-align: right;
+  margin: 0 0 10px 0;
+  padding: 3px 5px 0 0;
+}
+.account_form label.required:after {
+  content: '*';
+  color: #da251d;
+  background-color: transparent;
+  font-weight: bold;
+}
+.account_form input {
+  float: left;
+  width: 150px;
+  margin: 0 0 10px 0;
+}
+.account_form input[type=submit] {
+  width: 150px;
+}
+.account_form input[type=checkbox] {
+  float: left;
+  width: 15px;
+  padding: 0;
+  margin: 0 10px 0 0;
+}
+
+#form_account_type {
+  float: left;
+  width: 330px;
+  height: auto;
+}
+#form_account_type input {
+  clear: left;
+  float:left;
+  width: 15px;
+  margin: 5px 10px 0 0;
+  padding: 0;
+}
+#form_account_type label {
+  clear: none;
+  float: left;
+  width: 300px;
+  text-align: left;
+}
+#form_account_type label.required:after {
+  content: none;
+}

@@ -1,0 +1,60 @@
+{
+  "administrator": {
+    "email": "local@hertsch.org",
+    "name": "LOCAL"
+  },
+  "contact": {
+    "confirmation": {
+      "double_opt_in": true
+    },
+    "information": {
+      "pending_confirmation": true,
+      "published_comment": true,
+      "rejected_comment": true,
+      "locked_contact": true
+    }
+  },
+  "comments": {
+    "length": {
+      "minimum": 5,
+      "maximum": 1024
+    },
+    "confirmation": {
+      "double_opt_in": false,
+      "administrator": true
+    }
+  },
+  "gravatar": {
+    "enabled": true,
+    "size": 40,
+    "max_rating": "pg",
+    "default_image": "mm",
+    "use_ssl": false,
+    "comment": {
+      "main": {
+        "enabled": true,
+        "size": 40
+      },
+      "reply": {
+        "enabled": true,
+        "size": 30
+      }
+    }
+  },
+  "rating": {
+    "enabled": true,
+    "type": "small",
+    "length": 5,
+    "step": true,
+    "rate_max": 5,
+    "show_rate_info": false,
+    "comment": {
+      "main": {
+        "enabled": true
+      },
+      "reply": {
+        "enabled": true
+      }
+    }
+  }
+}

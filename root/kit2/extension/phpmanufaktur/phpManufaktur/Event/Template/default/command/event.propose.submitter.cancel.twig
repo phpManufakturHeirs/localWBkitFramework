@@ -1,0 +1,37 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.propose.css" media="screen, projection" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+{% endblock stylesheet %}
+{% block content %}
+  {% if app.translator.locale == 'de' %}
+    {# german translation #}
+    <h2>Veranstaltungsvorschlag zurückgezogen</h2>
+    {{ parent() }}
+    {% if basic.message|length < 1 %}
+      <div class="iframe_content message">
+        <p>Der Veranstaltungsvorschlag <strong>{{ event.description_title }}</strong> mit der ID <strong>{{ event.event_id }}</strong> wurde zurückgezogen und wird nicht veröffentlicht.</p>
+      </div>
+    {% endif %}    
+  {% else %}
+    {# english language #}
+    <h2>Proposed event cancelled</h2>
+    {{ parent() }}
+    {% if basic.message|length < 1 %}
+      <div class="iframe_content message">
+        <p>The proposed event {{ event.description_title }} with the ID {{ event.event_id }} was cancelled and will not published.</p>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,65 @@
+{
+  "name":"winCalc",
+  "guid":"E24DDF44-094A-4539-B9AB-90FDEBA9E89B",
+  "category":"extension",
+  "group":"phpManufaktur",
+  "vendor":{
+      "name":"phpManufaktur",
+      "url":"https:\/\/phpmanufaktur.de",
+      "mail":"team@phpmanufaktur.de",
+      "address":{
+          "street":"Stockholmer Straße 31",
+          "zip":"13359",
+          "city":"Berlin",
+          "country":"Germany"
+      },
+      "phone":"+49 30 68813647"
+  },
+  "type":"application",
+  "path":"\/extension\/phpmanufaktur\/phpManufaktur\/winCalc",
+  "namespace":"phpManufaktur\\winCalc",
+  "release":{
+    "number":"0.14",
+    "date":"2013-11-04",
+    "status":"beta"
+  },
+  "description":{
+    "en":{
+      "title":"Online Calculator for Windows and Doors",
+      "short":"Interactive online Calculator for Windows and Doors",
+      "long":"Define Windows and Doors with different materials, profiles, colors, glass, fittings, minimum and maximum sizes and prices. The online calculator for the frontend is easy to use and guide the customer through the calculation and ordering process.",
+      "url":"https:\/\/phpmanufaktur.de"
+    }
+  },
+  "require":{
+    "framework":{
+      "release":"0.26"
+    },
+    "extension":{
+        "phpmanufaktur":{
+            "Basic":{
+                "release":"0.35"
+            },
+            "Contact":{
+                "release":"2.0.13"
+            },
+            "CKEditor":{
+                "release":"0.15"
+            },
+            "MediaBrowser":{
+                "release":"0.19"
+            }
+        }
+    }
+  },
+  "setup": {
+      "install":"\/admin\/wincalc\/setup",
+      "update":"\/admin\/wincalc\/update",
+      "uninstall":"\/admin\/wincalc\/uninstall"
+  },
+  "license":"Commercial use",
+  "download": {
+    "availability":"commercial use only",
+    "agreement":"Service and support agreement"
+  }
+}

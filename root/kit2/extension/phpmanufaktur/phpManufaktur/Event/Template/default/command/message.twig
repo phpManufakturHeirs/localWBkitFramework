@@ -1,0 +1,23 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block title %}{{ title }}{% endblock %}
+{% block description %}{{ 'Message from the kitFramework Event application'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/command.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  <div id="message-body">
+    <h2>{{ title }}</h2>
+    <div class="message_message">{{ message }}</div>
+  </div>
+{% endblock %}
+

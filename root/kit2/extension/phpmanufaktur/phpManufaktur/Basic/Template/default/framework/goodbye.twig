@@ -1,0 +1,30 @@
+{#
+  kitFramework
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if basic.cms.type == 'framework' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_file = 'kitcommand/iframe.body.twig' %}
+{% endif %}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', template_file) %}
+{% block content %}
+  {% if content|length > 0 %}
+    {{ content }}
+  {% else %}
+    <h2>{{ 'Goodbye'|trans }}</h2>    
+    {% if content|length > 0 %}
+      {{ content }}
+    {% else %}
+      <div class="logout">
+        <p>{{ 'Thank you for using the kitFramework'|trans }}</p>
+        <p><a href="{{ FRAMEWORK_URL ~ '/login' }}">{{ 'Login'|trans }}</a></p>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endblock content %}

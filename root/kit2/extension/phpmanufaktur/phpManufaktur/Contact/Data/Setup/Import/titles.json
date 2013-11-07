@@ -1,0 +1,27 @@
+[
+    {
+      "identifier":"NO_TITLE",
+      "short":"NO_TITLE",
+      "long":"NO_TITLE"
+    },
+    {
+      "identifier":"DOC",
+      "short":"doc",
+      "long":"doctor"
+    },
+    {
+      "identifier":"PROF",
+      "short":"prof",
+      "long":"professor"
+    },
+    {
+      "identifier":"EARL",
+      "short":"earl",
+      "long":"earl"
+    },
+    {
+      "identifier":"BARON",
+      "short":"baron",
+      "long":"baron"
+    }
+]

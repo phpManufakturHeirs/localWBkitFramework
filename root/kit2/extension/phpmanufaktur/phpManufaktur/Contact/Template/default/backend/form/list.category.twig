@@ -1,0 +1,33 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+<div id="contact_list">
+  <table>
+    <thead>
+      <th>{{ 'ID'|trans }}</th>
+      <th>{{ 'Category name'|trans }}</th>
+      <th>{{ 'Category name (translated)'|trans }}</th>
+      <th>{{ 'Category description'|trans }}</th>
+      <th>{{ 'Category description (translated)'|trans }}</th>
+    </thead>
+    <tbody>
+      {% set i = 0 %}
+      {% for category in categories %}
+        <tr class="{{ cycle(['flop','flip'], i) }}">
+          <td class="category_type_id"><a href="{{ FRAMEWORK_URL }}{{ route.edit|replace({'{category_id}':category.category_type_id}) }}">{{ '%03d'|format(category.category_type_id) }}</a></td>
+          <td class="category_type_name"><a href="{{ FRAMEWORK_URL }}{{ route.edit|replace({'{category_id}':category.category_type_id}) }}">{{ category.category_type_name }}</a></td>
+          <td class="category_type_name translated">{{ category.category_type_name|capitalize }} &rArr; {{ category.category_type_name|capitalize|trans }}</td>
+          <td class="category_type_description">{{ category.category_type_description }}</td>
+          <td class="category_type_description translated">{{ category.category_type_description|trans }}</td>            
+        </tr>
+        {% set i = i+1 %}
+      {% endfor %}
+    </tbody>
+  </table>    
+</div>

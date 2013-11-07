@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//kit2.phpmanufaktur.de//NONSGML kigkonsult.se iCalcreator 2.18//DE
+BEGIN:VEVENT
+UID:20131107T141019CET-5354EwSDix@kit2.phpmanufaktur.de
+DTSTAMP:20131107T131019Z
+CLASS:PUBLIC
+DESCRIPTION;LANGUAGE=de:Der Gesundbrunnen hat eine interessante Geschichte\
+ ,  die während unseres Spaziergangs erzählt wird.
+DTSTART:20131123T100000
+DTEND:20131123T120000
+LOCATION;LANGUAGE=de:Bibliothek am Luisenbad
+PRIORITY:0
+STATUS:CONFIRMED
+SUMMARY;LANGUAGE=de:Spaziergang durch den Gesundbrunnen
+END:VEVENT
+END:VCALENDAR

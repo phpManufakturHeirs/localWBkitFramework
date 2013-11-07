@@ -1,0 +1,63 @@
+table {
+    width: 100%;
+}
+th {
+    text-align: left;
+    font-size: 11px;
+    color: #000;
+    background-color: #b0c4de;
+    font-weight: normal;
+}
+th.active {
+  font-weight: bold;
+}
+td {
+    text-align: left;
+    font-size: 11px;
+}
+td.pending {
+  color: #000;
+  background-color: #deb887;
+}
+td.confirmed {
+  color: #000;
+  background-color: #8fbc8f;
+}
+td.rejected {
+  color: #fff;
+  background-color: #a52a2a;
+}
+td.waiting {
+  color: #000;
+  background-color: #dcdcdc;
+}
+td.action {
+  text-align: center;
+}
+td.action a {
+  text-decoration: none;
+}
+td.action a:link,
+td.action a:visited {
+  color: #fff !important;
+  background-color: transparent;
+  text-decoration: none;
+}
+td.action a:hover,
+td.action a:active {
+  color: #fff;
+  background-color: transparent;
+  text-decoration: underline;
+}
+th.right,
+td.right {
+  text-align: right;
+}
+tr.flip {
+    color: #000;
+    background-color: #e6e6fa;
+}
+tr.flop {
+    color: #000;
+    background-color: #fff;
+}

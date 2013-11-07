@@ -1,0 +1,84 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'backend/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'Event - Extra field list'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if usage == 'framework' %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/backend.css" media="screen, projection" />
+  {% endif %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/backend/css/field.css" media="screen, projection" />
+{% endblock stylesheet %}
+
+{% block content %}
+  <div id="event_content">
+    {% include '@phpManufaktur/Event/Template/default/backend/toolbar.twig' %}
+
+    {% if message|length > 0 %}
+      <div class="message">{{ message }}</div>
+    {% endif %}
+
+    <div class="field_form">
+      <form action="{{ FRAMEWORK_URL }}/admin/event/extra/field/edit?usage={{ usage }}" method="post" {{ form_enctype(form) }}>
+        {{ form_row(form._token) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.extra_type_id) }}
+        <div>
+          <label>{{ 'ID'|trans }}</label>
+          <div class="value">
+            {% if form.extra_type_id.vars.value > 0 %}
+              {{ '%03d'|format(form.extra_type_id.vars.value) }}
+            {% else %}
+              {{ '- new extra field -'|trans }}
+            {% endif %}
+          </div>
+        </div>
+
+        {{ form_row(form.extra_type_type) }}
+
+        {{ form_row(form.extra_type_name) }}
+        {% if form.extra_type_id.vars.value > 0 %}
+          <div>
+            <label>{{ 'Field name (translated)'|trans }}</label>
+            <div class="value">{{ form.extra_type_name.vars.value|replace({'_':' '})|capitalize }} &rArr; {{ form.extra_type_name.vars.value|replace({'_':' '})|capitalize|trans }}</div>
+          </div>
+        {% endif %}
+
+        {{ form_row(form.extra_type_description) }}
+        {% if form.extra_type_id.vars.value > 0 %}
+          <div>
+            <label>{{ 'Description (translated)'|trans }}</label>
+            <div class="value">{{ form.extra_type_description.vars.value|trans }}</div>
+          </div>
+        {% endif %}
+
+        <div>
+          <label>&nbsp;</label>
+          {{ form_widget(form.delete) }}
+        </div>
+
+        {{ form_rest(form) }}
+        <div>
+          <label for="submit">&nbsp;</label>
+          <input type="submit" name="submit" />
+        </div>
+        <div class="clear"></div>
+      </form>
+    </div>
+  </div>
+{% endblock content %}

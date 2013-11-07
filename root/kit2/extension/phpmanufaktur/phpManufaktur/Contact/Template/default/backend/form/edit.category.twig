@@ -1,0 +1,67 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+<div class="contact_form">
+  <form action="{{ FRAMEWORK_URL ~ route.action }}" method="post" {{ form_enctype(form) }}>
+    {{ form_errors(form) }}
+
+    {{ form_row(form.category_type_id) }}
+    <div>
+      <label>{{ 'category_type_id'|trans }}</label>
+      <div class="value">
+        {% if form.category_type_id.vars.value > 0 %}
+          {{ '%03d'|format(form.category_type_id.vars.value) }}
+        {% else %}
+          {{ '- new category -'|trans }}
+        {% endif %}
+     </div>
+    </div>
+
+    {{ form_row(form.category_type_name) }}
+    {% if form.vars.value.category_type_id > 0 %}
+      <div>
+        <label>{{ 'Category name (translated)'|trans }}</label>
+        <div class="value">{{ form.vars.value.category_type_name|capitalize }} &rArr; {{ form.vars.value.category_type_name|capitalize|trans }}</div>
+      </div>
+    {% endif %}
+
+    {{ form_row(form.category_type_description) }}
+    {% if form.category_type_id.vars.value > 0 %}
+      <div>
+        <label>{{ 'Category description (translated)'|trans }}</label>
+        <div class="value">{{ form.category_type_description.vars.value|trans }}</div>
+      </div>
+    {% endif %}
+
+    {#{ form_rest(form) }#}
+
+    {% if form.vars.value.category_type_id > 0 %}
+      <div class="clear"></div>
+      <div>
+        <label>&nbsp;</label>
+        <input type="checkbox" name="delete" value="1" />&nbsp;{{ 'delete the category <b>%category_type_name%</b>'|trans({'%category_type_name%':form.category_type_name.vars.value}) }}
+      </div>
+    {% endif %}
+
+    {{ form_row(form.category_extra_fields) }}
+    {{ form_rest(form) }}
+    {{ form_row(form.add_extra_field) }}
+
+    <div class="edit_button">
+      <input type="button" value=".." title="{{ 'Edit extra fields'|trans }}" onclick="self.location.href='{{ FRAMEWORK_URL ~ route.extra }}';return false;" />
+    </div>
+
+
+    <div>
+      <label for="submit">&nbsp;</label>
+      <input type="submit" name="submit" />
+    </div>
+    <div class="clear"></div>
+  </form>
+</div>
