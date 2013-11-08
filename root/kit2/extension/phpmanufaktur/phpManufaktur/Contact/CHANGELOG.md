@@ -6,6 +6,11 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**2.0.24**
+
+* check for `contact_since` at inserting a new record fails because key was quoted ... 8-/
+* prevent field `extra_type_description` from being NULL at creating a new extra field
+
 **2.0.23** - 2013-11-04
 
 * added support for additional vendor information

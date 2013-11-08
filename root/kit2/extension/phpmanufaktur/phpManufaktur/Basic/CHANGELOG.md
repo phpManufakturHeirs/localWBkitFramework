@@ -6,6 +6,10 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.58** - 2013-11-08
+
+* set FRAMEWORK_PATH from BOOTSTRAP_PATH and get it no longer from the framework.json (needed for mobile Installations)
+
 **0.57** - 2013-11-07
 
 * fixed wrong access to license name in class `InstallAdminTool`

@@ -19,8 +19,8 @@
   "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Basic",
   "namespace":"phpManufaktur\\Basic",
   "release":{
-    "number":"0.57",
-    "date":"2013-11-07",
+    "number":"0.58",
+    "date":"2013-11-08",
     "status":"beta"
   },
   "description": {

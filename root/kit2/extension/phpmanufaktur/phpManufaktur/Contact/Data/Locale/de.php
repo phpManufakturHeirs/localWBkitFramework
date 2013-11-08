@@ -169,6 +169,8 @@ return array(
         => 'Kategorien bearbeiten',
     'Edit extra fields'
         => 'Zusätzliche Felder bearbeiten',
+    'Edit tags'
+        => 'Markierungen bearbeiten',
     'Edit the category %category_type_name%'
         => 'Die Kategorie %category_type_name% bearbeiten',
     'Edit the <i>#tag</i> %tag_name%'
@@ -266,6 +268,8 @@ return array(
         => 'Kurzbezeichnung (Übersetzung)',
     'Start import from KeepInTouch'
         => 'Den Import aus KeepInTouch starten',
+    'State'
+        => 'Bundesland',
     'Street'
         => 'Straße',
 

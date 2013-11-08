@@ -4,7 +4,6 @@
   "FRAMEWORK_TEMPLATES": [
     "default"
   ],
-  "FRAMEWORK_PATH": "D:\\Repositories\\CMS\\localWBkitFramework\\root\/kit2",
   "FRAMEWORK_URL": "http:\/\/localhost:8080\/kit2",
   "CATALOG_ACCEPT_EXTENSION": [
     "beta",

@@ -137,7 +137,7 @@ class ExtraFieldEdit extends Dialog {
                         $data = array(
                             'extra_type_type' => $type['extra_type_type'],
                             'extra_type_name' => $type_name,
-                            'extra_type_description' => $type['extra_type_description']
+                            'extra_type_description' => !is_null($type['extra_type_description']) ? $type['extra_type_description'] : ''
                         );
                         $this->ExtraType->insert($data, self::$type_id);
                         $this->setMessage('The record with the ID %id% was successfull inserted.',

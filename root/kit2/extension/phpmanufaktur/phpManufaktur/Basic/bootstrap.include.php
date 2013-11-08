@@ -50,7 +50,8 @@ try {
     $framework_config = $app['utils']->readConfiguration(realpath(BOOTSTRAP_PATH . '/config/framework.json'));
     // framework constants
     define('FRAMEWORK_URL', $framework_config['FRAMEWORK_URL']);
-    define('FRAMEWORK_PATH', $app['utils']->sanitizePath($framework_config['FRAMEWORK_PATH']));
+    // FRAMEWORK_PATH == BOOTSTRAP_PATH !
+    define('FRAMEWORK_PATH', $app['utils']->sanitizePath(BOOTSTRAP_PATH));
     define('FRAMEWORK_TEMP_PATH', isset($framework_config['FRAMEWORK_TEMP_PATH']) ?
         $framework_config['FRAMEWORK_TEMP_PATH'] : FRAMEWORK_PATH . '/temp');
     define('FRAMEWORK_TEMP_URL', isset($framwework_config['FRAMEWORK_TEMP_URL']) ?
