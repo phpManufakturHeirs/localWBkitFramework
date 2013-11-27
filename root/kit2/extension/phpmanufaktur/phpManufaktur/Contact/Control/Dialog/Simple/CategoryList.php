@@ -40,6 +40,7 @@ class CategoryList extends Dialog {
                 'list' => isset($options['template']['list']) ? $options['template']['list'] : 'backend/simple/list.category.twig'
             ),
             'route' => array(
+                'create' => isset($options['route']['create']) ? $options['route']['create'] : '/admin/contact/simple/category/edit',
                 'edit' => isset($options['route']['edit']) ? $options['route']['edit'] : '/admin/contact/simple/category/edit/id/{category_id}'
             )
         ));

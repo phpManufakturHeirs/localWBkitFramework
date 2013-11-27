@@ -37,15 +37,19 @@ class GoodBye extends Basic
     {
         $this->initParameters($app);
 
-        if (!is_null($content = $app['request']->query->get('content'))) {
-            $content = urldecode($content);
+        if (null !== ($redirect = $app['request']->query->get('redirect'))) {
+            // redirect to the given route or URL
+            $parameters = $app['request']->query->all();
+            unset($parameters['redirect']);
+            $parameter_str = !empty($parameters) ? '?'.http_build_query($parameters) : '';
+            return $app->redirect(FRAMEWORK_URL.$redirect.$parameter_str);
         }
 
         return $app['twig']->render($app['utils']->getTemplateFile(
             '@phpManufaktur/Basic/Template',
             'framework/goodbye.twig'), array(
                 'basic' => $this->getBasicSettings(),
-                'content' => $content
+                'message' => $app['request']->query->get('message')
             )
         );
     }

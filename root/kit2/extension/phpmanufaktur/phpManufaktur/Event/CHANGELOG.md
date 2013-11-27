@@ -6,6 +6,12 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**2.0.22** - 2013-11-10
+
+* missed `$roles` definition if user has a account but was never active
+* changed the about dialog
+* Changed to Font Awesome 4.0.3 (local available at *Contact*)
+
 **2.0.21** - 2013-11-05
 
 * fixed problem assigning Organizer, Location or Participant to the Event group

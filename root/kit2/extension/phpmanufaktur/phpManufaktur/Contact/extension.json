@@ -22,8 +22,8 @@
     "about":"\/contact\/about"
   },
   "release":{
-    "number":"2.0.24",
-    "date":"2013-11-08",
+    "number":"2.0.27",
+    "date":"2013-11-27",
     "status":"beta"
   },
   "description":{
@@ -32,6 +32,12 @@
       "short":"Contact management for kitFramework",
       "long":"Contact management database for general use in kitFramework",
       "url":"https:\/\/kit2.phpmanufaktur.de"
+    },
+    "de":{
+        "title":"Kontaktverwaltung für das kitFramework",
+        "short":"Umfassende Kontakt- und Adressverwaltung für das kitFramework",
+        "long":"Umfangreiche und leistungsfähige Kontakt- sowie Adressverwaltung (CRM) für das kitFramework. Schnittstellen (API sowie direkt verwendbare Dialoge) ermöglichen eine leichte Einbindung und Anpassung in anderen kitFramework Anwendungen.",
+        "url":"https:\/\/kit2.phpmanufaktur.de"
     }
   },
   "require":{
@@ -49,9 +55,16 @@
   "setup": {
       "install":"\/admin\/contact\/setup",
       "update":"\/admin\/contact\/update",
-      "uninstall":"\/admin\/contact\/uninstall"
+      "uninstall":"\/admin\/contact\/uninstall",
+      "icon_path":{
+        "BlackCat":"\/extension\/phpmanufaktur\/phpManufaktur\/Contact\/Data\/Setup\/Icon\/icon.png",
+        "WebsiteBaker":"\/extension\/phpmanufaktur\/phpManufaktur\/Contact\/Data\/Setup\/Icon\/tool_icon.png"
+      }
   },
-  "license":"MIT License",
+  "license": {
+    "name":"MIT License",
+    "url":"https:\/\/github.com\/phpManufaktur\/kfContact\/raw\/master\/LICENSE.md"
+  },
   "download":{
     "availability":"public",
     "agreement":"free",

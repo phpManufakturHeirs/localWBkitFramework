@@ -19,8 +19,8 @@
   "path":"\/extension\/thirdparty\/thirdParty\/HelloWorld",
   "namespace":"thirdParty\\HelloWorld",
   "release": {
-    "number":"0.26",
-    "date":"2013-11-04",
+    "number":"0.27",
+    "date":"2013-11-09",
     "status":"beta"
   },
   "description": {
@@ -48,7 +48,10 @@
     "update":"\/admin\/helloworld\/update",
     "uninstall":"\/admin\/helloworld\/uninstall"
   },
-  "license":"MIT License",
+  "license": {
+    "name":"MIT License",
+    "url":"https:\/\/github.com\/phpManufaktur\/kfHelloWorld\/raw\/master\/LICENSE.md"
+  },
   "download": {
     "availability":"public",
     "agreement":"free",

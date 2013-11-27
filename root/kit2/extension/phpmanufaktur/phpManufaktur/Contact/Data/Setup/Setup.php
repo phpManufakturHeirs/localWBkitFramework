@@ -34,6 +34,7 @@ use phpManufaktur\Contact\Data\Contact\ExtraCategory;
 use phpManufaktur\Contact\Data\Contact\Extra;
 use phpManufaktur\Contact\Data\Contact\Message;
 use phpManufaktur\Contact\Control\Configuration;
+use phpManufaktur\Basic\Control\CMS\InstallAdminTool;
 
 class Setup
 {
@@ -140,6 +141,10 @@ class Setup
 
             // Create Configuration - only constructor needed
             $Configuration = new Configuration($app);
+
+            // setup kit_framework_contact as Add-on in the CMS
+            $admin_tool = new InstallAdminTool($app);
+            $admin_tool->exec(MANUFAKTUR_PATH.'/Contact/extension.json', '/contact/cms');
 
             // success - return message
             $app['monolog']->addInfo('[Contact Install] The setup process was successfull');

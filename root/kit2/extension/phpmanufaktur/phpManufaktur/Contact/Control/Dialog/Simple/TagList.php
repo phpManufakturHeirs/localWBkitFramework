@@ -40,6 +40,7 @@ class TagList extends Dialog {
                 'list' => isset($options['template']['list']) ? $options['template']['list'] : 'backend/simple/list.tag.twig'
             ),
             'route' => array(
+                'create' => isset($options['route']['create']) ? $options['route']['create'] : '/admin/contact/simple/tag/edit',
                 'edit' => isset($options['route']['edit']) ? $options['route']['edit'] : '/admin/contact/simple/tag/edit/id/{tag_id}'
             )
         ));

@@ -16,7 +16,6 @@ use Symfony\Component\Security\Core\User\User as SymfonyUser;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use phpManufaktur\Basic\Data\Security\Users as FrameworkUser;
 use phpManufaktur\Basic\Data\CMS\Users as CMSuser;
-use phpManufaktur\Basic\Data\Security\Users;
 
 class Account
 {
@@ -138,8 +137,7 @@ class Account
         $data = array(
             'last_login' => date('Y-m-d H:i:s')
         );
-        $Users = new Users($this->app);
-        $Users->updateUser($username, $data);
+        $this->FrameworkUser->updateUser($username, $data);
     }
 
     /**
@@ -217,6 +215,34 @@ class Account
     public function checkLogin($username, $password, &$roles=array())
     {
         return $this->FrameworkUser->checkLogin($username, $password, $roles);
+    }
+
+    /**
+     * Create a new GUID for the user and return it
+     *
+     * @param string $username
+     * @param boolean $guid_check ignore the GUID check
+     * @return boolean|string FALSE if GUID was last changed within 24 hours
+     */
+    public function createGUID($username, $guid_check=true)
+    {
+        if (false === ($data = $this->FrameworkUser->createNewGUID($username, $guid_check))) {
+            return false;
+        }
+        else {
+            return $data['guid'];
+        }
+    }
+
+    /**
+     * Get the user data by the given GUID
+     *
+     * @param string $guid
+     * @return boolean|array FALSE if not exists, array with user data on success
+     */
+    public function getUserByGUID($guid)
+    {
+        return $this->FrameworkUser->selectUserByGUID($guid);
     }
 
 }

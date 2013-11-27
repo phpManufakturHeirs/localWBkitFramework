@@ -15,6 +15,8 @@ if ('á' != "\xc3\xa1") {
 }
 
 return array(
+    'Account'
+        => 'Konto',
     'Add the extension <b>%name%</b> to the catalog.'
         => 'Die Erweiterung <b>%name%</b> wurde dem Katalog hinzugefügt.',
     'Add the extension <b>%name%</b> to the register.'

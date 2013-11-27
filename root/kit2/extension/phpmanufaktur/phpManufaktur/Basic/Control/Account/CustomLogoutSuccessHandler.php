@@ -24,12 +24,9 @@ class CustomLogoutSuccessHandler extends DefaultLogoutSuccessHandler
     {
         // get all parameters
         $parameters = $request->query->all();
-        // set the target
-        $target = (!isset($parameters['redirect']) && !empty($parameters['redirect'])) ? $parameters['redirect'] : $this->targetUrl;
-        unset($parameters['redirect']);
         // build the parameter string
         $parameter_str = !empty($parameters) ? '?'.http_build_query($parameters) : '';
         // return the logout response
-        return $this->httpUtils->createRedirectResponse($request, $target.$parameter_str);
+        return $this->httpUtils->createRedirectResponse($request, $this->targetUrl.$parameter_str);
     }
 }

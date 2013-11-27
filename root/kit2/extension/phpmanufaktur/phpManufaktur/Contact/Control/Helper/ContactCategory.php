@@ -84,14 +84,44 @@ class ContactCategory extends ContactParent
         return true;
     }
 
+    /**
+     * Delete a category
+     *
+     * @param integer $category_id
+     */
     public function delete($category_id)
     {
         $this->Category->delete($category_id);
     }
 
+    /**
+     * Select the category type ID for the given category ID
+     *
+     * @param integer $category_id
+     */
     public function selectCategoryTypeID($category_id)
     {
         return $this->Category->selectCategoryTypeID($category_id);
     }
 
+    /**
+     * Check if the category with the given name exists
+     *
+     * @param string $category_name
+     */
+    public function existsCategory($category_name)
+    {
+        return $this->CategoryType->existsCategory($category_name);
+    }
+
+    /**
+     * Create a new category type
+     *
+     * @param array $data
+     * @param reference integer $category_type_id
+     */
+    public function createCategory($data, &$category_type_id)
+    {
+        return $this->CategoryType->insert($data, $category_type_id);
+    }
 }

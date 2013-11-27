@@ -30,7 +30,7 @@ class Utils
 
     protected $app = null;
     protected static $proxy = null;
-    protected static $proxy_auth = CURLAUTH_BASIC;
+    protected static $proxy_auth = 'NONE';
     protected static $proxy_port = null;
     protected static $proxy_usrpwd = null;
 
@@ -59,7 +59,22 @@ class Utils
             self::$proxy = $proxy['PROXY'];
             self::$proxy_port = $proxy['PROXYPORT'];
         }
-    } // __construct()
+    }
+
+    /**
+     * Return a array with the PROXY settings
+     *
+     * @return multitype:string NULL
+     */
+    public function getProxyInfo()
+    {
+        return array(
+            'proxy' => self::$proxy,
+            'proxy_auth' => self::$proxy_auth,
+            'proxy_usrpwd' => self::$proxy_usrpwd,
+            'proxy_port' => self::$proxy_port
+        );
+    }
 
     /**
      * Sanitize variables and prepare them for saving in a MySQL record

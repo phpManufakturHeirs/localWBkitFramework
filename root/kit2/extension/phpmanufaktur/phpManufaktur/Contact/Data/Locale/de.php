@@ -69,6 +69,8 @@ return array(
         => 'Der Kontakt Datensatz mit der ID %contact_id% konnte nicht gelesen werden, er wurde möglicher Weise gelöscht.',
     'category_type_id'
         => 'Kategorie ID',
+    'Categories'
+        => 'Kategorien',
     'Category'
         => 'Kategorie',
     'Category description'

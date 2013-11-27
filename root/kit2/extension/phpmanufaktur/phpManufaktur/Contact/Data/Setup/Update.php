@@ -19,6 +19,7 @@ use phpManufaktur\Contact\Data\Contact\Extra;
 use phpManufaktur\Contact\Data\Contact\Message;
 use phpManufaktur\Contact\Data\Contact\Overview;
 use phpManufaktur\Contact\Control\Configuration;
+use phpManufaktur\Basic\Control\CMS\InstallAdminTool;
 
 class Update
 {
@@ -271,6 +272,10 @@ class Update
 
             // Create Configuration if not exists - only constructor needed
             $Configuration = new Configuration($app);
+
+            // setup kit_framework_contact as Add-on in the CMS
+            $admin_tool = new InstallAdminTool($app);
+            $admin_tool->exec(MANUFAKTUR_PATH.'/Contact/extension.json', '/contact/cms');
 
             // prompt message and return
             $this->app['monolog']->addInfo('[Contact Update] The update process was successfull.');

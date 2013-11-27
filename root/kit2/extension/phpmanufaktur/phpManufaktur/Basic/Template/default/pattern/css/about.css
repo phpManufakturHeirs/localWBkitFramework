@@ -1,0 +1,97 @@
+/**
+ * BASIC
+ *
+ * @author Team phpManufaktur <team@phpmanufaktur.de>
+ * @link https://addons.phpmanufaktur.de/event
+ * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ */
+
+.about {
+  clear: both;
+  margin: 50px 0 0 20px;
+  padding: 0;
+  font-size: 13px;
+}
+
+.about h2 {
+  font-size: 16px;
+}
+
+.about a {
+  text-decoration: none;
+}
+.about a:link,
+.about a:visited {
+  color: #da251d;
+  background-color: transparent;
+  text-decoration: none;
+}
+.about a:hover,
+.about a:active {
+  color: #da251d;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+.about .logo {
+  float: left;
+  margin: 0;
+  padding: 0 30px 0 0;
+  width: 200px;
+  height: 200px;
+}
+
+.about .info {
+  float: left;
+  margin: 0;
+  padding: 0;
+  max-width: 650px;
+  height: auto;
+}
+.about .info .release {
+  
+}
+.about .info .license {
+  font-size: 10px;
+  color: #afafaf;
+  background-color: transparent;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.about .info .description {
+  font-size: 11px;
+  font-style: italic;
+  margin: 10px 0 0 0;
+  padding: 0;
+}
+.about .info .vendor {
+  font-size: 11px;
+  font-style: normal;
+  margin: 10px 0 0 110px;
+  padding: 0;
+}
+.about .info .vendor .name {
+  font-weight: bold;
+}
+
+.about .info .vendor .phone,
+.about .info .vendor .url,
+.about .info .vendor .street {
+  margin: 5px 0 0 0;
+}
+
+.about .info .gethelp {
+  margin: 10px 0 0 0;
+  padding: 0;
+  font-size: 11px;
+}
+.about .info .gethelp label {
+  clear: left;
+  float: left;
+  width: 100px;
+  text-align: right;
+  margin: 0 10px 0 0;
+  padding: 0;
+}

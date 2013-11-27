@@ -28,6 +28,7 @@ use phpManufaktur\Basic\Control\Account\Account;
 use Symfony\Bridge\Monolog\Logger;
 use phpManufaktur\Basic\Control\Account\CustomLogoutSuccessHandler;
 use phpManufaktur\Basic\Control\Account\CustomAuthenticationSuccessHandler;
+use phpManufaktur\Basic\Data\dbUtils;
 
 // set the error handling
 ini_set('display_errors', 1);
@@ -130,8 +131,8 @@ $app['monolog']->addDebug('MonologServiceProvider registered.');
 try {
     // read the CMS configuration
     $cms_config = $app['utils']->readConfiguration(FRAMEWORK_PATH . '/config/cms.json');
-    // setting the CMS constants
-    define('CMS_PATH', $app['utils']->sanitizePath($cms_config['CMS_PATH']));
+    // set the CMS_PATH from FRAMEWORK_PATH because it can change at mobile installations
+    define('CMS_PATH', $app['utils']->sanitizePath(FRAMEWORK_PATH.'/../'));
     define('CMS_URL', $cms_config['CMS_URL']);
     define('CMS_MEDIA_PATH', $app['utils']->sanitizePath($cms_config['CMS_MEDIA_PATH']));
     define('CMS_MEDIA_URL', $cms_config['CMS_MEDIA_URL']);
@@ -166,6 +167,17 @@ try {
 }
 // $app['db']->query("SET NAMES 'utf8'");
 $app['monolog']->addDebug('DoctrineServiceProvider registered');
+
+// share the database utils
+$app['db.utils'] = $app->share(function($app) {
+    return new dbUtils($app);
+});
+$app['monolog']->addDebug('dbUtils registered');
+
+if (!$app['db.utils']->isInnoDBsupported()) {
+    // big problem: missing InnoDB support!
+    throw new \Exception('Missing the MySQL InnoDB support, please check your server configuration!');
+}
 
 // register the session handler
 $app->register(new Silex\Provider\SessionServiceProvider(), array(
@@ -524,7 +536,7 @@ $app->mount('/command', $command);
 $app->mount('/filter', $filter);
 
 $app->error(function (\Exception $e, $code) use ($app) {
-    if ($app['debug']) {
+    if ($app['debug'] && ($code != 403)) {
         // on debugging mode use the regular exception handler!
         return;
     }

@@ -19,13 +19,6 @@
       "file": {
         "help":"kitcommand_help_en.md"
       }
-    },
-    "de": {
-      "link":"https://gist.github.com/hertsch/5494030",
-      "gist_id":"5494030",
-      "file": {
-        "help":"kitcommand_help_de.md"
-      }
     }
   },
   "info": {

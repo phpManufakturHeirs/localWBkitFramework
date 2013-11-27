@@ -142,6 +142,25 @@ EOD;
             );
             $this->app['db']->insert(self::$table_name, $data);
             $id = $this->app['db']->lastInsertId();
+
+            $SQL = "SELECT `extra_type_type`, `extra_type_name` FROM `".FRAMEWORK_TABLE_PREFIX."contact_extra_type` WHERE `extra_type_id`='$extra_type_id'";
+            $extra_type = $this->app['db']->fetchAssoc($SQL);
+
+            $SQL = "SELECT `contact_id`, `category_id` FROM `".FRAMEWORK_TABLE_PREFIX."contact_category` WHERE `category_type_id`='$category_type_id'";
+            $contacts = $this->app['db']->fetchAll($SQL);
+            foreach ($contacts as $contact) {
+                $data = array(
+                    'extra_type_id' => $extra_type_id,
+                    'extra_type_name' => $extra_type['extra_type_name'],
+                    'category_id' => $contact['category_id'],
+                    'category_type_name' => $type['category_type_name'],
+                    'contact_id' => $contact['contact_id'],
+                    'extra_type_type' => $extra_type['extra_type_type'],
+                    'extra_text' => '',
+                    'extra_html' => ''
+                );
+                $this->app['db']->insert(FRAMEWORK_TABLE_PREFIX.'contact_extra', $data);
+            }
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }
@@ -160,6 +179,12 @@ EOD;
             $this->app['db']->delete(self::$table_name, array(
                 'extra_type_id' => $extra_type_id,
                 'category_type_id' => $category_type_id
+            ));
+
+            $type = $this->CategoryType->select($category_type_id);
+            $this->app['db']->delete(FRAMEWORK_TABLE_PREFIX.'contact_extra', array(
+                'extra_type_id' => $extra_type_id,
+                'category_type_name' => $type['category_type_name']
             ));
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);

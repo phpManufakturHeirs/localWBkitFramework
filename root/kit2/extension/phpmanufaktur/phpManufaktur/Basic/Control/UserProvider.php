@@ -54,7 +54,7 @@ class UserProvider implements UserProviderInterface
             // user not found - check if the user exists as CMS user!
             $cmsUser = new Data\CMS\Users($this->app);
             $isAdmin = false;
-            if (false === ($user = $cmsUser->selectUser($username . $isAdmin))) {
+            if (false === ($user = $cmsUser->selectUser($username, $isAdmin))) {
                 // give up - user not found
                 throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
             }

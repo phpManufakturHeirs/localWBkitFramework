@@ -10,7 +10,7 @@
 {% block stylesheet %}
     {{ parent() }}
   <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Contact/Template/default/backend/import/css/keepintouch.css" media="screen, projection" />
-  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Contact/Template/default/font-awesome/4.0.3/css/font-awesome.min.css" media="screen, projection" />
 {% endblock %}
 
 {% block content %}
@@ -22,12 +22,12 @@
     {# german translation #}
     <p><b>Achtung!</b></p>
     <p><i></i>kitFramework Contact verfügt über eine andere Datenstruktur als KeepInTouch (KIT).</p>
-    <ul class="icons-ul">
-      <li><i class="icon-li icon-warning-sign red"></i>Nur die <i>erste</i> markierte KIT Kategorie <i>Intern</i> wird in kitFramework Contact übernommen und als <i>Kategorie</i> gesetzt (Contact akzeptiert nur eine Kategorie)</li>
-      <li><i class="icon-li icon-warning-sign red"></i>Die KIT Kategorien für <i>Newsletter</i> erhalten den Prefix <b>NL</b> und werden als Contact <i>Markierung (Tag)</i> übernommen</li>
-      <li><i class="icon-li icon-warning-sign red"></i>Die KIT Kategorien für <i>Verteiler</i> werden als Contact <i>Markierung (Tag)</i> übernommen</li>
-      <li><i class="icon-li icon-warning-sign red"></i>Wenn ein KIT Datensatz die Adressen für eine Firma und eine Person (Ansprechpartner) enthält, wird dieser Datensatz in zwei Contact Datensätze aufgeteilt: einen für die Person und einen für die Firma. Die beiden Datensätze referenzieren sich gegenseitig</li>
-      <li><i class="icon-li icon-warning-sign red"></i>Es werden nur KIT Datensätze importiert, die als <i>Aktiv</i> oder <i>Gesperrt</i> gekennzeichnet sind. Als <i>gelöscht</i> gekennzeichnete Datensätze werden nicht übernommen.</li>
+    <ul class="fa-ul">
+      <li><i class="fa-li fa fa-warning red"></i>Nur die <i>erste</i> markierte KIT Kategorie <i>Intern</i> wird in kitFramework Contact übernommen und als <i>Kategorie</i> gesetzt (Contact akzeptiert nur eine Kategorie)</li>
+      <li><i class="fa-li fa fa-warning red"></i>Die KIT Kategorien für <i>Newsletter</i> erhalten den Prefix <b>NL</b> und werden als Contact <i>Markierung (Tag)</i> übernommen</li>
+      <li><i class="fa-li fa fa-warning red"></i>Die KIT Kategorien für <i>Verteiler</i> werden als Contact <i>Markierung (Tag)</i> übernommen</li>
+      <li><i class="fa-li fa fa-warning red"></i>Wenn ein KIT Datensatz die Adressen für eine Firma und eine Person (Ansprechpartner) enthält, wird dieser Datensatz in zwei Contact Datensätze aufgeteilt: einen für die Person und einen für die Firma. Die beiden Datensätze referenzieren sich gegenseitig</li>
+      <li><i class="fa-li fa fa-warning red"></i>Es werden nur KIT Datensätze importiert, die als <i>Aktiv</i> oder <i>Gesperrt</i> gekennzeichnet sind. Als <i>gelöscht</i> gekennzeichnete Datensätze werden nicht übernommen.</li>
     </ul>
   {% else %}
     {# english translation #}
@@ -43,7 +43,7 @@
   {% endif %}
 
   {% if import_is_possible %}
-    <p><i class="icon-puzzle-piece icon-3x pull-left"></i>&nbsp;<a href="{{ FRAMEWORK_URL }}/admin/contact/import/keepintouch/execute">{{ 'Start import from KeepInTouch'|trans }}</a></p>
+    <p><i class="fa fa-puzzle-piece fa-3x pull-left"></i>&nbsp;<a href="{{ FRAMEWORK_URL }}/admin/contact/import/keepintouch/execute">{{ 'Start import from KeepInTouch'|trans }}</a></p>
   {% endif %}
 
 {% endblock content %}

@@ -34,7 +34,8 @@
       </div>
     {% endif %}
 
-    {{ form_row(form.extra_type_description) }}  
+    {{ form_row(form.extra_type_description) }} 
+    
     {% if form.extra_type_id.vars.value > 0 %}  
       <div>
         <label>{{ 'Description (translated)'|trans }}</label>
@@ -43,14 +44,16 @@
     {% endif %}
 
     {% if form.extra_type_id.vars.value > 0 %}
+      {#
       <div>
         <label>&nbsp;</label>
         {{ form_widget(form.delete) }}
       </div>    
+      #}
+      {{ form_row(form.delete) }}
     {% endif %}
 
-    {#{ form_rest(form) }#}
-      
+    {#{ form_rest(form) }#}     
       
     <div>
       <label for="submit">&nbsp;</label>

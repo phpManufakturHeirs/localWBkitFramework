@@ -760,6 +760,7 @@ class Edit extends Basic
             $user = $Account->getUserData($contact['communication_email']);
             $user_status = 'CONTACT_ONLY';
             $user_proposes = 0;
+            $roles = array();
         }
 
         // create a AdminAction record

@@ -19,8 +19,8 @@
   "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Basic",
   "namespace":"phpManufaktur\\Basic",
   "release":{
-    "number":"0.58",
-    "date":"2013-11-08",
+    "number":"0.61",
+    "date":"2013-11-27",
     "status":"beta"
   },
   "description": {
@@ -47,7 +47,10 @@
     "update":"\/admin\/basic\/update",
     "uninstall":"\/admin\/basic\/uninstall"
   },
-  "license":"MIT License",
+  "license": {
+    "name":"MIT License",
+    "url":"https:\/\/github.com\/phpManufaktur\/kfBasic\/raw\/master\/LICENSE.md"
+  },
   "download": {
     "availability":"public",
     "agreement":"free",

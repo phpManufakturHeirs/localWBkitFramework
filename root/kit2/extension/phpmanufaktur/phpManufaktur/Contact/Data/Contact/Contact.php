@@ -492,6 +492,17 @@ EOD;
     }
 
     /**
+     * Return the primary EMAIL address for the given contact ID
+     *
+     * @param integer $contact_id
+     */
+    public function getPrimaryEmailAddress($contact_id)
+    {
+        $communication_id = $this->getPrimaryEmailID($contact_id);
+        return $this->Communication->selectValue($communication_id);
+    }
+
+    /**
      * Set the primary EMAIL ID for the CONTACT ID
      *
      * @param integer $contact_id
@@ -568,5 +579,26 @@ EOD;
         return $lst;
     }
 
-
+    /**
+     * Get the status for the given $login, where $login can be the contact_login
+     * or the contact_id
+     *
+     * @param <string|integer> $login
+     * @throws \Exception
+     * @return Ambigous <boolean, string> FALSE or contact_status
+     */
+    public function getStatus($login)
+    {
+        try {
+            if (is_numeric($login)) {
+                $SQL = "SELECT `contact_status` FROM `".self::$table_name."` WHERE `contact_id`='$login'";
+            }
+            else {
+                $SQL = "SELECT `contact_status` FROM `".self::$table_name."` WHERE `contact_login`='$login'";
+            }
+            return (null === ($status = $this->app['db']->fetchColumn($SQL))) ? false : $status;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
 }

@@ -6,7 +6,29 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
-**2.0.24**
+**2.0.27**
+
+* add `icon.png` and `tool_icon.png` for BlackCat CMS and WebsiteBaker 2.8.4 support
+* added `getPrimaryEMailAddress()` to Contact Control
+* share Contact Control as $app['contact']
+
+**2.0.26**
+
+* added `getStatus()` to Contact Control
+* added `existsCategory()` and `createCategory()` to class ContactCategory
+* Contact Control: `select()` handle now also the login name instead of the contact ID
+* Contact Control: `insert()` handle now also submitting extra fields
+* Contact Control: added `existsCategory()`, `createCategory()`, `existsExtraTypeName()`, `createExtraType()`, `bindExtraTypeToCategory()`
+* extra fields are now automatically inserted and deleted for all assigned contacts
+* fixed: category edit calls the wrong route
+
+**2.0.25** - 2013-11-10
+
+* changed to Font Awesome 4.0.3 and make it local available
+* make Contact available as Admin-Tool in the CMS backend
+* added `create` routes to the simple dialogs
+
+**2.0.24** - 2013-11-08
 
 * check for `contact_since` at inserting a new record fails because key was quoted ... 8-/
 * prevent field `extra_type_description` from being NULL at creating a new extra field

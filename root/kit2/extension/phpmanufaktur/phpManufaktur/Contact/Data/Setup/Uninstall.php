@@ -33,6 +33,7 @@ use phpManufaktur\Contact\Data\Contact\Extra;
 use phpManufaktur\Contact\Data\Contact\ExtraType;
 use phpManufaktur\Contact\Data\Contact\ExtraCategory;
 use phpManufaktur\Contact\Data\Contact\Message;
+use phpManufaktur\Basic\Control\CMS\UninstallAdminTool;
 
 class Uninstall
 {
@@ -40,6 +41,7 @@ class Uninstall
     public function exec(Application $app)
     {
         try {
+
             $Communication = new Communication($app);
             $Communication->dropTable();
             $app['monolog']->addInfo('[Contact Uninstall] Drop table `contact_communication`');
@@ -124,8 +126,10 @@ class Uninstall
             $Message->dropTable();
             $app['monolog']->addInfo('[Contact Uninstall] Drop table `contact_message`');
 
-
             $app['monolog']->addInfo('[Contact Uninstall] Dropped all tables successfull');
+
+            $admin_tool = new UninstallAdminTool($app);
+            $admin_tool->exec(MANUFAKTUR_PATH.'/Contact/extension.json');
 
             return $app['translator']->trans('Successfull uninstalled the extension %extension%.',
                 array('%extension%' => 'Contact'));

@@ -72,12 +72,9 @@ class ExtraFieldEdit extends Dialog {
             'required' => false,
             'label' => 'Description'
         ))
-        ->add('delete', 'choice', array(
-            'choices' => array('DELETE' => 'delete this extra field'),
-            'expanded' => true,
-            'multiple' => true,
+        ->add('delete', 'checkbox', array(
             'required' => false,
-            'label' => 'Delete'
+            'label' => 'Delete extra field'
         ))
         ;
         return $fields;
@@ -164,9 +161,14 @@ class ExtraFieldEdit extends Dialog {
                 if (self::$type_id > 0) {
                     // get the actual extra field
                     $type = $this->ExtraType->select(self::$type_id);
-                    $fields = $this->getFormFields($type);
-                    $form = $fields->getForm();
                 }
+                else {
+                    // set default record
+                    $type = $this->ExtraType->getDefaultRecord();
+                }
+                $fields = $this->getFormFields($type);
+                $form = $fields->getForm();
+
             }
             else {
                 // general error (timeout, CSFR ...)

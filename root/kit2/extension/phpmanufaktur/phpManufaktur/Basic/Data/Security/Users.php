@@ -143,12 +143,11 @@ EOD;
      * Insert a new User into the table.
      * Create a GUID if none exists.
      *
-     * @param unknown $data
-     * @param unknown $archive_id
+     * @param array $data
+     * @param integer $user_id
      * @throws \Exception
-     * @return boolean
      */
-    public function insertUser ($data, $archive_id = -1)
+    public function insertUser ($data, $user_id = -1)
     {
         try {
             if (! isset($data['username']) || ! isset($data['email']) || ! isset($data['password']) || ! isset($data['roles']))
@@ -165,11 +164,10 @@ EOD;
             $data['email'] = strtolower($data['email']);
             // insert a new record
             $this->app['db']->insert(self::$table_name, $data);
-            $archive_id = $this->app['db']->lastInsertId();
+            $user_id = $this->app['db']->lastInsertId();
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e->getMessage(), 0, $e);
         }
-        return true;
     } // insertUser()
 
     /**
@@ -201,6 +199,7 @@ EOD;
             }
             $data = array(
                 'guid' => $this->app['utils']->createGUID(),
+                'guid_status' => 'ACTIVE',
                 'guid_timestamp' => date('Y-m-d H:i:s')
             );
             $where = array(

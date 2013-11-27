@@ -6,6 +6,10 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.19** - 2013-11-09
+
+* changed license information and handling in `extension.json`
+
 **0.18** - 2013-11-04
 
 * added support for additional vendor information
@@ -16,7 +20,7 @@ kitFramework - <https://kit2.phpmanufaktur.de>
 
 **0.15** - 2013-08-07
 
-* changed handling of initParameters() in the kitCommand Basic class
+* changed handling of `initParameters()` in the kitCommand Basic class
 
 **0.14** - 2013-08-07
 

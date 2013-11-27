@@ -39,7 +39,7 @@ class InstallAdminTool
         if (!isset($extension['vendor']['name'])) {
             throw new \Exception('Missing the vendor name of the extension!');
         }
-        if (!isset($extension['license'])) {
+        if (!isset($extension['license']['name'])) {
             throw new \Exception('Missing the license type for the extension!');
         }
 

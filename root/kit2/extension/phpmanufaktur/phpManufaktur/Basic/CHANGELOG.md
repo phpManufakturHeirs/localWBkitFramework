@@ -6,6 +6,31 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.61**
+
+* introduce class `dbUtils` and share it as `$app[db.utils]`
+* added missing check to `bootstrap.php` for MySQL InnoDB
+
+**0.60**
+
+* set the `CMS_PATH` from `FRAMEWORK_PATH` to avoid invalid assignments at mobile installations
+* introduce `/pattern` templates and add a pattern for the about dialog
+* BASIC get the parameter ID (PID) now also from submitted `form.factory` forms
+* changed visibility for $message to protected to enable extended classes to set messages direct without auto-formatting
+* switch off the debugging mode if the application return a 403 HTTP error
+* added new kitCommand parameter `cache[]`
+* add `createGUID()` and `getUserByGUID()` to class `Account`
+* improved the `CustomLogoutSuccessHandler` and assigned actions/forms
+* added missing `guid_status` at `createNewGUID()` to class `Users`
+* fixed a incomplete check for the license key at setup of Admin-Tools 
+
+**0.59** - 2013-11-09
+
+* changed license information and handling in `extension.json`
+* removed link to german help file for the kitCommands because it is incomplete, use the english help instead
+* added `getProxyInfo()` in class `Utils` - return array with PROXY information
+* fixed: `_recaptcha_http_post()` support now also the usage of a PROXY server
+
 **0.58** - 2013-11-08
 
 * set FRAMEWORK_PATH from BOOTSTRAP_PATH and get it no longer from the framework.json (needed for mobile Installations)

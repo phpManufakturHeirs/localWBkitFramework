@@ -228,6 +228,16 @@ class Contact extends ContactParent
     }
 
     /**
+     * Return the primary EMail address for the given contact ID
+     *
+     * @param integer $contact_id
+     */
+    public function getPrimaryEMailAddress($contact_id)
+    {
+        return $this->ContactData->getPrimaryEmailAddress($contact_id);
+    }
+
+    /**
      * General select function for contact records.
      * The identifier can be the contact_id or the login name.
      * Return a PERSON or a COMPANY record. If the identifier not exists return
@@ -237,7 +247,14 @@ class Contact extends ContactParent
      */
     public function select($identifier, $contact_type='PERSON')
     {
+        if (!is_numeric($identifier)) {
+            // try to get the contact ID by the login name
+            if (!$identifier = $this->existsLogin($identifier)) {
+                return $this->getDefaultRecord($contact_type);
+            }
+        }
         if (is_numeric($identifier)) {
+
             self::$contact_id = $identifier;
             if (self::$contact_id < 1) {
                 return $this->getDefaultRecord($contact_type);
@@ -662,6 +679,17 @@ class Contact extends ContactParent
                         foreach ($field_ids as $field_id) {
                             $this->Extra->insert($contact_id, $category_id, $category['category_type_name'], $field_id);
                         }
+                        // check if any data are submitted
+                        if (isset($data['extra_fields'])) {
+                            foreach ($data['extra_fields'] as $field) {
+                                if (false === ($type = $this->ExtraType->selectName($field['extra_type_name']))) {
+                                    $this->setMessage('Missing the field `extra_type_name`');
+                                    $this->app['db']->rollback();
+                                    return false;
+                                }
+                                $this->Extra->insert($contact_id, $category_id, $category['category_type_name'], $type['extra_type_id'], $field['extra_value']);
+                            }
+                        }
                     }
                 }
 
@@ -677,6 +705,8 @@ class Contact extends ContactParent
                     }
                 }
             }
+
+
 
             // all complete - now we refresh the OVERVIEW
             $this->Overview->refresh($contact_id);
@@ -1121,6 +1151,62 @@ class Contact extends ContactParent
     }
 
     /**
+     * Check if the given category name exists
+     *
+     * @param string $category_name
+     * @return boolean
+     */
+    public function existsCategoryName($category_name)
+    {
+        return $this->ContactCategory->existsCategory($category_name);
+    }
+
+    /**
+     * Create a new category
+     *
+     * @param array $data
+     * @param integer reference $category_type_id
+     */
+    public function createCategory($data, &$category_type_id)
+    {
+        $this->ContactCategory->createCategory($data, $category_type_id);
+    }
+
+    /**
+     * Check if a extra type name already exists
+     *
+     * @param string $extra_type_name
+     * @return boolean
+     */
+    public function existsExtraTypeName($extra_type_name)
+    {
+        return $this->ExtraType->existsTypeName($extra_type_name);
+    }
+
+    /**
+     * Create a new extra type
+     *
+     * @param array $data
+     * @param integer $extra_type_id
+     */
+    public function createExtraType($data, &$extra_type_id)
+    {
+        $this->ExtraType->insert($data, $extra_type_id);
+    }
+
+    /**
+     * Bind a extra type to the given category
+     *
+     * @param integer $extra_type_id
+     * @param integer $category_type_id
+     * @param integer reference $id
+     */
+    public function bindExtraTypeToCategory($extra_type_id, $category_type_id, &$id=null)
+    {
+        $this->ExtraCategory->insert($extra_type_id, $category_type_id, $id);
+    }
+
+    /**
      * Check if the given $tag_name already exists
      *
      * @param string $tag_name
@@ -1191,6 +1277,19 @@ class Contact extends ContactParent
     public function issetContactTag($tag_name, $contact_id)
     {
         return $this->ContactTag->issetContactTag($tag_name, $contact_id);
+    }
+
+    /**
+     * Get the status for the given $login, where $login can be the
+     * contact_login or the contact_id
+     *
+     * @param <string|integer> $login
+     * @throws \Exception
+     * @return Ambigous <boolean, string> FALSE or contact_status
+     */
+    public function getStatus($login)
+    {
+        return $this->ContactData->getStatus($login);
     }
 
 }

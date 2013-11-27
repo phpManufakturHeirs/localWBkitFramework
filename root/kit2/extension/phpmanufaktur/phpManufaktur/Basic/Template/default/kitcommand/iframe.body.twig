@@ -20,6 +20,11 @@
           }
         </script>
       {% endif %}
+      {% if not basic.page.cache %}  
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />  
+      {% endif %}
       <title>{% block title %}{{ basic.page.title|default('') }}{% endblock title %}</title>
       <meta http-equiv="Content-Type" content="text/html; charset={{ basic.page.charset|default('UTF-8') }}"/>
       <meta name="robots" content="{% block robots %}{{ basic.page.robots|default('index,follow') }}{% endblock %}" />

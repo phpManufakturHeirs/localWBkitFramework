@@ -14,17 +14,13 @@
 {% endif %}
 {% extends getTemplateFile('@phpManufaktur/Basic/Template', template_file) %}
 {% block content %}
-  {% if content|length > 0 %}
-    {{ content }}
-  {% else %}
-    <h2>{{ 'Goodbye'|trans }}</h2>    
-    {% if content|length > 0 %}
-      {{ content }}
+  <h2>{{ 'Goodbye'|trans }}</h2>    
+  <div class="logout">
+    {% if message|length > 0 %}
+      {{ message|trans }}
     {% else %}
-      <div class="logout">
         <p>{{ 'Thank you for using the kitFramework'|trans }}</p>
-        <p><a href="{{ FRAMEWORK_URL ~ '/login' }}">{{ 'Login'|trans }}</a></p>
-      </div>
+        <p><a href="{{ FRAMEWORK_URL ~ '/login' }}">{{ 'Login'|trans }}</a></p>  
     {% endif %}
-  {% endif %}
+  </div>
 {% endblock content %}
