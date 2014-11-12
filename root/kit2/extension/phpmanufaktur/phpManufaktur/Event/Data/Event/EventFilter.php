@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/FacebookGallery
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -14,13 +14,14 @@ namespace phpManufaktur\Event\Data\Event;
 use Silex\Application;
 use phpManufaktur\Event\Data\Event\Event;
 use Carbon\Carbon;
+use phpManufaktur\CommandCollection\Data\Comments\Comments;
 
 
 class EventFilter
 {
     protected $app = null;
     protected $Event = null;
-    protected $Carbon = null;
+    protected $Comments = null;
 
     /**
      * Constructor for the Event filter
@@ -31,11 +32,23 @@ class EventFilter
     {
         $this->app = $app;
         $this->Event = new Event($app);
-        $this->Carbon = new Carbon();
+        $this->Comments = new Comments($app);
     }
 
 
-    public function filter($filter=array(), &$messages=array(), &$SQL='')
+    /**
+     * The filter function for events
+     *
+     * @param array $filter
+     * @param array reference $messages
+     * @param string $SQL
+     * @param boolean $comments_info
+     * @param string $comments_type
+     * @throws \Exception
+     * @return Ambigous <boolean, array>
+     * @link https://gist.github.com/hertsch/6289857#param_filter
+     */
+    public function filter($filter=array(), &$messages=array(), &$SQL='', $comments_info=false, $comments_type='EVENT')
     {
         try {
             // SQL body
@@ -48,14 +61,14 @@ class EventFilter
                 // no filter defined - select all active events one week back and four weeks ahead
 
                 // set actual date
-                $this->Carbon->now();
-                $today = $this->Carbon->toDateTimeString();
+                $dt = Carbon::now();
+                $today = $dt->toDateTimeString();
                 // go a week back
-                $this->Carbon->subWeek();
-                $start_date = $this->Carbon->toDateTimeString();
+                $dt->subWeek();
+                $start_date = $dt->toDateTimeString();
                 // add 5 weeks (4 weeks from today)
-                $this->Carbon->addWeeks(5);
-                $end_date = $this->Carbon->toDateTimeString();
+                $dt->addWeeks(5);
+                $end_date = $dt->toDateTimeString();
 
                 $SQL .= "AND `event_publish_from` <= '$today' AND `event_publish_to` >= '$today' ";
                 $SQL .= "AND (`event_date_from` >= '$start_date' OR `event_date_to` >= '$start_date') ";
@@ -72,19 +85,21 @@ class EventFilter
                     if ((strtolower($filter['actual']) == 'current') ||
                         (is_numeric($filter['actual']) && (intval($filter['actual']) == 0))) {
                         // use the current day and add 14 days ahead
-                        $this->Carbon->startOfDay();
-                        $start_date = $this->Carbon->toDateTimeString();
-                        $this->Carbon->addDays(14);
-                        $this->Carbon->endOfDay();
-                        $end_date = $this->Carbon->toDateTimeString();
+                        $dt = Carbon::now();
+                        $dt->startOfDay();
+                        $start_date = $dt->toDateTimeString();
+                        $dt->addDays(14);
+                        $dt->endOfDay();
+                        $end_date = $dt->toDateTimeString();
                     }
                     elseif (is_numeric($filter['actual'])) {
-                        $this->Carbon->startOfDay();
-                        $this->Carbon->addDays(intval($filter['actual']));
-                        $start_date = $this->Carbon->toDateTimeString();
-                        $this->Carbon->addDays(14);
-                        $this->Carbon->endOfDay();
-                        $end_date = $this->Carbon->toDateTimeString();
+                        $dt = Carbon::now();
+                        $dt->startOfDay();
+                        $dt->addDays(intval($filter['actual']));
+                        $start_date = $dt->toDateTimeString();
+                        $dt->addDays(14);
+                        $dt->endOfDay();
+                        $end_date = $dt->toDateTimeString();
                     }
                     else {
                         // filter is not valid
@@ -97,13 +112,15 @@ class EventFilter
                     $start = strtolower(trim($start));
                     $end = trim($end);
                     if (($start == 'current') || (is_numeric($start) && (intval($start) == 0))) {
-                        $this->Carbon->startOfDay();
-                        $start_date = $this->Carbon->toDateTimeString();
+                        $dt = Carbon::now();
+                        $dt->startOfDay();
+                        $start_date = $dt->toDateTimeString();
                     }
                     elseif (is_numeric($start)) {
-                        $this->Carbon->startOfDay();
-                        $this->Carbon->addDays(intval($start));
-                        $start_date = $this->Carbon->toDateTimeString();
+                        $dt = Carbon::now();
+                        $dt->startOfDay();
+                        $dt->addDays(intval($start));
+                        $start_date = $dt->toDateTimeString();
                     }
                     else {
                         // filter is not valid
@@ -117,26 +134,30 @@ class EventFilter
                             $messages[] = $this->app['translator']->trans("The second parameter for the filter 'actual' must be positive integer value.");
                         }
                         else {
-                            $this->Carbon->addDays(intval($end));
-                            $this->Carbon->endOfDay();
-                            $end_date = $this->Carbon->toDateTimeString();
+                            $dt = Carbon::now();
+                            $dt->addDays(intval($end));
+                            $dt->endOfDay();
+                            $end_date = $dt->toDateTimeString();
                         }
                     }
                     elseif (strtolower($end) == 'year') {
-                        $this->Carbon->month(12);
-                        $this->Carbon->day(31);
-                        $this->Carbon->endOfDay();
-                        $end_date = $this->Carbon->toDateTimeString();
+                        $dt = Carbon::now();
+                        $dt->month(12);
+                        $dt->day(31);
+                        $dt->endOfDay();
+                        $end_date = $dt->toDateTimeString();
                     }
                     elseif (strtolower($end) == 'month') {
-                        $this->Carbon->endOfMonth();
-                        $this->Carbon->endOfDay();
-                        $end_date = $this->Carbon->toDateTimeString();
+                        $dt = Carbon::now();
+                        $dt->endOfMonth();
+                        $dt->endOfDay();
+                        $end_date = $dt->toDateTimeString();
                     }
                     elseif (strtolower($end) == 'week') {
-                        $this->Carbon->endOfWeek();
-                        $this->Carbon->endOfDay();
-                        $end_date = $this->Carbon->toDateTimeString();
+                        $dt = Carbon::now();
+                        $dt->endOfWeek();
+                        $dt->endOfDay();
+                        $end_date = $dt->toDateTimeString();
                     }
                     elseif (!is_numeric($end)) {
                         // filter is not valid
@@ -169,26 +190,28 @@ class EventFilter
                 $skip = false;
                 if (strtolower($filter['day']) == 'current') {
                     // set actual date
-                    $this->Carbon->startOfDay();
-                    $start_date = $this->Carbon->toDateTimeString();
-                    $this->Carbon->endOfDay();
-                    $end_date = $this->Carbon->toDateTimeString();
+                    $dt = Carbon::now();
+                    $dt->startOfDay();
+                    $start_date = $dt->toDateTimeString();
+                    $dt->endOfDay();
+                    $end_date = $dt->toDateTimeString();
                 }
                 elseif (is_numeric($filter['day'])) {
                     // filter for the given DAY
-                    $this->Carbon->startOfDay();
+                    $dt = Carbon::now();
+                    $dt->startOfDay();
                     $day = intval($filter['day']);
-                    $month = (isset($filter['month']) && is_numeric($filter['month'])) ? intval($filter['month']) : $this->Carbon->month;
-                    $year = (isset($filter['year']) && is_numeric($filter['year'])) ? intval($filter['year']) : $this->Carbon->year;
-                    $this->Carbon->setDate($year, $month, $day);
-                    $start_date = $this->Carbon->toDateTimeString();
-                    $this->Carbon->endOfDay();
-                    $end_date = $this->Carbon->toDateTimeString();
+                    $month = (isset($filter['month']) && is_numeric($filter['month'])) ? intval($filter['month']) : $dt->month;
+                    $year = (isset($filter['year']) && is_numeric($filter['year'])) ? intval($filter['year']) : $dt->year;
+                    $dt->setDate($year, $month, $day);
+                    $start_date = $dt->toDateTimeString();
+                    $dt->endOfDay();
+                    $end_date = $dt->toDateTimeString();
                 }
                 else {
                     // filter is not valid
                     $skip = true;
-                    $messages[] = $this->app['translator']->trans("The filter for 'day' must be numeric or contain the keyword 'current'");
+                    $messages[] = $this->app['translator']->trans('The filter for <em>day</em> must be numeric or contain the keyword <em>current</em>');
                 }
 
                 if (!$skip) {
@@ -216,36 +239,38 @@ class EventFilter
 
                 if (strtolower($filter['month']) == 'current') {
                     // set the actual date
-                    $this->Carbon->startOfDay();
-                    $year = (isset($filter['year']) && is_numeric($filter['year'])) ? intval($filter['year']) : $this->Carbon->year;
+                    $dt = Carbon::now();
+                    $dt->startOfDay();
+                    $year = (isset($filter['year']) && is_numeric($filter['year'])) ? intval($filter['year']) : $dt->year;
                     if ($year < 100) {
                         $year += 2000;
                     }
-                    $this->Carbon->year($year);
+                    $dt->year($year);
                     // first day of the month
-                    $this->Carbon->startOfMonth();
-                    $start_date = $this->Carbon->toDateTimeString();
-                    $this->Carbon->endOfMonth();
-                    $end_date = $this->Carbon->toDateTimeString();
+                    $dt->startOfMonth();
+                    $start_date = $dt->toDateTimeString();
+                    $dt->endOfMonth();
+                    $end_date = $dt->toDateTimeString();
                 }
                 elseif (is_numeric($filter['month'])) {
-                    $this->Carbon->startOfDay();
-                    $this->Carbon->month(intval($filter['month']));
-                    $year = (isset($filter['year']) && is_numeric($filter['year'])) ? intval($filter['year']) : $this->Carbon->year;
+                    $dt = Carbon::now();
+                    $dt->startOfDay();
+                    $dt->month(intval($filter['month']));
+                    $year = (isset($filter['year']) && is_numeric($filter['year'])) ? intval($filter['year']) : $dt->year;
                     if ($year < 100) {
                         $year += 2000;
                     }
-                    $this->Carbon->year($year);
+                    $dt->year($year);
                     // first day of the month
-                    $this->Carbon->startOfMonth();
-                    $start_date = $this->Carbon->toDateTimeString();
-                    $this->Carbon->endOfMonth();
-                    $end_date = $this->Carbon->toDateTimeString();
+                    $dt->startOfMonth();
+                    $start_date = $dt->toDateTimeString();
+                    $dt->endOfMonth();
+                    $end_date = $dt->toDateTimeString();
                 }
                 else {
                     // filter is not valid
                     $skip = true;
-                    $messages[] = $this->app['translator']->trans("The filter for 'month' must be numeric or contain the keyword 'current'");
+                    $messages[] = $this->app['translator']->trans('The filter for <em>month</em> must be numeric or contain the keyword <em>current</em>');
                 }
 
                 if (!$skip) {
@@ -273,23 +298,25 @@ class EventFilter
 
                 if (strtolower($filter['year']) == 'current') {
                     // set the date, based from the actual day
-                    $this->Carbon->startOfDay();
-                    $this->Carbon->setDateTime($this->Carbon->year, 1, 1, 0, 0, 0);
-                    $start_date = $this->Carbon->toDateTimeString();
-                    $this->Carbon->setDateTime($this->Carbon->year, 12, 31, 23, 59, 59);
-                    $end_date = $this->Carbon->toDateTimeString();
+                    $dt = Carbon::now();
+                    $dt->startOfDay();
+                    $dt->setDateTime($dt->year, 1, 1, 0, 0, 0);
+                    $start_date = $dt->toDateTimeString();
+                    $dt->setDateTime($dt->year, 12, 31, 23, 59, 59);
+                    $end_date = $dt->toDateTimeString();
                 }
                 elseif (is_numeric($filter['year'])) {
                     $year = ($filter['year'] < 100) ? 2000 + intval($filter['year']) : intval($filter['year']);
-                    $this->Carbon->setDateTime($year, 1, 1, 0, 0, 0);
-                    $start_date = $this->Carbon->toDateTimeString();
-                    $this->Carbon->setDateTime($year, 12, 31, 23, 59, 59);
-                    $end_date = $this->Carbon->toDateTimeString();
+                    $dt = Carbon::now();
+                    $dt->setDateTime($year, 1, 1, 0, 0, 0);
+                    $start_date = $dt->toDateTimeString();
+                    $dt->setDateTime($year, 12, 31, 23, 59, 59);
+                    $end_date = $dt->toDateTimeString();
                 }
                 else {
                     // filter is not valid
                     $skip = true;
-                    $messages[] = $this->app['translator']->trans("The filter for 'year' must be numeric or contain the keyword 'current'");
+                    $messages[] = $this->app['translator']->trans('The filter for <em>year</em> must be numeric or contain the keyword <em>current</em>');
                 }
 
                 if (!$skip) {
@@ -350,13 +377,13 @@ class EventFilter
                         if (!$start) {
                             $SQL .= " OR ";
                         }
-                        $SQL .= "`address_state`='".$this->app['utils']->utf8_entities(trim($state))."'";
+                        $SQL .= "`address_state` LIKE '".$this->app['utils']->utf8_entities(trim($state))."%'";
                         $start = false;
                     }
                     $SQL .= ") ";
                 }
                 else {
-                    $SQL .= "AND `address_state`='".$this->app['utils']->utf8_entities($filter['state'])."' ";
+                    $SQL .= "AND `address_state` LIKE '".$this->app['utils']->utf8_entities($filter['state'])."%' ";
                 }
             }
 
@@ -492,14 +519,17 @@ class EventFilter
                 }
             }
 
-
             // execute the filter and get all event IDs
-            //$this->app['db']->query("SET NAMES utf8");
             $results = $this->app['db']->fetchAll($SQL);
             $events = array();
             foreach ($results as $result) {
                 // loop through the events and get all details
-                $events[] = $this->Event->selectEvent($result['event_id']);
+                $event = $this->Event->selectEvent($result['event_id']);
+                if ($comments_info) {
+                    // add information about comments
+                    $event['comments']['count'] = $this->Comments->countComments($comments_type, $result['event_id']);
+                }
+                $events[] = $event;
             }
             // return the event array or false
             return (!empty($events)) ? $events : false;

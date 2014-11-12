@@ -1,0 +1,47 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/miniShop/Template/default/css/basket.min.css" media="screen, projection" />
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  {% if article.status != 'AVAILABLE_SOON' and article.status != 'NOT_AVAILABLE' %} 
+    
+    <form action="{{ FRAMEWORK_URL ~ '/minishop/basket/add' }}" class="form-inline" method="post" role="form" target="_parent">
+      <div class="wrapper">
+        <div class="input-group">
+          <div class="input-group-addon"><i class="fa fa-shopping-cart"></i></div>
+            {{ form_widget(form.quantity) }}
+        </div>
+      </div>
+      {% if form.article_variant_name.vars.value|length > 0 %}
+        <div class="wrapper">
+          {{ form_widget(form.article_variant_values) }}
+        </div>
+      {% endif %}  
+      {% if form.article_variant_name_2.vars.value|length > 0 %}
+        <div class="wrapper">
+          {{ form_widget(form.article_variant_values_2) }}
+        </div>
+      {% endif %}          
+      {{ form_rest(form) }}
+      <button type="submit" class="btn btn-default input-sm" title="{{ 'Add article to the shopping basket'|trans }}"><i class="fa fa-plus"></i></button>
+    </form>  
+
+{% endif %}
+{% endblock content %}
+
+{% block footer %}
+  {% set iframe_add_height = -50 %}
+  {{ parent() }}
+{% endblock footer %}

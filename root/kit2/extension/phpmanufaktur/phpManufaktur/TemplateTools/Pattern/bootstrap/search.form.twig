@@ -1,0 +1,20 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+
+  This search form is ready to use, just place it in your template, the size
+  will fit to the embedding parent.
+#}
+<!-- {{ _self.getTemplateName() }} -->
+<form action="{{ CMS_URL ~ '/search/index.php' }}" name="search" role="form" method="get">      
+  <div class="input-group">
+    <input name="string" type="text" class="form-control" placeholder="{{ 'Search'|trans }}..." />
+    <span class="input-group-btn">
+      <button class="btn btn-default" type="submit" title="{{ 'Search'|trans }}"><span class="glyphicon glyphicon-search"></span></button>
+    </span>
+  </div>
+</form>

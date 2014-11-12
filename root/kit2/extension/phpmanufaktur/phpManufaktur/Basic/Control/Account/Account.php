@@ -48,7 +48,7 @@ class Account
     /**
      * Return the display name of the authenticated user or ANONYMOUS otherwise
      *
-     * @return string|unknown
+     * @return string
      */
     public function getDisplayName()
     {
@@ -66,8 +66,48 @@ class Account
             // user not found!
             return 'ANONYMOUS';
         }
-        $display_name = (isset($user_data['displayname']) && ! empty($user_data['displayname'])) ? $user_data['displayname'] : $user_data['username'];
-        return $display_name;
+        return (isset($user_data['displayname']) && ! empty($user_data['displayname'])) ? $user_data['displayname'] : $user_data['username'];
+    }
+
+    /**
+     * Return the EMail address of the authenticated user or FALSE
+     *
+     * @return boolean|string
+     */
+    public function getEMailAddress()
+    {
+        $token = $this->app['security']->getToken();
+        if (is_null($token))
+            return false;
+
+        $user = $token->getUser();
+
+        if ($user == 'anon.') {
+            return false;
+        }
+        // get the user record
+        if (false === ($user_data = $this->FrameworkUser->selectUser($user->getUsername()))) {
+            // user not found!
+            return false;
+        }
+        return (isset($user_data['email']) && ! empty($user_data['email'])) ? $user_data['email'] : false;
+    }
+
+    /**
+     * Return the displayname for the given username from the database, if the
+     * username not exists, the function will return 'ANONYMOUS' as displayname.
+     *
+     * @param string $username
+     * @return string
+     */
+    public function getDisplayNameByUsername($username)
+    {
+        // get the user record
+        if (false === ($user_data = $this->FrameworkUser->selectUser($username))) {
+            // user not found!
+            return 'ANONYMOUS';
+        }
+        return (isset($user_data['displayname']) && ! empty($user_data['displayname'])) ? $user_data['displayname'] : $user_data['username'];
     }
 
     /**
@@ -99,6 +139,40 @@ class Account
     }
 
     /**
+     * Return a arry with all possible entry points for the authenticated user
+     *
+     * @return array
+     */
+    public function getUserRolesEntryPoints()
+    {
+        // get all available entry points
+        $entry_points = $this->app['security.role_entry_points'];
+
+        $points = array();
+        foreach ($entry_points as $role => $entries) {
+            // check to which entry points the user is allowed to access
+            if ($this->isGranted($role)) {
+                foreach ($entries as $entry) {
+                    $points[$role][] = $entry;
+                }
+            }
+        }
+        ksort($points);
+        return $points;
+    }
+
+    public function getAvailableRoles()
+    {
+        $roles = call_user_func_array('array_merge', $this->app['security.role_hierarchy']);
+        if (!in_array('ROLE_ADMIN', $roles)) {
+            $roles[] = 'ROLE_ADMIN';
+        }
+        unset($roles[array_search('ROLE_ALLOWED_TO_SWITCH', $roles)]);
+        sort($roles);
+        return $roles;
+    }
+
+    /**
      * Check if the given CMS user has administrator privileges at the CMS
      *
      * @param string $username
@@ -113,11 +187,26 @@ class Account
     /**
      * Check if the user has as account at the kitFramework
      *
-     * @param string $username
+     * @param string $username check username and/or email address
+     * @param integer $ignore_id if set, ignore the user account with this ID
+     * @return boolean
      */
-    public function checkUserHasFrameworkAccount($username)
+    public function checkUserHasFrameworkAccount($username, $ignore_id=null)
     {
-        return $this->FrameworkUser->existsUser($username);
+        return $this->FrameworkUser->existsUser($username, $ignore_id);
+    }
+
+    /**
+     * Check if the given displayname is already in use
+     *
+     * @param string $displayname
+     * @param integer $ignore_id don't check the given user ID
+     * @throws \Exception
+     * @return boolean
+     */
+    public function existsDisplayName($displayname, $ignore_id=null)
+    {
+        return $this->FrameworkUser->existsDisplayName($displayname, $ignore_id);
     }
 
     /**
@@ -160,7 +249,7 @@ class Account
      * @param array|string $roles
      * @param string $displayname
      */
-    public function createAccount($username, $email, $password, $roles, $displayname='')
+    public function createAccount($username, $email, $password, $roles, $displayname='', &$id=-1)
     {
         $data = array(
             'username' => $username,
@@ -169,7 +258,7 @@ class Account
             'displayname' => ($displayname != '') ? $displayname : $username,
             'roles' => $roles
         );
-        $this->FrameworkUser->insertUser($data);
+        return $this->FrameworkUser->insertUser($data, $id);
     }
 
     /**
@@ -201,6 +290,18 @@ class Account
     public function updateUserData($username, $data)
     {
         $this->FrameworkUser->updateUser($username, $data);
+    }
+
+    /**
+     * Update a user account by the given user ID
+     *
+     * @param integer $id
+     * @param array $data
+     * @throws \Exception
+     */
+    public function updateUserDataByID($id, $data)
+    {
+        $this->FrameworkUser->updateUserByID($id, $data);
     }
 
     /**

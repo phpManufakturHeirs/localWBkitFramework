@@ -1,0 +1,382 @@
+{# 
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Event
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CKEditor/Source/ckeditor.js"></script>
+{% endblock jquery %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/ui/latest/themes/smoothness/jquery-ui.min.css" />
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/ui/latest/themes/smoothness/jquery.ui.theme.css" />
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/timepicker/latest/jquery-ui-timepicker-addon.min.css" />
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/default/css/admin.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock stylesheet %}
+{% block title %}{{ 'Event Administration - Create or edit event'|trans }}{% endblock %}
+  
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/Event/Template/default/admin/toolbar.twig' %}
+    
+    <div class="height-15"></div>
+    
+    {{ alert }}
+    
+    {% if recurring_dates|length > 0 %}
+      <small>{{ 'The next recurring events'|trans }}:</small>
+      <div class="row">
+        {% for recurring in recurring_dates %}
+          <div class="col-md-1 col-sm-2 col-xs-4">
+            <a href="{{ FRAMEWORK_URL ~ '/admin/event/edit/id/' ~ recurring.event_id ~ '?usage=' ~ usage }}">{{ recurring.event_date_from|date('DATE_FORMAT'|trans) }}</a>
+          </div>
+        {% endfor %}  
+      </div>
+    {% endif %}
+    
+    <form action="{{ FRAMEWORK_URL }}/admin/event/edit?usage={{ usage }}" method="post" {{ form_enctype(form) }} role="form">
+      
+      {{ form_errors(form) }}
+      {{ form_row(form._token) }}
+      
+      <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          {# left content column #}
+          {{ form_row(form.event_id) }}
+          <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-12">
+              <label>{{ 'ID'|humanize|trans }}</label>
+            </div>
+            <div class="col-lg-8 col-md-6 col-sm-12">
+              {% if form.event_id.vars.value > 0 %}
+                {{ '%05d'|format(form.event_id.vars.value) }}
+              {% else %}
+                {{ '- new group -'|trans }}
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-12">
+              {{ form_label(form.event_status) }}
+            </div>
+            <div class="col-lg-8 col-md-6 col-sm-12">
+              {{ form_widget(form.event_status, {'attr':{'class':'form-control input-sm'}}) }}
+            </div>
+          </div>
+          
+          {{ form_row(form.group_id) }}
+          {% if form.group_name.vars.value|length > 0 %}
+            <div class="row">
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <label>{{ 'Group'|trans }}</label>
+              </div>
+              <div class="col-lg-8 col-md-6 col-sm-12">
+                {{ form.group_name.vars.value|capitalize|trans }}
+              </div>
+            </div>
+          {% endif %}
+          
+          <div class="height-15"></div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.event_organizer) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.event_organizer, {'attr':{'class':'form-control input-sm'}}) }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.event_location) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.event_location, {'attr':{'class':'form-control input-sm'}}) }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.event_date_from) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.event_date_from, {'attr':{'class':'form-control input-sm event_date_from'}}) }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.event_date_to) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.event_date_to, {'attr':{'class':'form-control input-sm event_date_to'}}) }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.event_publish_from) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.event_publish_from, {'attr':{'class':'form-control input-sm event_publish_from'}}) }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.event_publish_to) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.event_publish_to, {'attr':{'class':'form-control input-sm event_publish_to'}}) }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.event_deadline) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.event_deadline, {'attr':{'class':'form-control input-sm event_deadline'}}) }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.event_url) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.event_url, {'attr':{'class':'form-control input-sm'}}) }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.event_costs) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.event_costs, {'attr':{'class':'form-control input-sm'}}) }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.event_participants_max) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.event_participants_max, {'attr':{'class':'form-control input-sm'}}) }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              <label>{{ 'Participants confirmed'|trans }}</label>
+            </div>
+            <div class="col-lg-12 text-info">
+              {{ form.event_participants_confirmed.vars.value }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              <label>{{ 'Participants pending'|trans }}</label>
+            </div>
+            <div class="col-lg-12 text-info">
+              {{ form.event_participants_pending.vars.value }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              <label>{{ 'Participants canceled'|trans }}</label>
+            </div>
+            <div class="col-lg-12 text-info">
+              {{ form.event_participants_canceled.vars.value }}
+            </div>
+          </div>
+
+          {% if images|length > 0 %}
+            <div class="row">
+              <div class="col-lg-12">
+                <label>{{ 'Pictures'|trans }}</label>
+              </div>
+              <div class="col-lg-12">
+                {% for image in images %}
+                  <div class="image">
+                    <div class="close">
+                      <a href="{{ FRAMEWORK_URL }}/admin/event/image/delete/id/{{ image.image_id }}/event/{{ form.event_id.vars.value }}?usage={{ usage }}" title="{{ 'Delete this image'|trans }}">
+                        <li class="fa fa-times-circle fa-lg"></li></a>
+                    </div>
+                    <img src="{{ FRAMEWORK_URL ~ image.image_path }}" title="{{ image.image_title }}" />
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+          
+          <div class="height-15"></div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              <a href="{{ add_image_url }}" title="{{ 'Add a image'|trans }}"><i class="fa fa-picture-o fa-3x"></i></a>
+            </div>
+          </div>         
+          
+        </div>{# end left content column #}
+        
+        <div class="col-lg-8 col-md-8 col-sm-8">
+          {# right content column #}
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.description_title) }}
+            </div>
+            <div class="col-lg-12">
+              {{ form_widget(form.description_title, {'attr':{'class':'form-control input-sm'}}) }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.description_short) }}
+            </div>
+            <div class="col-lg-12">
+              {{ CKEditor(
+                    form.description_short.vars.id,
+                    form.description_short.vars.full_name,
+                    form.description_short.vars.value,
+                    '100%', '100px',
+                    MANUFAKTUR_URL ~ '/Event/Template/default/admin/ckeditor.config.simple.js'
+              ) }}
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              {{ form_label(form.description_long) }}
+            </div>
+            <div class="col-lg-12">
+              {{ CKEditor(
+                    form.description_long.vars.id,
+                    form.description_long.vars.full_name,
+                    form.description_long.vars.value,
+                    '100%', '250px',
+                    MANUFAKTUR_URL ~ '/Event/Template/default/admin/ckeditor.config.full.js'
+              ) }}
+            </div>
+          </div>
+          
+          {% for extra in extra_info %}
+            {% if (extra.type == 'HTML') %}
+              <div calss="row">
+                <div class="col-lg-12">
+                  {{ form_label(form[extra.name]) }}
+                </div>
+                <div class="col-lg-12">
+                  {{ CKEditor(
+                        form[extra.name].vars.id,
+                        form[extra.name].vars.full_name,
+                        form[extra.name].vars.value,
+                        '100%', '100px',
+                        MANUFAKTUR_URL ~ '/Event/Template/default/admin/ckeditor.config.simple.js'
+                  ) }}
+                </div>
+              </div>
+            {% else %}
+              <div calss="row">
+                <div class="col-lg-12">
+                  {{ form_label(form[extra.name]) }}
+                </div>
+                <div class="col-lg-12">
+                  {{ form_widget(form[extra.name], {'attr':{'class':'form-control input-sm'}}) }}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+          
+          <div class="clearfix"></div>
+          <div class="height-15"></div>
+          
+          <div class="row">
+            <div class="col-lg-12">
+              <input class="btn btn-default" type="submit" value="{{ 'Submit'|trans }}" />&nbsp;
+              {% if form.event_id.vars.value > 0 and form.event_status.vars.value == 'ACTIVE' %}
+                {% set recurring_disabled = '' %}
+              {% else %}
+                {% set recurring_disabled = ' disabled' %}
+              {% endif %}
+              <a class="btn btn-default{{ recurring_disabled }}" href="{{ FRAMEWORK_URL }}/admin/event/recurring/id/{{ form.event_id.vars.value }}?usage={{ usage }}" role="button">{{ 'Recurring event'|trans }}</a>              
+            </div>
+          </div>
+          
+        </div>{# end right content column #}
+      </div>{# end content row #}
+      
+      {#{ form_rest(form) }#}
+      
+    </form>  
+  </div>
+{% endblock content %}
+    
+{% block footer_jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/jquery-ui.min.js"></script>    
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/i18n/jquery-ui-i18n.min.js"></script>  
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/timepicker/latest/jquery-ui-timepicker-addon.min.js"></script>  
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/timepicker/latest/i18n/jquery-ui-timepicker-de.js"></script>  
+{% endblock footer_jquery %}
+  
+{% block footer %}
+  {{ parent() }}
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      $(document).ready(function() {
+        $.datepicker.setDefaults($.datepicker.regional['{{ app.translator.locale }}']);
+        $.timepicker.setDefaults($.timepicker.regional['{{ app.translator.locale }}']);
+        $('.event_date_from').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_date_to').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_publish_from').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_publish_to').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_deadline').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+      });
+    }
+  </script>
+{% endblock footer %}

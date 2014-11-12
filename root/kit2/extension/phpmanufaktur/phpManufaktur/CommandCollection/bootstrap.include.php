@@ -4,18 +4,10 @@
  * CommandCollection
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de
+ * @link https://kit2.phpmanufaktur.de/CommandCollection
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
-
-// not needed - use only for syntax check!
-global $app, $admin, $command, $collection;
-
-// scan the /Locale directory and add all available languages
-$app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/CommandCollection/Data/Locale');
-// scan the /Locale/Custom directory and add all available languages
-$app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/CommandCollection/Data/Locale/Custom');
 
 // use $collection for all CommandCollection routes
 $collection = $app['controllers_factory'];
@@ -91,6 +83,14 @@ $collection->get('/comments/admin/reject/{guid}',
 $collection->get('/comments/admin/lock/{guid}',
     // admin reject the comment and lock the contact
     'phpManufaktur\CommandCollection\Control\Comments\Comments::controllerAdminLockContact');
+
+// administrative routes for the comments
+$admin->get('/collection/comments/reject/id/{comment_id}',
+    'phpManufaktur\CommandCollection\Control\Comments\Comments::ControllerAdminPublishedCommentReject');
+$admin->get('/collection/comments/remove/id/{comment_id}',
+    'phpManufaktur\CommandCollection\Control\Comments\Comments::ControllerAdminPublishedCommentRemove');
+$admin->get('/collection/comments/confirm/id/{comment_id}',
+    'phpManufaktur\CommandCollection\Control\Comments\Comments::ControllerAdminPublishedCommentConfirm');
 
 // RAL colors
 $command->post('/ral',

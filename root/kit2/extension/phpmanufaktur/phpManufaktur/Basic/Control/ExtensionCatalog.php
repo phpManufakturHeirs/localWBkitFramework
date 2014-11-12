@@ -11,13 +11,14 @@
 
 namespace phpManufaktur\Basic\Control;
 
-use Silex\Application;
 use phpManufaktur\Basic\Control\gitHub\gitHub;
 use phpManufaktur\Basic\Control\cURL\cURL;
 use phpManufaktur\Basic\Control\unZip\unZip;
 use phpManufaktur\Basic\Data\ExtensionCatalog as Catalog;
 use phpManufaktur\Basic\Data\Setting;
 use phpManufaktur\Basic\Data\ExtensionRegister as Register;
+use phpManufaktur\Basic\Control\Pattern\Alert;
+use Silex\Application;
 
 /**
  * Get the catalog with all for the kitFramework available extensions from GitHub
@@ -25,56 +26,35 @@ use phpManufaktur\Basic\Data\ExtensionRegister as Register;
  * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  *
  */
-class ExtensionCatalog
+class ExtensionCatalog extends Alert
 {
 
-    protected $app = null;
-    protected static $message = '';
+    protected static $usage = null;
+    private static $ignore_locale = false;
 
-    /**
-     * Constructor
-     *
-     * @param Application $app
-     */
-    public function __construct(Application $app)
+    public function __construct(Application $app=null, $ignore_locale=false)
     {
-        $this->app = $app;
+        if (!is_null($app)) {
+            self::$ignore_locale = $ignore_locale;
+            $this->initialize($app);
+        }
     }
 
     /**
-     * @return the $message
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Basic\Control\Pattern\Alert::initialize()
      */
-    public function getMessage ()
+    protected function initialize(Application $app)
     {
-        return self::$message;
-    }
+        parent::initialize($app);
 
-    public function setMessage($message, $params=array())
-    {
-        self::$message .= $this->app['twig']->render($this->app['utils']->getTemplateFile(
-            '@phpManufaktur/Basic/Template',
-            'framework/message.twig'),
-        array(
-            'message' => $this->app['translator']->trans($message, $params)
-        ));
-    }
-
-    /**
-     * Check if a message is active
-     *
-     * @return boolean
-     */
-    public function isMessage()
-    {
-        return !empty(self::$message);
-    }
-
-    /**
-     * Clear the existing message(s)
-     */
-    public function clearMessage()
-    {
-        self::$message = '';
+        if (!self::$ignore_locale) {
+            self::$usage = $this->app['request']->get('usage', 'framework');
+            if (self::$usage != 'framework') {
+                // set the locale from the CMS locale
+                $app['translator']->setLocale($app['session']->get('CMS_LOCALE', 'de'));
+            }
+        }
     }
 
     /**
@@ -99,6 +79,35 @@ class ExtensionCatalog
     }
 
     /**
+     * Check if a new catalog information is available at Github
+     *
+     * @param string reference $catalog_release
+     * @param string reference $available_release
+     * @param string reference $catalog_url
+     * @throws \Exception
+     * @return boolean
+     */
+    public function isCatalogUpdateAvailable(&$catalog_release=null,&$available_release=null, &$catalog_url=null)
+    {
+        // init GitHub
+        $github = new gitHub($this->app);
+        $available_release = null;
+        if (false === ($catalog_url = $github->getLastRepositoryZipUrl('phpManufaktur', 'kitFramework_Catalog', $available_release))) {
+            throw new \Exception($this->app['translator']->trans("Can't read the the %repository% from %organization% at Github!",
+                array('%repository%' => 'kitFramework_Catalog', '%organization%' => 'phpManufaktur')));
+        }
+
+        $Setting = new Setting($this->app);
+        $catalog_release = $Setting->select('extension_catalog_release');
+        if (version_compare($available_release, $catalog_release, '>')) {
+            // update available
+            return true;
+        }
+        // no update available
+        return false;
+    }
+
+    /**
      * Get the online catalog from Github and read it into the database
      *
      * @throws \Exception
@@ -106,23 +115,15 @@ class ExtensionCatalog
      */
     public function getOnlineCatalog()
     {
-        // init GitHub
-        $github = new gitHub($this->app);
-        $release = null;
-        if (false === ($catalog_url = $github->getLastRepositoryZipUrl('phpManufaktur', 'kitFramework_Catalog', $release))) {
-            throw new \Exception($this->app['translator']->trans("Can't read the the %repository% from %organization% at Github!",
-                array('%repository%' => 'kitFramework_Catalog', '%organization%' => 'phpManufaktur')));
-        }
+        $catalog_release = null;
+        $available_release = null;
+        $catalog_url = null;
 
-        $Setting = new Setting($this->app);
-        $last_release = $Setting->select('extension_catalog_release');
-        if (\version_compare($release, $last_release, '>')) {
-            $this->setMessage("actual: $last_release, online: $release (online is newer, we'll update!)");
-        }
-        else {
-            // nothing to do!
+        if (!$this->isCatalogUpdateAvailable($catalog_release, $available_release, $catalog_url)) {
+            // nothing to do - return ...
             return true;
         }
+
         $cURL = new cURL($this->app);
         $info = array();
         $target_path = FRAMEWORK_TEMP_PATH.'/catalog.zip';
@@ -146,6 +147,9 @@ class ExtensionCatalog
         // init catalog
         $catalog = new Catalog($this->app);
 
+        $update_extension = array();
+        $add_extension = array();
+
         foreach ($files as $file) {
             if (false !== strpos($file['file_name'], '/')) {
                 $work = explode('/', substr($file['file_name'], strlen($subdirectory)+1));
@@ -157,14 +161,25 @@ class ExtensionCatalog
                                 try {
                                     $framework = $this->app['utils']->readConfiguration($file['file_path']);
                                 } catch (\Exception $e) {
-                                    $this->setMessage('Can not read the information file for the kitFramework!');
+                                    $this->setAlert('Can not read the information file for the kitFramework!',
+                                        array(), self::ALERT_TYPE_WARNING);
                                 }
                                 if (file_exists(FRAMEWORK_PATH.'/framework.json') && isset($framework['release']['number'])) {
                                     // check if a new kitFramework release is available
                                     $actual_framework = $this->app['utils']->readConfiguration(FRAMEWORK_PATH.'/framework.json');
                                     if (version_compare($framework['release']['number'], $actual_framework['release']['number'], '>')) {
                                         // the framework version has changed!
-                                        $this->setMessage('New kitFramework release available!');
+                                        $Setting = new Setting($this->app);
+                                        if (!$Setting->exists('framework_update')) {
+                                            // insert a new record
+                                            $Setting->insert('framework_update', $framework['release']['number']);
+                                        }
+                                        else {
+                                            $Setting->update('framework_update', $framework['release']['number']);
+                                        }
+                                        $this->setAlert('There is a <a href="%route%">new kitFramework release available</a>!',
+                                            array('%route%' => FRAMEWORK_URL.'/admin/welcome/extensions?usage='.self::$usage),
+                                            self::ALERT_TYPE_INFO);
                                     }
                                 }
                             }
@@ -176,13 +191,13 @@ class ExtensionCatalog
                                 try {
                                     $target = $this->app['utils']->readConfiguration($file['file_path']);
                                 } catch (\Exception $e) {
-                                    $this->setMessage('Can not read the extension.json for %name%!<br />Error message: %error%',
-                                        array('%name%' => $name, '%error%' => $e->getMessage()));
+                                    $this->setAlert('Can not read the extension.json for %name%!<br />Error message: %error%',
+                                        array('%name%' => $name, '%error%' => $e->getMessage()), self::ALERT_TYPE_WARNING);
                                     break;
                                 }
                                 if (!isset($target['guid']) || !isset($target['group']) || !isset($target['release']['number'])) {
-                                    $this->setMessage('The extension.json of <b>%name%</b> does not contain all definitions, check GUID, Group and Release!',
-                                        array('%name%' => $name));
+                                    $this->setAlert('The extension.json of <b>%name%</b> does not contain all definitions, check GUID, Group and Release!',
+                                        array('%name%' => $name), self::ALERT_TYPE_WARNING);
                                     break;
                                 }
                                 $path = substr($file['file_path'], 0, strrpos($file['file_path'], '/')+1);
@@ -227,14 +242,12 @@ class ExtensionCatalog
                                 if (null === ($id = $catalog->selectIDbyGUID($data['guid']))) {
                                     // insert as new record
                                     $id = $catalog->insert($data);
-                                    $this->setMessage('Add the extension <b>%name%</b> to the catalog.',
-                                        array('%name%' => $data['name']));
+                                    $add_extension[] = $data['name'];
                                 }
                                 else {
                                     // update the existing record
                                     $catalog->update($id, $data);
-                                    $this->setMessage('Updated the catalog data for <b>%name%</b>.',
-                                        array('%name%' => $data['name']));
+                                    $update_extension[] = $data['name'];
                                 }
                             }
                             break;
@@ -242,13 +255,35 @@ class ExtensionCatalog
                 }
             }
         }
+
         // update settings
-        $Setting->update('extension_catalog_release', $release);
+        $Setting = new Setting($this->app);
+        if (is_null($Setting->select('extension_catalog_release'))) {
+            $Setting->insertDefaultValues();
+        }
+        $Setting->update('extension_catalog_release', $available_release);
+
+        if (!empty($add_extension)) {
+            $this->setAlert('Add the extension(s) <strong>%extension%</strong> to the catalog.',
+                array('%extension%' => implode(', ', $add_extension)), self::ALERT_TYPE_SUCCESS);
+        }
+        if (!empty($update_extension)) {
+            $this->setAlert('Updated the catalog data for the extension(s) <strong>%extension%</strong>.',
+                array('%extension%' => implode(', ', $update_extension)), self::ALERT_TYPE_SUCCESS);
+        }
+
         return true;
     }
 
-    public function getAvailableExtensions()
+    /**
+     * Get the available extensions for this kitFramework installation
+     *
+     * @param string $locale default = 'en'
+     * @return array
+     */
+    public function getAvailableExtensions($locale='en')
     {
+        $locale = strtolower($locale);
         $catalog = new Catalog($this->app);
         $items = $catalog->selectAll();
 
@@ -263,13 +298,13 @@ class ExtensionCatalog
             $data = $item;
             $info = json_decode(base64_decode($item['info']), true);
             $data['info'] = $info;
-            if (isset($info['description'][$this->app['locale']])) {
+            if (isset($info['description'][$locale])) {
                 // description for the actual locale is available
                 $description = array(
-                    'title' => isset($info['description'][$this->app['locale']]['title']) ? $info['description'][$this->app['locale']]['title'] : '',
-                    'short' => isset($info['description'][$this->app['locale']]['short']) ? $info['description'][$this->app['locale']]['short'] : '',
-                    'long' => isset($info['description'][$this->app['locale']]['long']) ? $info['description'][$this->app['locale']]['long'] : '',
-                    'url' => isset($info['description'][$this->app['locale']]['url']) ? $info['description'][$this->app['locale']]['url'] : ''
+                    'title' => isset($info['description'][$locale]['title']) ? $info['description'][$locale]['title'] : '',
+                    'short' => isset($info['description'][$locale]['short']) ? $info['description'][$locale]['short'] : '',
+                    'long' => isset($info['description'][$locale]['long']) ? $info['description'][$locale]['long'] : '',
+                    'url' => isset($info['description'][$locale]['url']) ? $info['description'][$locale]['url'] : ''
                 );
             }
             else {
@@ -281,6 +316,7 @@ class ExtensionCatalog
                     'url' => isset($info['description']['en']['url']) ? $info['description']['en']['url'] : ''
                 );
             }
+
             $data['description'] = $description;
             $result[] = $data;
         }

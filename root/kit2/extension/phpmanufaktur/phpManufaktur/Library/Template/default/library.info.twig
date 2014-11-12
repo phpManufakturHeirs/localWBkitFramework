@@ -1,0 +1,57 @@
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}{{ 'kitFramework Library'|trans }}{% endblock %}
+{% block description %}{{ 'List of the available extensions and libraries for kitFramework'|trans }}{% endblock %}
+{% block content %}
+
+  <h2>kitFramework Library {{ extension.release.number }} ({{ extension.release.date|date('DATE_FORMAT'|trans) }})</h2>
+  
+  {{ parent() }}
+
+  {% if extension.library.extension|length > 0 %}
+    <h3>{{ 'PHP Extensions'|trans }}</h3>
+    <div class="list-group">
+      {% for item in extension.library.extension %}
+        <a href="{{ item.url }}" target="_blank" class="list-group-item">
+          <h4 class="list-group-item-heading">{{ item.name }}</h4>
+          {% for release in item.releases %}
+            <span class="badge">{{ release }}</span>
+          {% endfor %}
+          <div class="list-group-item-text">{{ item.usage }}</div>          
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if extension.library.library.jquery.library|length > 0 %}
+    <h3>{{ 'jQuery Libraries'|trans }}</h3>
+    <div class="list-group">
+      {% for item in extension.library.library.jquery.library %}
+        <a href="{{ item.url }}" target="_blank" class="list-group-item">
+          <h4 class="list-group-item-heading">{{ item.name }}</h4>
+          {% for release in item.releases %}
+            <span class="badge">{{ release }}</span>
+          {% endfor %}
+          <div class="list-group-item-text">{{ item.usage }}</div>          
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+    
+  {% if extension.library.library|length > 0 %}
+    <h3>{{ 'Other Libraries'|trans }}</h3>
+    <div class="list-group">
+      {% for item in extension.library.library %}
+        {% if item.name|lower != 'jquery' %}
+          <a href="{{ item.url }}" target="_blank" class="list-group-item">
+            <h4 class="list-group-item-heading">{{ item.name }}</h4>
+            {% for release in item.releases %}
+              <span class="badge">{{ release }}</span>
+            {% endfor %}
+            <div class="list-group-item-text">{{ item.usage }}</div>          
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+    
+{% endblock %}

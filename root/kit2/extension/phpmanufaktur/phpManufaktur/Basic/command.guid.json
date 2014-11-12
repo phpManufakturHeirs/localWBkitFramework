@@ -1,0 +1,29 @@
+{
+  "command":"GUID",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://kit2.phpmanufaktur.de"
+    },
+  "name": {
+    "en":"Create a globally unique identifier (GUID)",
+    "de":"Eine weltweit eindeutige Kennung erzeugen (GUID)"
+  },
+  "description": {
+    "en":"Create a globally unique idenfier (GUID)",
+    "de":"Eine weltweit eindeutige Kennung erzeugen (GUID)"
+  },
+  "help": {
+    "en": {
+      "link":"https://gist.github.com/hertsch/b9159992e4b8856796e2",
+      "gist_id":"b9159992e4b8856796e2",
+      "file": {
+        "help":"kitcommand_guid_en.md"
+      }
+    }
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  }
+}

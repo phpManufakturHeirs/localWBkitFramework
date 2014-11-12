@@ -1,0 +1,36 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}{{ 'Register a public contact record'|trans }}{% endblock %}
+{% block description %}{{ 'Register a public contact record'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Contact/Template/default/css/command.min.css" />
+{% endblock %}  
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  {# need the parent to enable prompting messages #}
+  <h2>{{ 'Contact data submitted'|trans }}</h2>
+  
+  {{ parent() }}
+  
+  <div class="panel panel-default">
+    <div class="panel-body">
+      {% if app.translator.locale == 'de' %}
+        <p>Vielen Dank für die Übermittlung Ihrer Kontaktdaten.</p>
+        <p>Wir haben Ihnen eine Bestätigung und einen Aktivierungslink per E-Mail zugesendet, bitte prüfen Sie Ihren Posteingang.</p>
+      {% else %}  
+        <p>Thank you for submitting your contact data.</p>
+        <p>We have send you a confirmation mail with an activation link, please check your inbox.</p>
+      {% endif %}
+    </div>
+  </div>
+      
+{% endblock %}

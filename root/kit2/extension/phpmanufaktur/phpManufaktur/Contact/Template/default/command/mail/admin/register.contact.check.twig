@@ -1,0 +1,65 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% if app.translator.locale == 'de' %}
+  {# GERMAN #}
+  <p>Der folgende Kontakt wurde auf {{ FRAMEWORK_URL }} eingetragen, die E-Mail Adresse wurde bestätigt:</p>
+{% else %}
+  {# ENGLISH #}
+  <p>The following Contact was submitted at {{ FRAMEWORK_URL }}, the email address is confirmed by user:</p>
+{% endif %}
+{#
+<pre>
+  {{ contact.contact_id }}
+  {{ contact.contact_type }}
+  {{ contact.contact_status }}
+
+</pre>
+{%if contact.contact_type == 'PERSON' %}
+<pre>
+  {{ contact.person_gender }}
+  {{ contact.person_title }}
+  {{ contact.person_first_name }}
+  {{ contact.person_last_name }}
+  {{ contact.person_nick_name }}
+  {{ contact.person_birthday }}
+</pre>
+{% else %}
+<pre>
+  {{ contact.company_name }}
+  {{ contact.company_department }}
+</pre>
+{% endif %}
+<pre>
+        
+  {{ contact.communication_phone }}
+  {{ contact.communication_email }}
+
+  {{ contact.address_street }}
+  {{ contact.address_zip }}
+  {{ contact.address_city }}
+  {{ contact.address_area }}
+  {{ contact.address_state }}
+  {{ contact.address_country_code }}
+        
+  {{ contact.category_name }}
+  {{ contact.category_access }}
+        
+  {{ contact.tags }}
+        
+  {{ contact.timestamp }}
+</pre>
+#}
+{% if app.translator.locale == 'de' %}
+  {# GERMAN #}
+  <p>Sie können den Kontakt <a href="{{ publish_link }}">veröffentlichen</a> oder <a href="{{ reject_link }}">zurückweisen</a>.</p>
+{% else %}
+  {# ENGLISH #}
+  <p>You can <a href="{{ publish_link }}">publish</a> or <a href="{{ reject_link }}">reject</a> the contact.</p>
+{% endif %}

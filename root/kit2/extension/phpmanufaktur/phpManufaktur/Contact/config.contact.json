@@ -1,6 +1,11 @@
 {
   "email": {
-    "required": true
+    "required": true,
+    "parse": {
+      "enabled": true,
+      "validate": true,
+      "format": true
+    }
   },
   "countries": {
     "preferred": [
@@ -8,5 +13,246 @@
       "CH",
       "AT"
     ]
+  },
+  "phonenumber": {
+    "parse": {
+      "enabled": true,
+      "default_country": "DE",
+      "validate": true,
+      "format": true,
+      "default_format": "INTERNATIONAL",
+      "maximum_length": 25
+    }
+  },
+  "zip": {
+    "parse": {
+      "enabled": true
+    }
+  },
+  "url": {
+    "parse": {
+      "enabled": true,
+      "format": true,
+      "validate": true,
+      "strip_query": false,
+      "strip_fragment": false,
+      "lowercase_host": true
+    }
+  },
+  "command": {
+    "register": {
+      "field": {
+        "predefined": [
+          "contact_type",
+          "category_id"
+        ],
+        "visible": [
+          "tags",
+          "person_gender",
+          "person_first_name",
+          "person_last_name",
+          "company_name",
+          "company_department",
+          "communication_email",
+          "communication_phone",
+          "address_street",
+          "address_zip",
+          "address_city",
+          "address_country_code",
+          "note",
+          "extra_fields"
+        ],
+        "required": [
+          "person_gender",
+          "person_last_name",
+          "company_name"
+        ],
+        "hidden": [
+          "contact_id",
+          "contact_type",
+          "category_id",
+          "category_type_id",
+          "person_id",
+          "company_id",
+          "address_id"
+        ],
+        "readonly": [
+          "contact_status",
+          "category_name"
+        ],
+        "tags": [
+          
+        ]
+      },
+      "publish": {
+        "activation": "admin"
+      }
+    }
+  },
+  "pattern": {
+    "form": {
+      "contact": {
+        "field": {
+          "predefined": [
+            "contact_type",
+            "category_id"
+          ],
+          "visible": [
+            "tags",
+            "person_gender",
+            "person_first_name",
+            "person_last_name",
+            "company_name",
+            "company_department",
+            "communication_email",
+            "communication_phone",
+            "address_street",
+            "address_zip",
+            "address_city",
+            "address_country_code",
+            "note",
+            "extra_fields"
+          ],
+          "required": [
+            "person_gender",
+            "person_last_name",
+            "company_name"
+          ],
+          "hidden": [
+            "contact_id",
+            "contact_type",
+            "category_id",
+            "category_type_id",
+            "person_id",
+            "company_id",
+            "address_id"
+          ],
+          "readonly": [
+            "contact_status",
+            "category_name"
+          ],
+          "tags": [
+            
+          ]
+        }
+      }
+    }
+  },
+  "dialog": {
+    "contact": {
+      "person": {
+        "field": {
+          "predefined": [
+            
+          ],
+          "visible": [
+            "contact_status",
+            "category_name",
+            "category_access",
+            "tags",
+            "person_gender",
+            "person_title",
+            "person_first_name",
+            "person_last_name",
+            "person_birthday",
+            "communication_email",
+            "communication_phone",
+            "communication_cell",
+            "communication_url",
+            "address_street",
+            "address_zip",
+            "address_city",
+            "address_country_code",
+            "note",
+            "extra_fields",
+            "special_fields"
+          ],
+          "required": [
+            "communication_email"
+          ],
+          "hidden": [
+            "contact_id",
+            "contact_type",
+            "category_id",
+            "category_type_id",
+            "person_id",
+            "company_id",
+            "address_id"
+          ],
+          "readonly": [
+            "category_access"
+          ],
+          "tags": [
+            
+          ],
+          "route": {
+            "person": "\/admin\/contact\/person\/edit",
+            "tag": "\/admin\/contact\/tag\/list",
+            "category": "\/admin\/contact\/category\/list",
+            "title": "\/admin\/contact\/title\/list",
+            "list": "\/admin\/contact\/list"
+          }
+        }
+      },
+      "company": {
+        "field": {
+          "predefined": [
+            
+          ],
+          "visible": [
+            "contact_status",
+            "category_name",
+            "category_access",
+            "tags",
+            "company_name",
+            "company_department",
+            "communication_email",
+            "communication_phone",
+            "communication_fax",
+            "communication_url",
+            "address_street",
+            "address_zip",
+            "address_city",
+            "address_country_code",
+            "address_delivery_street",
+            "address_delivery_zip",
+            "address_delivery_city",
+            "address_delivery_country_code",
+            "address_billing_street",
+            "address_billing_zip",
+            "address_billing_city",
+            "address_billing_country_code",
+            "note",
+            "extra_fields",
+            "special_fields"
+          ],
+          "required": [
+            "communication_email"
+          ],
+          "hidden": [
+            "contact_id",
+            "contact_type",
+            "category_id",
+            "category_type_id",
+            "company_id",
+            "person_id",
+            "address_id"
+          ],
+          "readonly": [
+            "category_access"
+          ],
+          "tags": [
+            
+          ],
+          "route": {
+            "person": "\/admin\/contact\/person\/edit",
+            "company": "\/admin\/contact\/company\/edit",
+            "tag": "\/admin\/contact\/tag\/list",
+            "category": "\/admin\/contact\/category\/list",
+            "list": "\/admin\/contact\/list"
+          }
+        }
+      }
+    }
   }
 }

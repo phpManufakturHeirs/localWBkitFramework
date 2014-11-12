@@ -11,9 +11,10 @@
     "release"
   ],
   "LOGFILE_MAX_SIZE": 2097152,
-  "LOGFILE_EMAIL_ACTIVE": true,
+  "LOGFILE_EMAIL_ACTIVE": false,
   "LOGFILE_EMAIL_LEVEL": 400,
   "LOGFILE_EMAIL_SUBJECT": "kitFramework error at: http:\/\/localhost:8080\/kit2",
   "LOGFILE_EMAIL_TO": "local@hertsch.org",
-  "FRAMEWORK_SETUP": false
+  "FRAMEWORK_SETUP": false,
+  "FRAMEWORK_UID": "3c231730-b084-4240-a890-e2fa46a80bae"
 }

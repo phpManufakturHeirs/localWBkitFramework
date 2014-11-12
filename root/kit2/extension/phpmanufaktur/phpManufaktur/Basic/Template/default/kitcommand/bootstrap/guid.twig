@@ -1,0 +1,44 @@
+{#
+  kitFramework:Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}{{ 'Generate a globally unique identifier (GUID)'|trans }}{% endblock %}
+{% block description %}{{ 'Generate a globally unique identifier (GUID)'|trans }}{% endblock %}
+{% block robots %}noindex,follow{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/kitcommand/bootstrap/css/guid.min.css" />
+{% endblock %}  
+{% block jquery %}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/zeroclipboard/latest/ZeroClipboard.min.js"></script>
+{% endblock %}
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  {# need the parent to enable prompting messages #}
+  {{ parent() }}
+  <div class="panel panel-default">
+    <div class="panel-heading">GUID</div>
+    <div class="panel-body">
+      <span class="guid">{{ guid }}</span><a id="copyguid" class="btn btn-default" role="button" href="#" data-clipboard-text="{{ guid }}" title="{{ 'Copy the GUID to the clipboard'|trans }}"><i class="fa fa-files-o"></i></a>
+    </div>
+  </div>
+{% endblock %} 
+{% block footer %}
+  {{ parent() }}
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      ZeroClipboard.config({ moviePath: '{{ LIBRARY_URL }}/jquery/zeroclipboard/latest/ZeroClipboard.swf' });
+      var clip = new ZeroClipboard(document.getElementById('copyguid'));
+      clip.on('complete', function(client, args){
+        alert("{{ 'Copied GUID to clipboard:'|trans }}"+" "+ args.text);
+      });             
+    }
+  </script>
+{% endblock footer %}

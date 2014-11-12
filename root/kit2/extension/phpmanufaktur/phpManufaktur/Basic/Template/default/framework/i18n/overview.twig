@@ -1,0 +1,62 @@
+{#
+  i18nEditor
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/i18n/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework i18nEditor' }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/default/framework/css/framework.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/Basic/Template/default/framework/i18n/toolbar.twig' %}
+
+    <div class="page-header">
+      <h1>i18nEditor <small>{{ 'Internationalization'|trans }}</small></h1>
+    </div>
+
+    <div class="well">
+    {% if info.locale_hits < 1 %}
+      {{ 'The kitFramework was never checked for the existing locale sources and translations, please start a search run!'|trans }}
+    {% elseif config.developer.enabled %}
+      <p>{{ 'Last registered file modification: <strong>%modification%</strong><br />Scanned files: <strong>%scanned%</strong><br />Locale hits: <strong>%hits%</strong>'|trans({'%modification%':info.last_file_modification|date('DATETIME_FORMAT'|trans),'%scanned%':info.count_scanned,'%hits%':info.locale_hits}) }}</p>
+      {% for translation in info.translation %}
+        <p>{{ 'Locale: <strong>%locale%</strong><br />Sources: <strong>%total%</strong><br />Translations: <strong>%translated%</strong><br />Pending: <strong>%pending%</strong>'|trans({'%locale%':translation.locale,'%total%':translation.status.total,'%translated%':translation.status.translated,'%pending%':translation.status.pending}) }}</p>
+      {% endfor %}
+      <p>{{ 'Duplicate translations: <strong>%duplicates%</strong><br />Conflicting translations: <strong>%conflicts%</strong><br />Unassigned translations: <strong>%unassigned%</strong>'|trans({'%conflicts%':info.conflicts,'%unassigned%':info.unassigned,'%duplicates%':info.duplicates}) }}</p>
+      <p>{{ 'You execute the i18nEditor in <strong>developer mode</strong>.'|trans }}</p>
+    {% else %}
+      <p>{{ 'Last registered file modification: <strong>%modification%</strong><br />Scanned files: <strong>%scanned%</strong><br />Locale hits: <strong>%hits%</strong>'|trans({'%modification%':info.last_file_modification|date('DATETIME_FORMAT'|trans),'%scanned%':info.count_scanned,'%hits%':info.locale_hits}) }}</p>
+      {% for translation in info.translation %}
+        <p>{{ 'Locale: <strong>%locale%</strong><br />Sources: <strong>%total%</strong><br />Translations: <strong>%translated%</strong><br />Pending: <strong>%pending%</strong>'|trans({'%locale%':translation.locale,'%total%':translation.status.total,'%translated%':translation.status.translated,'%pending%':translation.status.pending}) }}</p>
+      {% endfor %}
+      <p>{{ 'Switch to developer mode to get also information about problems and conflicts.'|trans }}</p>
+    {% endif %}
+    </div>
+
+    {{ alert }}
+
+    <div>
+      <a class="btn btn-primary btn-lg" href="{{ FRAMEWORK_URL ~ '/admin/i18n/editor/scan' ~ usage_param }}" role="button">{{ 'Start search run'|trans }}</a>
+    </div>
+
+  </div>
+{% endblock content %}

@@ -1,0 +1,68 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/miniShop/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'miniShop - About'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/miniShop/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/miniShop/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/miniShop/Template/default/css/admin.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/miniShop/Template/default/admin/toolbar.twig' %}
+
+    <h1>{{ 'Article list'|trans }}</h1>
+    
+    {{ alert }}
+    
+    {% if alert|length < 1 %}
+      <div class="create-button">
+        <a class="btn btn-default pull-right" role="button" href="{{ FRAMEWORK_URL ~ '/admin/minishop/article/edit/id' ~ usage_param }}">{{ 'Create a new article'|trans }}</a>
+      </div>
+    {% endif %}
+
+    {% if articles|length < 1 %}
+      {% if alert|length < 1 %}
+        {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig' 
+          with {content:'Please create a article to start with your miniShop!'|trans} only %}
+      {% endif %}
+    {% else %}
+      <div class="table-responsive">
+        <table class="table table-striped table-condensed table-hover">
+          <thead>
+            <tr>
+              <th>{{ 'name'|humanize|trans }}</th>
+              <th>{{ 'status'|humanize|trans }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in articles %}
+              <tr>
+                <td><a href="{{ FRAMEWORK_URL ~ '/admin/minishop/article/edit/id/' ~ item.id ~ usage_param }}">{{ item.article_name }}</a></td>
+                <td>{{ item.status|lower|humanize|trans }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+{% endblock content %}

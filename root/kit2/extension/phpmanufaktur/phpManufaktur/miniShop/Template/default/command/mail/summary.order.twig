@@ -1,0 +1,77 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if order.articles is defined and order.articles|length > 0 %}
+  <table cellpadding="0" cellspacing="10" width="100%" align="left">
+    <thead>
+      <tr>
+        <th align="right">{{ 'Quantity'|trans }}</th>
+        <th align="left">{{ 'Article'|trans }}</th>
+        <th align="right">{{ 'Price'|trans }}
+        <th align="right">{{ 'Subtotal'|trans }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for article in order.articles %}
+        <tr>
+          <td valign="top" align="right">{{ article.quantity }}</td>
+          <td valign="top" align="left">
+            <div style="font-weight: bold;"><a href="{{ permalink_base_url ~ '/article/' ~ article.permanent_link }}">{{ article.article_name }}</a></div>
+            <div>{{ article.description_short }}</div>
+            {% if article.variant_value|length > 0 or article.variant_value_2|length > 0 %}
+              <div>
+                {% if article.variant_value|length > 0 %}
+                  <span>{{ article.article_variant_name }}: {{ article.variant_value }}</span>&nbsp;
+                  {% endif %}
+                  {% if article.variant_value_2|length > 0 %}
+                  <span>{{ article.article_variant_name_2 }}: {{ article.variant_value_2 }}</span>
+                  {% endif %}                        
+              </div>
+            {% endif %}
+          </td>
+          <td valign="top" align="right">{{ article.article_price|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+          <td valign="top" align="right">{{ article.subtotal|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+        </tr>
+      {% endfor %}
+      <tr>
+        {% if order.sub_total < order.sum_total %}
+          <td valign="top" align="right" colspan="3">{{ 'Subtotal'|trans }}</td>
+          <td valign="top" align="right">{{ order.sub_total|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+        {% else %}
+          <td valign="top" colspan="3" align="right">{{ 'Sum total'|trans }}</td>
+          <td valign="top" align="right">{{ order.sum_total|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+        {% endif %}
+      </tr>
+      {% if order.base.article_value_added_tax > 0 and order.base.article_price_type == 'NET_PRICE' %}
+        <tr>
+          <td valign="top" colspan="3" align="right"">
+            {{ 'value add tax %vat%%'|trans({'%vat%':order.base.article_value_added_tax|number_format(2, decimal_separator, thousand_separator)}) }}
+          </td>
+          <td valign="top" align="right">{{ order.vat_total|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+        </tr>
+      {% endif %}
+      {% if order.shipping_total > 0 %}
+        <tr>
+          <td valign="top" colspan="3" align="right"">
+            {{ 'Shipping & handling'|trans }}
+          </td>
+          <td valign="top" align="right">{{ order.shipping_total|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+        </tr>
+      {% endif %}
+      {% if order.sum_total > order.sub_total %}
+        <tr>
+          <td valign="top" colspan="3" align="right">{{ 'Sum total'|trans }}</td>
+          <td valign="top" align="right">{{ order.sum_total|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  {% if order.base.article_value_added_tax > 0 and order.base.article_price_type == 'GROSS_PRICE' %}
+    <div>{{ 'Sum include %vat%% value add tax = %vat-total% %currency%.'|trans({'%vat%':order.base.article_value_added_tax|number_format(2, decimal_separator, thousand_separator),'%vat-total%':order.vat_total|number_format(2, decimal_separator, thousand_separator), '%currency%':currency_symbol}) }}</div>
+  {% endif %}
+{% endif %}

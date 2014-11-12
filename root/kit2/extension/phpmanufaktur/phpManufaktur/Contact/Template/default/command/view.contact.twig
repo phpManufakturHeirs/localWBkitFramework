@@ -1,0 +1,102 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}{{ 'Contact record'|trans }}{% endblock %}
+{% block description %}{{ 'Contact record'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Contact/Template/default/css/command.min.css" />
+{% endblock %}
+{% block canonical %}
+  <link rel="canonical" url="{{ FRAMEWORK_URL ~ '/contact/public/id/' ~ contact.contact.contact_id }}">
+{% endblock %}
+{% block content %}
+
+  <!-- {{ _self.getTemplateName() }} -->
+  {# need the parent to enable prompting messages #}
+  {{ parent() }}
+  <div class="row">
+    <div class="col-sm-6">
+      {# contact data #}
+      {% if contact.contact.contact_type == 'PERSON' %}
+        {# PERSON #}
+        {% set person = contact.person.0 %}
+        <div itemscope itemtype="http://schema.org/Person">
+          <span itemprop="gender">{{ person.person_gender|humanize|trans }}</span><br>
+          <span itemprop="name">{% if person.person_first_name|length > 0 %}{{ person.person_first_name }} {% endif %}{{ person.person_last_name }}</span>
+      {% else %}
+        {# COMPANY #}
+        <div itemscope itemtype="http://schema.org/Organization">
+          <p><span itemprop="name">{{ contact.company.0.company_name }}</span></p>
+      {% endif %}
+        <div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+          {% set address = contact.address.0 %}
+          <span itemprop="streetAddress">{{ address.address_street }}</span><br>
+          <span itemprop="postalCode">{{ address.address_zip }}</span>&nbsp;
+          <span itemprop="addressLocality">{{ address.address_city }}</span>
+        </div>
+        {% for item in contact.communication %}
+          {% if item.communication_type == 'PHONE' and item.communication_usage == 'PRIMARY' %}
+            <span itemprop="telephone">{{ item.communication_value }}</span><br>
+          {% endif %}
+        {% endfor %}
+        {% for item in contact.communication %}
+          {% if item.communication_type == 'EMAIL' and item.communication_usage == 'PRIMARY' %}
+            <span itemprop="email">{{ item.communication_value }}</span>
+          {% endif %}
+        {% endfor %}
+      </div>{# end of itemscope PERSON/COMPANY #}
+    </div>
+
+    {% if parameter.map is defined and parameter.map == true %}
+      <div class="col-sm-6">
+        {# google map #}
+        {% set location = address.address_street ~ ',' ~ address.address_zip ~ ',' ~ address.address_city %}
+        <iframe width="100%" height="180" src="https://maps.google.de/maps?hl=de&q={{ location }}&ie=UTF8&t=&z=14&iwloc=B&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if contact.note.0 is defined and contact.note.0.note_status == 'ACTIVE' %}
+    {# content of the regular contact note field #}
+    <div class="row">
+      <div class="col-sm-12">
+        {{ contact.note.0.note_content }}
+      </div>
+    </div>
+  {% endif %}
+
+  {% for extra in contact.extra_fields %}
+    {# loop through the contact extra fields #}
+    {% if extra.extra_value|length > 0 %}
+      {# show only fields which contain a value #}
+      <div class="row">
+        <div class="col-sm-4">{{ extra.extra_type_name|humanize|trans }}</div>
+        <div class="col-sm-8">{{ extra.extra_value }}</div>
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  {% if parameter.edit is defined and parameter.edit == true %}
+    <div class="row">
+      <div class="col-sm-12 text-right">
+        <a href="{{ FRAMEWORK_URL ~ '/contact/owner/login?contact_id=' ~ contact.contact.contact_id ~ '&pid=' ~ basic.pid }}"><i class="fa fa-pencil-square-o"></i></a>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if origin is defined and origin|length > 0 %}
+    {% set search_parameter = '' %}
+    {% if search is defined and search|length > 0 %}
+      {% set search_parameter = '?search=' ~ search|url_encode() %}
+    {% endif %}
+    <a class="btn btn-default" href="{{ origin ~ search_parameter }}" target="_parent" role="button">{{ 'Back'|trans }}</a>
+  {% endif %}
+{% endblock %}

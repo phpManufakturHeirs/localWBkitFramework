@@ -1,0 +1,27 @@
+{% block toolbar %}
+  {% if usage == 'framework' %}
+    <ul class="toolbar nav nav-tabs">
+  {% else %}
+    <ol class="breadcrumb">
+  {% endif %}
+    {% for item in toolbar %}
+      <li{% if item.active %} class="active"{% endif %}>
+        {% if usage == 'framework' %}
+          <a href="{{ item.link ~ '?usage=' ~ usage }}" title="{{ item.hint }}">
+        {% elseif not item.active %}
+          <a href="{{ item.link ~ '?usage=' ~ usage }}" title="{{ item.hint }}">
+        {% endif %}
+          {% if item.name == 'update' %}
+            <i class="fa fa-bell"></i>
+          {% elseif item.name == 'installed' %}
+            <i class="fa fa-plug"></i>
+          {% elseif item.name == 'catalog' %}
+            <i class="fa fa-book"></i>
+          {% endif %}
+          <span class="visible-lg pull-right">&nbsp;{{ item.text }}</span>  
+        {% if usage == 'framework' %}</a>
+        {% elseif not item.active %}</a>{% endif %}
+      </li>
+    {% endfor %}
+  {% if usage == 'framework' %}</ul>{% else %}</ol>{% endif %}
+{% endblock toolbar %}

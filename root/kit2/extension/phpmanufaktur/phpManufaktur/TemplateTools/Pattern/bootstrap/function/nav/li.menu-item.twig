@@ -1,0 +1,16 @@
+{% set icon = '' %}
+{% if menu.icons.page_id[menu.page_id] is defined %}
+  {% if 'glyphicon-' in menu.icons.page_id[menu.page_id] %}
+    {% set icon = '<i class="glyphicon ' ~ menu.icons.page_id[menu.page_id] ~ '"></i> ' %}
+  {% elseif 'fa-' in menu.icons.page_id[menu.page_id] %}
+    {% set icon = '<i class="fa ' ~ menu.icons.page_id[menu.page_id] ~ '"></i> ' %}
+  {% elseif '/media/' in menu.icons.page_id[menu.page_id] %}
+    {% set icon = '<img src="' ~ CMS_URL ~ menu.icons.page_id[menu.page_id] ~ '" height="' ~ menu.icons.height|default(15) ~ '" alt="' ~ menu.page_title ~ '" /> ' %}
+  {% elseif '/public/' in menu.icons.page_id[menu.page_id] %}
+    {% set icon = '<img src="' ~ CMS_URL ~ '/kit2/media' ~ menu.icons.page_id[menu.page_id] ~ '" height="' ~ menu.icons.height|default(15) ~ '" alt="' ~ menu.page_title ~ '" /> ' %}
+  {% endif %}
+{% endif %}
+
+<li class="menu-item{% if menu.active %} active{% endif %}">
+  <a href="{{ menu.url }}" title="{{ menu.page_title }}" {% if menu.active %}class="active"{% endif %} target="{{ menu.target }}">{{ icon }}{{ menu.menu_title }}</a>
+</li>

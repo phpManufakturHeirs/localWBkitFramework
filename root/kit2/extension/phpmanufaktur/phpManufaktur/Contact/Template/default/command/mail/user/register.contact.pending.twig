@@ -1,0 +1,16 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% if app.translator.locale == 'de' %}
+  {# GERMAN #}
+  <p>Die von Ihnen auf {{ FRAMEWORK_URL }} übermittelten Kontaktdaten werden zur Zeit geprüft und in Kürze veröffentlicht, wir melden uns bei Ihnen!</p>
+{% else %}
+  {# ENGLISH #}
+  <p>The contact record you have submitted at {{ FRAMEWORK_URL }} will be proofed and published soon, we will inform you!</p>
+{% endif %}

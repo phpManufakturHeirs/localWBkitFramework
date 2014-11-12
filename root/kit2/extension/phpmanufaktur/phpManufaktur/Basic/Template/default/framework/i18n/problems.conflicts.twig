@@ -1,0 +1,114 @@
+{#
+  i18nEditor
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/i18n/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework i18nEditor' }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/default/framework/css/framework.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/Basic/Template/default/framework/i18n/toolbar.twig' %}
+    {% include '@phpManufaktur/Basic/Template/default/framework/i18n/toolbar.problems.twig' with {'toolbar': toolbar_problems} %}
+
+    <h1>{{ 'Conflicts'|trans }} <small>i18nEditor</small></h1>
+
+    {% if conflicts|length > 0 %}
+      <div class="well">
+        {{ '<p>This list show you conflicting translations, which mean: the source is translated more then once and in a different way.</p><p>Remove conflicting translations or change the source if you need different translations.</p><p>Start a search run if you have solved a conflict to remove the entry from the list.</p>'|trans }}
+      </div>
+    {% endif %}
+
+    {{ alert }}
+
+    {% if conflicts|length > 0 %}
+      <div class="table-responsive conflicts">
+        <table class="table table-striped table-condensed table-hover">
+          <thead>
+            <tr>
+              <th>{{ 'ID'|humanize|trans }}</th>
+              <th>{{ 'Source'|trans }}</th>
+              <th>{{ 'Locale'|trans }}</th>
+              <th>{{ 'Remark'|trans }}</th>
+              <th>{{ 'Conflicting translations'|trans }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for conflict in conflicts %}
+              <tr>
+                <td><a href="{{ FRAMEWORK_URL ~ '/admin/i18n/editor/sources/detail/' ~ conflict.locale_id ~ usage_param }}">{{ '%05d'|format(conflict.locale_id) }}</a></td>
+                <td class="source">{{ conflict.locale_source|escape('html') }}</td>
+                <td>{{ conflict.locale_locale }}</td>
+                <td>{{ conflict.translation_remark }}</td>
+                <td>
+                  {% set comma = 0 %}
+                  {% for file in conflict.conflict_files %}
+                    {% if comma == 1 %},<br />{% else %}{% set comma = 1 %}{% endif %}
+                    <span title="{{ file.file_path }}">{{ file.extension }}</span>
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+  </div>
+{% endblock content %}
+{% block footer_jquery %}
+  {{ parent() }}
+  {# tablesorter #}
+  <script src="{{ LIBRARY_URL ~ '/jquery/tablesorter/latest/js/jquery.tablesorter.js' }}"></script>
+  <script src="{{ LIBRARY_URL ~ '/jquery/tablesorter/latest/js/jquery.tablesorter.widgets.js' }}"></script>
+  <script type="text/javascript">
+    $(function() {
+      $.extend($.tablesorter.themes.bootstrap, {
+        table      : 'table table-bordered',
+        caption    : 'caption',
+        header     : 'bootstrap-header',
+        footerRow  : '',
+        footerCells: '',
+        icons      : '',
+        sortNone   : 'bootstrap-icon-unsorted',
+        sortAsc    : 'icon-chevron-up glyphicon glyphicon-chevron-up',
+        sortDesc   : 'icon-chevron-down glyphicon glyphicon-chevron-down',
+        active     : '',
+        hover      : '',
+        filterRow  : '',
+        even       : '',
+        odd        : ''
+      });
+
+      $("table").tablesorter({
+        theme : "bootstrap",
+        widthFixed: true,
+        headerTemplate : '{content} {icon}',
+        widgets : [ "uitheme", "filter", "zebra" ],
+        widgetOptions : {
+          zebra : ["even", "odd"],
+          filter_reset : ".reset"
+        }
+      })
+    });
+  </script>
+{% endblock %}

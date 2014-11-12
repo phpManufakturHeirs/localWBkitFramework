@@ -2,7 +2,7 @@
   MediaBrowser
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/MediaBrowser
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
@@ -15,116 +15,151 @@
     {% set template_file = 'backend.body.twig' %}
 {% endif %}
 {% extends getTemplateFile(template_namespace, template_file) %}
-{% block title %}{{ 'kitFramework Media Browser'|trans }}{% endblock %}
-{% block head %}
-{{ parent() }}
-<link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/css/backend.css" media="screen, projection" />
-<script src="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/jquery/jquery.masonry.min.js"></script>
-{% endblock head %}
+{% block title %}{{ 'kitFramework MediaBrowser'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/css/browser.min.css" media="screen, projection" />
+{% endblock stylesheet %}
+
 {% block content %}
-  <div id="content_media">
-    {% if message|length > 0 %}
-      <div class="message">{{ message|trans }}</div>
-    {% endif %}
-    {% if images|length < 1 %}
-      <div class="message">
-        {{ '<p>This directory does not contain any media files</p>'|trans }}
-      </div>
-    {% endif %}
-    <div id="media_container">
-      <div id="media_system">
-        <div id="media_directory">
+  <div class="container">
+    
+    {{ alert }}
+    
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        {# select directory #}
+        <ul class="media-list">
           {% for directory in directories %}
-            <div class="directory_container">
-              {% if directory.basename != '..' %}
-              <div class="link_delete">
-                <a href="{{ directory.link.delete }}" title="{{ 'Delete directory: %directory%'|trans({'%directory%':directory.basename}) }}">
-                  <img src="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/image/delete_12x12.png" width="12" height="12" alt="{{ 'Delete directory: %directory%'|trans({'%directory%':directory.basename}) }}" />
+            <li class="media">
+              {% if directory.basename == '..' %}
+                <a class="pull-left" href="{{ directory.link.change }}" title="{{ directory.basename }}">
+                  <span class="glyphicon glyphicon-arrow-up"></span>                  
                 </a>
-              </div>
-              {% endif %}
-              <div class="directory_link{% if directory.basename == '..' %} directory_up{% endif %}">
-                <a href="{{ directory.link.change }}" title="{{ directory.basename }}">{{ directory.basename }}{% if directory.basename == '..' %} <em>({{ 'one level up'|trans }})</em>{% endif %}</a>
-              </div>
-            </div>
+                <div class="media-body">
+                  <a href="{{ directory.link.change }}" title="{{ 'one level up'|trans }}">{{ 'one level up'|trans }}</a>
+                </div>
+              {% else %}
+                <a class="pull-left" href="{{ directory.link.change }}" title="{{ directory.basename }}">
+                  <span class="glyphicon glyphicon-folder-close"></span>
+                </a>
+                <div class="media-body">
+                  <a class="pull-right" href="{{ directory.link.delete }}" title="{{ 'Delete directory: %directory%'|trans({'%directory%':directory.basename}) }}">
+                    <span class="glyphicon glyphicon-trash"></span>                  
+                  </a>
+                  <a href="{{ directory.link.change }}" title="{{ directory.basename }}">{{ directory.basename }}</a>
+                </div>
+              {% endif %}             
+            </li>
           {% endfor %}
-        </div>
-        <div id="media_submit">
-          <div class="file_submit">
-            <div class="link_exit">
-              <a href="{{ action.exit }}" title="{{ 'Exit MediaBrowser'|trans }}">
-                <img src="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/image/exit_16x15.png" width="16" height="15" alt="{{ 'Exit MediaBrowser'|trans }}" />
-              </a>
-            </div>
-            <form action="{{ action.upload }}" method="post" {{ form_enctype(upload) }}>
-              <div class="submit_container">
-                <div class="submit_item">
-                  {{ form_widget(upload.media_file) }}
-                </div>
-                  {{ form_errors(upload.media_file) }}
-                  {{ form_rest(upload) }}
-                <div class="submit_button">
-                  <input type="submit" value="{{ 'Submit file'|trans }}" />
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="directory_create">
-            <form action="{{ action.directory }}" method="post">
-              <div class="submit_container">
-                <div class="submit_directory">
-                  {{ form_widget(create_directory.create_directory) }}
-                </div>
-                  {{ form_errors(create_directory.create_directory) }}
-                  {{ form_rest(create_directory) }}
-                <div class="submit_button">
-                  <input type="submit" value="{{ 'Create directory'|trans }}" />
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div class="clear"></div>
+        </ul>
       </div>
-      <div id="media_browser">
-        {% for image in images %}
-          <div class="link_container">
-            <div class="link_delete">
-              <a href="{{ image.link.delete.url }}" title="{{ 'Delete file: %file%'|trans({'%file%':image.basename}) }}">
-                <img src="{{ MANUFAKTUR_URL }}/MediaBrowser/Template/default/image/delete_12x12.png" width="12" height="12" alt="{{ 'Delete file: %file%'|trans({'%file%':image.basename}) }}" />
-              </a>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        {# system operation #}
+        <div class="exit">
+          <a class="btn btn-default" href="{{ action.exit }}" title="{{ 'Exit MediaBrowser'|trans }}">{{ 'Exit MediaBrowser'|trans }}</a>        
+        </div>
+        <div class="upload">
+          <form action="{{ action.upload }}" method="post" {{ form_enctype(upload) }} role="form">
+            {{ form_errors(upload) }}            
+            <div class="form-group">
+              {{ form_label(upload.media_file) }}
+              {{ form_widget(upload.media_file, {'attr':{'class':'form-control input-sm'}}) }}
             </div>
-            <div class="icon_container">
-              <a href="{{ image.link.select.url }}" title="{{ image.basename }}">
-                <img src="{{ image.icon.url }}" width="{{ image.icon.width }}" height="{{ image.icon.height }}" />
-              </a>
+            <div class="form-group text-right">
+              <input class="form-control btn btn-default" type="submit" value="{{ 'Submit file'|trans }}" />
             </div>
-            <div class="link_info" style="width:{{ image.icon.width }}px;">
-              <div class="link_info_size">{{ image.dimension.string }}</div>
-              <div class="link_info_size">{{ image.size.string }}</div>
-              <div class="link_info_date">{{ image.modified|date("d.m.Y") }}</div>
-              <div class="link_info_date">{{ image.modified|date("H:i:s") }}</div>
-              <div class="link_info_link" style="width:{{ image.icon.width }}px;">
-                <a href="{{ image.link.select.url }}" title="{{ image.basename }}">{{ image.basename }}</a>
-              </div>
+            {{ form_rest(upload) }}
+          </form>
+        </div>
+        <div class="create">
+          <form action="{{ action.directory }}" method="post" role="form">
+            {{ form_errors(create_directory) }}
+            <div class="form-group">
+              {{ form_label(create_directory.create_directory) }}
+              {{ form_widget(create_directory.create_directory, {'attr':{'class':'form-control input-sm'}}) }}
             </div>
-          </div>
-        {% endfor %}
-          <div class="clear"></div>
+            <div class="form-group text-right">
+              <input class="form-control btn btn-default" type="submit" value="{{ 'Create directory'|trans }}" />
+            </div>{{ form_rest(create_directory) }}
+          </form>
+        </div>
       </div>
     </div>
+      
+    <ul class="media-list">
+      <li class="media text-muted">
+        <span class="pull-left glyphicon glyphicon-folder-open"></span>
+        <div class="media-body">
+          {{ actual_directory }}
+        </div>
+      </li>
+    </ul>
+
+    {% if images|length < 1 %}
+      <div class="alert alert-info">
+        {{ 'This directory does not contain any media files.'|trans }}
+      </div>
+    {% endif %}
+    
+    <div class="visible-lg visible-md">
+      {# large and medium devices #}
+      {% set counter = 1 %}
+      {% for image in images %}
+        {% if counter == 1 %}
+          <div class="row">
+        {% endif %}          
+        <div class="col-lg-2 col-md-2">
+          {% include '@phpManufaktur/MediaBrowser/Template/default/browser.item.twig' %}
+        </div>
+        {% if counter == 6 %}
+          </div>
+          {% set counter = 1 %}
+        {% else %}
+          {% set counter = counter + 1 %}
+        {% endif %}
+      {% endfor %}
+      {% if counter != 1 %}</div>{% endif %}
+    </div>  
+    
+    <div class="visible-sm">
+      {# small devices #}
+      {% set counter = 1 %}
+      {% for image in images %}
+        {% if counter == 1 %}
+          <div class="row">
+        {% endif %}          
+        <div class="col-sm-3">
+          {% include '@phpManufaktur/MediaBrowser/Template/default/browser.item.twig' %}
+        </div>
+        {% if counter == 4 %}
+          </div>
+          {% set counter = 1 %}
+        {% else %}
+          {% set counter = counter + 1 %}
+        {% endif %}
+      {% endfor %}
+      {% if counter != 1 %}</div>{% endif %}
+    </div>  
+      
+    <div class="visible-xs">
+      {# xtra small devices #}
+      {% set counter = 1 %}
+      {% for image in images %}
+        {% if counter == 1 %}
+          <div class="row">
+        {% endif %}          
+        <div class="col-xs-6">
+          {% include '@phpManufaktur/MediaBrowser/Template/default/browser.item.twig' %}
+        </div>
+        {% if counter == 2 %}
+          </div>
+          {% set counter = 1 %}
+        {% else %}
+          {% set counter = counter + 1 %}
+        {% endif %}
+      {% endfor %}
+      {% if counter != 1 %}</div>{% endif %}
+    </div>  
   </div>
 {% endblock content %}
-{% block footer %}
-  <script type="text/javascript">
-    if (typeof 'jQuery' != 'undefined') {
-      $(document).ready(function() {
-        $('#media_browser').masonry({
-          itemSelector: '.link_container',
-          columnWidth: 170
-        });
-      });
-    }
-  </script>
-  {{ parent() }}
-{% endblock footer %}

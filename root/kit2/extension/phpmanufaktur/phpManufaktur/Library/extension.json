@@ -1,0 +1,327 @@
+{
+  "name":"Library",
+  "guid":"0875FBF9-D2B7-4361-B913-83A763C1748C",
+  "category":"extension",
+  "group":"phpManufaktur",
+  "vendor":{
+      "name":"phpManufaktur",
+      "url":"https:\/\/phpmanufaktur.de",
+      "mail":"team@phpmanufaktur.de",
+      "address":{
+          "street":"Stockholmer Straße 31",
+          "zip":"13359",
+          "city":"Berlin",
+          "country":"Germany"
+      },
+      "phone":"+49 30 68813647"
+  },
+  "type":"library",
+  "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library",
+  "namespace":"phpManufaktur\\library",
+  "release":{
+    "number":"0.39",
+    "date":"2014-09-20",
+    "status":"release",
+    "changelog":"https:\/\/github.com\/phpManufaktur\/kfLibrary\/blob\/master\/CHANGELOG.md"
+  },
+  "library":{
+    "extension":{
+      "browser":{
+        "name":"browser.php",
+        "usage":"Browser Detection",
+        "url":"https:\/\/github.com\/cbschuld\/Browser.php",
+        "releases":[
+          "1.9.0"
+        ]
+      },
+      "carbon":{
+        "name":"Carbon",
+        "usage":"Date and Time API",
+        "url":"https:\/\/github.com\/briannesbitt\/Carbon",
+        "releases":[
+          "1.4.0",
+          "1.8.0"
+        ]
+      },
+      "dflydev-markdown":{
+          "name":"dflydev-markdown",
+          "usage":"MarkDown Parser API - DEPRECATED, use php-markdown instead!",
+          "url":"https:\/\/github.com\/dflydev\/dflydev-markdown",
+          "releases":[
+              "1.0.2",
+              "1.0.3"
+          ]
+      },
+      "htmlpurifier":{
+          "name":"HTMLPurifier",
+          "usage":"Standards-compliant HTML filter library",
+          "url":"http:\/\/htmlpurifier.org\/",
+          "releases":[
+              "4.6.0"
+          ]
+      },
+      "php-markdown":{
+          "name":"php-markdown",
+          "usage":"MarkDown Parser",
+          "url":"https:\/\/github.com\/michelf\/php-markdown",
+          "releases":[
+              "1.4.0"
+          ]
+      },
+      "phpexcel":{
+          "name":"PHPExcel",
+          "usage":"PHPExcel - OpenXML - Read, Write and Create spreadsheet documents in PHP",
+          "url":"https://github.com/PHPOffice/PHPExcel",
+          "releases":[
+              "1.8.0"
+          ]
+      }
+    },
+    "helper":{
+        "bootstrap":{
+            "navbarlinks":{
+                "name":"NavbarLinks",
+                "usage":"show_menu2() replacement for Bootstrap Navbars",
+                "url":"https:\/\/github.com\/phpManufaktur\/NavbarLinks",
+                "releases":[
+                    "1.0.0",
+                    "1.0.2"
+                ]
+            }
+        }
+    },
+    "library":{
+          "bootstrap":{
+              "name":"Bootstrap",
+              "usage":"Front-end framework",
+              "url":"http:\/\/getbootstrap.com\/",
+              "releases":[
+                  "2.3.2",
+                  "3.1.1",
+                  "3.2.0"
+              ],
+              "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/bootstrap"
+          },
+          "font-awesome":{
+              "name":"Font Awesome",
+              "usage":"Iconic font for Bootstrap",
+              "url":"http:\/\/fontawesome.io\/",
+              "releases":[
+                  "4.1.0",
+                  "4.2.0"
+              ],
+              "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/font-awesome"
+          },
+          "jasny-bootstrap":{
+              "name":"Jasny Bootstrap",
+              "usage":"Bootstrap Extension",
+              "url":"https:\/\/github.com\/jasny\/bootstrap",
+              "releases":[
+                "3.1.3"
+              ],
+              "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jasny-bootstrap"
+          },
+          "jquery":{
+              "name":"jQuery",
+              "usage":"Library",
+              "library":{
+                  "jquery":{
+                      "name":"jQuery",
+                      "usage":"JavaScript library",
+                      "url":"http:\/\/jquery.com\/",
+                      "releases":[
+                          "1.11.0",
+                          "2.1.0",
+                          "2.1.1"
+                      ],
+                      "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/jquery"
+                  },
+                  "awesomecloud":{
+                    "name":"awesomeCloud",
+                    "usage":"Create a word or tag cloud using the HTML5 canvas element",
+                    "url":"https:\/\/github.com\/indyarmy\/jQuery.awesomeCloud.plugin",
+                    "releases":[
+                      "0.2.0"
+                    ],
+                    "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/awesomecloud"
+                  },
+                  "easing":{
+                      "name":"jQuery Easing",
+                      "usage":"Easing effects",
+                      "url":"http:\/\/gsgd.co.uk\/sandbox\/jquery\/easing\/",
+                      "releases":[
+                          "1.3.0"
+                      ],
+                      "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/easing"
+                  },
+                  "flexslider":{
+                    "name":"FlexSlider",
+                    "usage":"Image slider and gallery",
+                    "url":"https:\/\/github.com\/woothemes\/FlexSlider",
+                    "releases":[
+                        "2.2.1"
+                    ],
+                    "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/flexslider"
+                  },
+                  "lightbox":{
+                      "name":"LightBox 2",
+                      "usage":"Image overlay",
+                      "url":"http:\/\/lokeshdhakar.com\/projects\/lightbox2\/",
+                      "releases":[
+                          "2.6.0",
+                          "2.7.1"
+                      ],
+                      "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/lightbox"
+                  },
+                  "migrate":{
+                      "name":"Migrate",
+                      "usage":"Migrate older jQuery code to 1.9+",
+                      "url":"https:\/\/github.com\/jquery\/jquery-migrate\/",
+                      "releases":[
+                          "1.2.1"
+                      ],
+                      "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/migrate"
+                  },
+                  "mmenu":{
+                    "name":"mmenu",
+                    "usage":"jQuery app-look-alike sliding menu",
+                    "url":"https:\/\/github.com\/BeSite\/jQuery.mmenu",
+                    "releases":[
+                      "4.3.6"
+                    ],
+                    "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/mmenu"
+                  },
+                  "mousewheel":{
+                      "name":"MouseWheel",
+                      "usage":"jQuery Mouse Wheel Plugin",
+                      "url":"https:\/\/github.com\/brandonaaron\/jquery-mousewheel",
+                      "releases":[
+                          "3.1.12"
+                      ],
+                      "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/mousewheel"
+                  },
+                  "tablesorter":{
+                      "name":"TableSorter",
+                      "usage":"Flexible client-side table sorting",
+                      "url":"https:\/\/github.com\/Mottie\/tablesorter",
+                      "releases":[
+                          "2.17.1",
+                          "2.17.4"
+                      ],
+                      "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/tablesorter"
+                  },
+                  "tagedit":{
+                      "name":"TagEdit",
+                      "usage":"Edit and change tags from database",
+                      "url":"https:\/\/github.com/webworka\/Tagedit",
+                      "releases":[
+                          "1.5.1"
+                      ],
+                      "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/tagedit"
+                  },
+                  "timepicker":{
+                      "name":"TimePicker",
+                      "usage":"Add a timepicker to the jQuery UI datepicker",
+                      "url":"https:\/\/github.com\/trentrichardson\/jQuery-Timepicker-Addon",
+                      "releases":[
+                          "1.4.3",
+                          "1.4.4",
+                          "1.4.5"
+                      ],
+                      "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/timepicker"
+                  },
+                  "ui":{
+                      "name":"jQuery UI",
+                      "usage":"Standard jQuery User Interface",
+                      "url":"https:\/\/github.com\/jquery\/jquery-ui",
+                      "releases":[
+                          "1.10.3",
+                          "1.10.4"
+                      ],
+                      "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/ui"
+                  },
+                  "zeroclipboad":{
+                      "name":"ZeroClipboard",
+                      "usage":"Copy text to the clipboard",
+                      "url":"https:\/\/github.com\/zeroclipboard\/zeroclipboard",
+                      "releases":[
+                          "1.3.2",
+                          "1.3.5"
+                      ],
+                      "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jquery\/zeroclipboard"
+                  }
+              }
+          },
+          "jsoneditor":{
+              "name":"JSON Editor",
+              "usage":"Editor for JSON files",
+              "url":"https:\/\/github.com\/josdejong\/jsoneditor",
+              "releases":[
+                  "3.0.0"
+              ],
+              "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/jsoneditor"
+          },
+          "normalize":{
+              "name":"normalize.css",
+              "usage":"Normalize CSS for Browsers",
+              "url":"https:\/\/github.com\/necolas\/normalize.css",
+              "releases":[
+                  "3.0.1"
+              ],
+              "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/normalize"
+          },
+          "rrssb":{
+              "name":"Ridiculously Responsive Social Sharing Buttons",
+              "usage":"Ridiculously Responsive Social Sharing Buttons",
+              "url":"https:\/\/github.com\/kni-labs\/rrssb",
+              "releases":[
+                  "1.6.0"
+              ],
+              "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Library\/Library\/rrssb"
+          }
+      }
+  },
+  "description": {
+    "en":{
+      "title":"Library for the kitFramework",
+      "short":"Different libraries for the usage with the kitFramework",
+      "long":"Libraries for the usage with the kitFramework like Bootstrap 2 & 3, Font Awesome 3 & 4, different jQuery versions and jQuery extensions and also PHP Extensions.",
+      "url":"https:\/\/kit2.phpmanufaktur.de\/Library"
+    },
+    "de":{
+      "title":"Library for the kitFramework",
+      "short":"Verschiedene Bibliotheken für die Nutzung im kitFramework",
+      "long":"Bibliotheken für die Nutzung mit dem kitFramework, wie Bootstrap 2 & 3, Font Awesome 3 & 4, verschiedene jQuery Versionen sowie jQuery Erweiterungen und PHP Erweiterungen.",
+      "url":"https:\/\/kit2.phpmanufaktur.de\/Library"
+    }
+  },
+  "require":{
+    "framework":{
+      "release":"0.27"
+    },
+    "extension":{
+        "phpManufaktur":{
+            "Basic":{
+                "release":"1.0.12"
+            }
+        }
+    }
+  },
+  "setup": {
+      "install":"\/admin\/library\/setup",
+      "update":"\/admin\/library\/update"
+  },
+  "license": {
+    "name":"MIT License",
+    "url":"https:\/\/github.com\/phpManufaktur\/kfLibrary\/raw\/master\/LICENSE.md"
+  },
+  "download": {
+    "availability":"public",
+    "agreement":"free",
+    "github":{
+      "organization":"phpManufaktur",
+      "repository":"kfLibrary"
+    },
+    "url":"https:\/\/github.com\/phpManufaktur\/kfLibrary"
+  }
+}

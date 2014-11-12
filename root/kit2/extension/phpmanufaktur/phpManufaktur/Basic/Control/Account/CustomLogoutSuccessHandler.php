@@ -25,7 +25,7 @@ class CustomLogoutSuccessHandler extends DefaultLogoutSuccessHandler
         // get all parameters
         $parameters = $request->query->all();
         // build the parameter string
-        $parameter_str = !empty($parameters) ? '?'.http_build_query($parameters) : '';
+        $parameter_str = !empty($parameters) ? '?'.http_build_query($parameters, '', '&') : '';
         // return the logout response
         return $this->httpUtils->createRedirectResponse($request, $this->targetUrl.$parameter_str);
     }

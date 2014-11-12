@@ -1,0 +1,120 @@
+{#
+  kitFramework::Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/tool/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework' }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/default/framework/css/framework.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container">
+    {% include '@phpManufaktur/Basic/Template/default/framework/tool/toolbar.twig' %}
+    
+    <div id="about-wrap"
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 text-center">
+          {# framework logo#}
+          <img src="{{ FRAMEWORK_URL ~ '/framework.jpg' }}" width="200" height="200" title="kitFramework" alt="kitFramework" />
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 text-left">
+          <div class="lead"><strong>kitFramework</strong>&nbsp;<small>extend your CMS</small></div>
+          <div>
+            {% if app.translator.locale == 'de' %}
+              {# GERMAN translation #}
+              <p>Installieren und aktualisieren Sie Erweiterungen für Ihr Content Management System mit einem einzigen Klick.</p>
+            {% else %}
+              {# ENGLISH translation #}
+              <p>Install and update extensions for your Content Management System with only one click.</p>
+            {% endif %}
+          </div>
+          <div>{{ 'Release'|trans }} <strong>{{ kitframework.release.number }}</strong></div>
+          <div class="small text-muted">
+            {{ 'published at'|trans }} <strong>{{ kitframework.release.date|date('DATE_FORMAT'|trans) }}</strong>, {{ 'License'|trans }}: <a href="https://github.com/phpManufaktur/kitFramework/blob/master/LICENSE.md" target="_blank">MIT License</a>
+          </div>
+          
+          <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 text-right small"><var>FRAMEWORK_UID</var></div>
+            <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8 text-left small">{{ framework_config.FRAMEWORK_UID }}&nbsp;&nbsp;<a href="mailto:{{ SERVER_EMAIL_ADDRESS }}?subject=FRAMEWORK_UID&body={{ framework_config.FRAMEWORK_UID }}" title="{{ 'Send a email with the FRAMEWORK_UID'|trans }}"><i class="fa fa-envelope-o"></i></a></div>            
+          </div>
+          
+          <div class="libraries">            
+            <div class="small text-muted">
+              {% if app.translator.locale == 'de' %}
+                {# GERMAN translation #}
+                Das kitFramework verwendet die folgenden Bibliotheken:
+              {% else %}
+                {# ENGLISH translation #}
+                The kitFramework is using the following libraries:
+              {% endif %}
+            </div>
+            <div class="row">
+              {% for name, version in libraries %}
+                <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 text-right small"><em>{{ name }}</em></div>
+                <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8 text-left small">{{ version }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          
+          <div>&nbsp;</div>
+          <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 text-right"></div>
+            <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8 text-left">
+              <div><strong>phpManufaktur</strong></div>
+              <div>Stockholmer Straße 31</div>
+              <div>13359 Berlin</div>
+              <div class="small">Deutschland</div>
+              <div class="small">+49 30 68813647</div>
+              <div class="small"><a href="mailto:team@phpmanufaktur.de">team@phpmanufaktur.de</a></div>
+              <div class="small"><a href="https://kit2.phpmanufaktur.de" traget="_blank">https://kit2.phpmanufaktur.de</a></div>
+            </div>
+          </div>
+          <div>&nbsp;</div>
+          <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 text-right small"><em>{{ 'First steps'|trans }}</em></div>
+            <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8 text-left small">
+              <a href="https://kit2.phpmanufaktur.de/de/content/erste-schritte" target="_blank">https://kit2.phpmanufaktur.de/de/content/erste-schritte</a>
+            </div>
+          </div>  
+          <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 text-right small"><em>{{ 'Documentation'|trans }}</em></div>
+            <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8 text-left small">
+              <a href="https://kit2.phpmanufaktur.de/de/start.php" target="_blank">https://kit2.phpmanufaktur.de/de/start.php</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 text-right small"><em>{{ 'Report problems'|trans }}</em></div>
+            <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8 text-left small">
+              <a href="https://github.com/phpManufaktur/kitFramework/issues" target="_blank">https://github.com/phpManufaktur/kitFramework/issues</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 text-right small"><em>{{ 'Support'|trans }}</em></div>
+            <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8 text-left small">
+              <a href="https://support.phpmanufaktur.de" target="_blank">https://support.phpmanufaktur.de</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>     
+    
+  </div>
+{% endblock content %}

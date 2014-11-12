@@ -8,33 +8,36 @@
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
 #}
 <!DOCTYPE html>
-<html>
-  {% spaceless %}
+{% spaceless %}
+<html lang="{{ basic.cms.locale }}">  
   <head>
     {% block head %}
       {% if (basic.frame is defined and basic.frame.redirect.active) %}
-        {# catch the iframe content into the CMS if the URL is executed external #}
+        {# catch the iframe content into the CMS if the URL is executed from outside (direct access) #}
         <script type="text/javascript">
-          if (top.location == self.location) {
+          if (top.location === self.location) { 
             document.location.replace("{{ basic.cms.page_url }}{% if basic.frame.redirect.route|length > 0 %}?redirect={{ basic.frame.redirect.route }}{% endif %}");
           }
         </script>
       {% endif %}
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <meta charset="utf-8" />
       {% if not basic.page.cache %}  
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
         <meta http-equiv="Pragma" content="no-cache" />
         <meta http-equiv="Expires" content="0" />  
       {% endif %}
       <title>{% block title %}{{ basic.page.title|default('') }}{% endblock title %}</title>
-      <meta http-equiv="Content-Type" content="text/html; charset={{ basic.page.charset|default('UTF-8') }}"/>
       <meta name="robots" content="{% block robots %}{{ basic.page.robots|default('index,follow') }}{% endblock %}" />
+      {% block canonical %}{% endblock %}
       <meta name="description" content="{% block description %}{{ basic.page.description|default('') }}{% endblock %}" />
       <meta name="keywords" content="{% block keywords %}{{ basic.page.keywords|default('') }}{% endblock %}" />
+      <meta name="generator" content="kitFramework (https://kit2.phpmanufaktur.de)" />
       {% block stylesheet %}
-        <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/kitcommand/css/kitcommand.css" media="screen, projection" />
+        <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/kitcommand/css/kitcommand.min.css" media="screen, projection" />
       {% endblock stylesheet %}
       {% block jquery %}
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/jquery/latest/jquery.min.js"></script>
       {% endblock jquery %}
     {% endblock head %}
   </head>
@@ -52,10 +55,18 @@
           if (typeof 'jQuery' !== 'undefined') {
             $(document).ready(function() {
               {# setting the iFrame height dynamically by the height of the inbounded document #}
-              var content_height = $('.iframe_content').height() + {{ basic.frame.add|default(20) }} + {{ iframe_add_height|default(0) }} + "px";
-              parent.document.getElementById("{{ basic.frame.id }}").style.height = content_height;
+              var frame_id = window.frameElement.getAttribute('id');
+              var content_height = $('.iframe_content').height() + {{ basic.frame.add|default(20) }} + {{ iframe_add_height|default(0) }} + "px";              
+              parent.document.getElementById(frame_id).style.height = content_height;
               {% if basic.frame.scroll_to_id|length > 0 %}
-                document.getElementById('{{ basic.frame.scroll_to_id }}').scrollIntoView(true);
+                {# execute scrollIntoView() only if the ID exists! #}
+                if (null !== document.getElementById('{{ basic.frame.scroll_to_id }}')) {
+                  document.getElementById('{{ basic.frame.scroll_to_id }}').scrollIntoView(true);
+                }
+              {% endif %}
+              {% if basic.page.page_title and (basic.page.title|length > 0) %}
+                {# set the page title of the parent dynamically #}
+                parent.document.title = '{{ basic.page.title }}';
               {% endif %}
             });
           }
@@ -69,5 +80,5 @@
       {% endif %}
     {% endblock tracking %}
   </body>
-  {% endspaceless %}
 </html>
+{% endspaceless %}

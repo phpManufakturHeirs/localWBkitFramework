@@ -1,0 +1,18 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% if app.translator.locale == 'de' %}
+  {# GERMAN #}
+  <p>Die von Ihnen auf {{ FRAMEWORK_URL }} übermittelten Kontaktdaten wurden eben veröffentlicht!</p>
+  <p>Sie können auf die Kontaktdaten jederzeit über diesen <a href="{{ permalink }}">permanenten Link</a> zugreifen.</p>
+{% else %}
+  {# ENGLISH #}
+  <p>The contact record you have submitted at {{ FRAMEWORK_URL }} has been published!</p>
+  <p>You can always access your contact recort at this <a href="{{ permalink }}">permanent link</a>.</p>
+{% endif %}

@@ -1,0 +1,48 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if CMS_LOGIN_ENABLED and PAGE_VISIBILITY != 'private' and not CMS_USER_IS_AUTHENTICATED %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div id="bootstrap-login">
+    <form class="form-inline" role="form" action="{{ CMS_LOGIN_URL }}" method="post">
+      <input type="hidden" name="redirect" value="{{ CMS_LOGIN_REDIRECT_URL }}" />
+      <div class="form-group">
+        <label class="sr-only" for="username">{{ 'Username'|trans }}</label>
+        <input type="text" class="form-control" id="username" placeholder="{{ 'Enter username'|trans }}">
+      </div>
+      <div class="form-group">
+        <label class="sr-only" for="password">{{ 'Password'|trans }}</label>
+        <input type="password" class="form-control" id="password" placeholder="{{ 'Enter password'|trans }}">        
+      </div>
+      <button type="submit" class="btn btn-default">{{ 'Login'|trans }}</button>
+      <div class="forgotten">
+        <a href="{{ CMS_LOGIN_FORGOTTEN_URL }}">{{ 'Forgot your password?'|trans }}</a>
+      </div>
+      {% if CMS_LOGIN_SIGNUP_ENABLED %}
+        <div class="signup">
+          <a href="{{ CMS_LOGIN_SIGNUP_URL }}">{{ 'I want to signup!'|trans }}</a>
+        </div>
+      {% endif %}
+    </form>
+  </div>  
+{% elseif CMS_LOGIN_ENABLED and CMS_USER_IS_AUTHENTICATED %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div id="bootstrap-login">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <form role="form" action="{{ CMS_LOGOUT_URL }}" method="post">
+          <div class="welcome">
+            {{ 'Welcome back, %name%'|trans({'%name%':CMS_USER_DISPLAYNAME}) }}
+          </div>
+          <button type="submit" class="btn btn-default">{{ 'Logout'|trans }}</button>
+          <a role="button" class="btn btn-default" href="{{ CMS_USER_ACCOUNT_URL }}">{{ 'User account'|trans }}</a>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}

@@ -1,0 +1,80 @@
+{#
+  flexContent
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/flexContent
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% spaceless %}
+<!-- {{ _self.getTemplateName() }} -->
+<div id="flexcontent">
+  <div class="container-fluid">    
+      
+    {{ basic.alert }}
+
+    {% if parameter.category_description and category.category_description|length > 0 %}
+      <div class="media">
+        {% if parameter.category_image and category.category_image|length > 0 %}
+          <div class="media-object pull-right" style="max-width:{{ parameter.category_image_max_width+30 }}px;max-height:{{ parameter.category_image_max_height+30 }}px;">
+          {% if category.category_image_url is defined %}
+            <img class="img-thumbnail" src="{{ category.category_image_url }}" alt="{{ category.category_name }}" title="{{ category.category_name }}" />
+          {% else %}
+            {% set img = image(category.category_image, parameter.category_image_max_width, parameter.category_image_max_height) %}
+            <img class="media-object pull-right img-thumbnail" src="{{ img.src }}" width="{{ img.width }}" height="{{ img.height }}" alt="{{ category.category_name }}" title="{{ category.category_name }}" />
+          {% endif %}          
+          </div>
+        {% endif %}
+        <div class="media-body">
+          {% if parameter.category_name %}
+            <h{{ parameter.title_level|default('1') }} class="media-heading">{{ category.category_name|default('') }}</h{{ parameter.title_level|default('1') }}>
+          {% endif %}
+          {% if config.kitcommand.content.kitcommand.enabled %}  
+            {# enable kitCommands in config.flexcontent.json if you want to execute 
+               kitCommands within the flexContent categories ... #}
+            {{ kitCommandParser(category.category_description|default('')) }}
+          {% else %}
+            {{ category.category_description|default('') }}
+          {% endif %} 
+        </div>
+      </div>
+    {% elseif parameter.category_name %}
+      <h{{ parameter.title_level|default('1') }}>{{ category.category_name|default('') }}</h{{ parameter.title_level|default('1') }}>
+    {% endif %}
+      
+    {# loop only if active contens available ... #}  
+    {% if contents.0.content is defined %}
+      {% for content in contents %}
+        {% if content.redirect_url|length > 0 %}
+          {% set url = content.redirect_url %}
+          {% set target = content.redirect_target %}
+        {% elseif content.content|length > 0 %}
+          {% set url = permalink_base_url ~ '/' ~ content.permalink %}
+          {% if basic.cms.page_visibility in ['private','registered'] %}
+            {# add the PID for protected pages to enable the permanent link class to authenticate the user #}
+            {% set url = url ~ '?pid=' ~ basic.pid %}
+          {% endif %}
+          {% set target = '_self' %}
+        {% else %}
+          {% set url = '' %}
+          {% set target = '_self' %}
+        {% endif %}   
+        {% if loop.index == 1 %}<div class="row">{% endif %}
+        {% if loop.index < parameter.content_exposed+1 %}  
+          {# expose items in columns #}
+          {% include '@phpManufaktur/flexContent/Template/default/command/content.exposed.twig' %}
+        {% endif %}
+        {% if loop.index == parameter.content_exposed %}</div>{% endif %}
+        {% if loop.index > parameter.content_exposed %}
+          {# show all other content items in a smaller list #}
+          {% include '@phpManufaktur/flexContent/Template/default/command/content.item.twig' %}
+        {% endif %}
+      {% endfor %}
+      {# if we have only one exposed content we must close the row here ... #}
+      {% if contents|length < 2 %}</div>{% endif %}
+    {% endif %}  
+  </div>
+  
+</div>
+{% endspaceless %}

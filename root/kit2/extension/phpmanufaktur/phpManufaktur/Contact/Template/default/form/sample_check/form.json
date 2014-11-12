@@ -1,0 +1,42 @@
+{
+  "fields":{
+    "gender":{
+      "type":"person_gender",
+      "required":false
+    },
+    "vorname":{
+      "type":"person_first_name",
+      "required":false
+    },
+    "nachname":{
+      "type":"person_last_name"
+    },
+    "mail":{
+      "type":"communication_email"
+    },
+    "street":{
+      "type":"address_street",
+      "required":false
+    },
+    "zip":{
+      "type":"address_zip",
+      "required":false
+    },
+    "city":{
+      "type":"address_city",
+      "required":false
+    },
+    "message":{
+      "type":"textarea",
+      "name":"message",
+      "label":"Message",
+      "required":true
+    },
+    "license":{
+      "type":"single_checkbox",
+      "name":"license",
+      "label":"I accept that this software is provided under <a href=\"http:\/\/opensource.org\/licenses\/MIT\" target=\"_blank\">MIT License<\/a>.",
+      "required":true
+    }
+  }
+}

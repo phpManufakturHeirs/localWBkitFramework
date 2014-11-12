@@ -4,7 +4,7 @@
  * CommandCollection
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de
+ * @link https://kit2.phpmanufaktur.de/CommandCollection
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -13,16 +13,15 @@ namespace phpManufaktur\CommandCollection\Control\Comments\Import;
 
 use Silex\Application;
 use phpManufaktur\CommandCollection\Data\Comments\Import\FeedbackModule as FeedbackModuleData;
-use phpManufaktur\Contact\Control\Contact;
 use phpManufaktur\CommandCollection\Data\Comments\Comments;
 use phpManufaktur\CommandCollection\Data\Comments\CommentsIdentifier;
 use phpManufaktur\Basic\Data\CMS\Page;
+use phpManufaktur\Basic\Control\Pattern\Alert;
 
-class FeedbackModule extends Dialog
+class FeedbackModule extends Alert
 {
     protected static $import_is_possible = false;
     protected $FeedbackModuleData = null;
-    protected $Contact = null;
     protected $Comments = null;
     protected $CommentsIdentifier = null;
     protected $Page = null;
@@ -38,7 +37,6 @@ class FeedbackModule extends Dialog
         $this->FeedbackModuleData = new FeedbackModuleData($app);
         self::$import_is_possible = $this->FeedbackModuleData->existsFeedbackModule();
 
-        $this->Contact = new Contact($app);
         $this->Comments = new Comments($app);
         $this->CommentsIdentifier = new CommentsIdentifier($app);
         $this->Page = new Page($app);
@@ -56,15 +54,16 @@ class FeedbackModule extends Dialog
         $count = 0;
         if (!self::$import_is_possible) {
             // no import possible
-            $this->setMessage('There exists no FeedbackModule table for import!');
+            $this->setAlert('There exists no FeedbackModule table for import!', array(), self::ALERT_TYPE_WARNING);
         }
         else {
             $count = $this->FeedbackModuleData->countRecords();
         }
 
-        return $this->app['twig']->render($this->app['utils']->getTemplateFile('@phpManufaktur/CommandCollection/Template/Comments', 'import/start.feedbackmodule.twig'),
+        return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+            '@phpManufaktur/CommandCollection/Template/Comments', 'import/start.feedbackmodule.twig'),
             array(
-                'message' => $this->getMessage(),
+                'alert' => $this->getAlert(),
                 'import_is_possible' => self::$import_is_possible,
                 'count' => $count
             ));
@@ -114,8 +113,8 @@ class FeedbackModule extends Dialog
         );
         // insert the contact data
         $contact_id = -1;
-        if (!$this->Contact->insert($data, $contact_id)) {
-            self::$message = $this->Contact->getMessage();
+        if (!$this->app['contact']->insert($data, $contact_id)) {
+            $this->setAlertUnformatted($this->app['contact']->getAlert());
             return false;
         }
         return true;
@@ -142,7 +141,7 @@ class FeedbackModule extends Dialog
         $feedbacks = $this->FeedbackModuleData->getRecords();
         foreach ($feedbacks as $feedback) {
             // loop through the feedbacks
-            if (false === ($contact_id = $this->Contact->existsLogin($feedback['email']))) {
+            if (false === ($contact_id = $this->app['contact']->existsLogin($feedback['email']))) {
                 // add a new contact
                 if (false === ($this->addContact(
                     $feedback['email'],
@@ -153,9 +152,9 @@ class FeedbackModule extends Dialog
                     break;
                 }
             }
-            elseif (!$this->Contact->issetContactTag('COMMENTS', $contact_id)) {
+            elseif (!$this->app['contact']->issetContactTag('COMMENTS', $contact_id)) {
                 // set the COMMENTS tag for the already existing contact
-                $this->Contact->setContactTag('COMMENTS', $contact_id);
+                $this->app['contact']->setContactTag('COMMENTS', $contact_id);
             }
 
             // get the comments identifier for the page ID
@@ -199,7 +198,7 @@ class FeedbackModule extends Dialog
                 // now check for a comment to the feedback
                 if (!empty($feedback['comment'])) {
                     // there exists a 'comment' (reply) to the feedback
-                    if (false === ($contact_id = $this->Contact->existsLogin($feedback['comment_mail']))) {
+                    if (false === ($contact_id = $this->app['contact']->existsLogin($feedback['comment_mail']))) {
                         // add a new contact
                         if (false === ($this->addContact(
                             $feedback['comment_mail'],
@@ -210,9 +209,9 @@ class FeedbackModule extends Dialog
                             break;
                         }
                     }
-                    elseif (!$this->Contact->issetContactTag('COMMENTS', $contact_id)) {
+                    elseif (!$this->app['contact']->issetContactTag('COMMENTS', $contact_id)) {
                         // set the COMMENTS tag for the already existing contact
-                        $this->Contact->setContactTag('COMMENTS', $contact_id);
+                        $this->app['contact']->setContactTag('COMMENTS', $contact_id);
                     }
                     if (!$this->Comments->commentAlreadyExists($identifier_id, $contact_id, date('Y-m-d H:i:s', $feedback['comment_date']))) {
                         $this->Comments->insert(array(
@@ -239,14 +238,14 @@ class FeedbackModule extends Dialog
 
         }
 
-        $this->setMessage('Imported %feedbacks% records and %comments% administrative comments from FeedbackModule',
-            array('%feedbacks%' => $imported_feedback, '%comments%' => $imported_comment));
+        $this->setAlert('Imported %feedbacks% records and %comments% administrative comments from FeedbackModule',
+            array('%feedbacks%' => $imported_feedback, '%comments%' => $imported_comment), self::ALERT_TYPE_INFO, array(), true);
 
         return $this->app['twig']->render($this->app['utils']->getTemplateFile(
             '@phpManufaktur/CommandCollection/Template/Comments',
             'import/execute.feedbackmodule.twig'),
             array(
-                'message' => $this->getMessage()
+                'alert' => $this->getAlert()
             ));
     }
 }

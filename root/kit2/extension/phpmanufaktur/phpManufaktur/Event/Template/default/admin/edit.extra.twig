@@ -1,0 +1,124 @@
+{# 
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Event
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/default/css/admin.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock stylesheet %}
+{% block title %}{{ 'Event Administration - About'|trans }}{% endblock %}
+  
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/Event/Template/default/admin/toolbar.twig' %}
+    
+    <div class="height-15"></div>
+    
+    {{ alert }}
+    
+    <form action="{{ FRAMEWORK_URL }}/admin/event/extra/field/edit?usage={{ usage }}" method="post" {{ form_enctype(form) }} role="form">
+      {{ form_row(form._token) }}
+      {{ form_errors(form) }}
+
+      {{ form_row(form.extra_type_id) }}
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+          <label>{{ 'ID'|humanize|trans }}</label>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-9">
+          {% if form.extra_type_id.vars.value > 0 %}
+            {{ '%03d'|format(form.extra_type_id.vars.value) }}
+          {% else %}
+            {{ '- new extra field -'|trans }}
+          {% endif %}
+        </div>      
+      </div>
+
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+          {{ form_label(form.extra_type_type) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-9">
+          {{ form_widget(form.extra_type_type, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>      
+      </div>  
+        
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+          {{ form_label(form.extra_type_name) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-9">
+          {{ form_widget(form.extra_type_name, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>      
+      </div>   
+        
+      {% if form.extra_type_id.vars.value > 0 %}
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-3">
+            <label>{{ 'Field name (translated)'|trans }}</label>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-9">
+            {{ form.extra_type_name.vars.value|replace({'_':' '})|capitalize }} &rArr; {{ form.extra_type_name.vars.value|replace({'_':' '})|capitalize|trans }}
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+          {{ form_label(form.extra_type_description) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-9">
+          {{ form_widget(form.extra_type_description, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>      
+      </div>   
+        
+      {% if form.extra_type_id.vars.value > 0 %}
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-3">
+            <label>{{ 'Description (translated)'|trans }}</label>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-9">
+            {{ form.extra_type_description.vars.value|trans }}
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="height-15"></div>  
+      
+      <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-9 col-lg-offset-3 col-md-offset-3 col-sm-offset-3">
+          <input type="checkbox" id="{{ form.delete.vars.form.children.0.vars.id }}" name="{{ form.delete.vars.full_name}}[]" value="{{ form.delete.vars.form.children.0.vars.value }}" /> {{ form.delete.vars.form.children.0.vars.label|trans }}
+        </div>      
+      </div>   
+      
+      {#{ form_rest(form) }#}
+      
+      <div class="height-15"></div> 
+      
+      <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-9 col-lg-offset-3 col-md-offset-3 col-sm-offset-3">
+          <input class="btn btn-default" type="submit" value="{{ 'Submit'|trans }}" />
+        </div>
+      </div>
+            
+    </form>
+  </div>
+{% endblock content %}

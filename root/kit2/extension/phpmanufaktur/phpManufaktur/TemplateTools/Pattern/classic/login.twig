@@ -1,0 +1,49 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if CMS_LOGIN_ENABLED and PAGE_VISIBILITY != 'private' and not CMS_USER_IS_AUTHENTICATED %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div id="classic-login">
+    <form name="login" action="{{ CMS_LOGIN_URL }}" method="post">
+      <input type="hidden" name="redirect" value="{{ CMS_LOGIN_REDIRECT_URL }}" />
+      <fieldset>
+        <legend>{{ 'Login'|trans }}</legend>
+        <label for="username">{{ 'Username'|trans }}</label>
+        <input type="text" name="username" id="username" />
+        <label for="password">{{ 'Password'|trans }}</label>
+        <input type="password" name="password" id="password" />
+        <label for="submit"></label>
+        <input type="submit" name="submit" value="{{ 'Login'|trans }}" />
+        <div class="forgotten">
+          <a href="{{ CMS_LOGIN_FORGOTTEN_URL }}">{{ 'Forgot your password?'|trans }}</a>
+        </div>
+        {% if CMS_LOGIN_SIGNUP_ENABLED %}
+          <div class="signup">
+            <a href="{{ CMS_LOGIN_SIGNUP_URL }}">{{ 'I want to signup!'|trans }}</a>
+          </div>
+        {% endif %}
+      </fieldset>
+    </form>
+  </div>  
+{% elseif CMS_LOGIN_ENABLED and CMS_USER_IS_AUTHENTICATED %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div id="classic-login">
+    <form name="logout" action="{{ CMS_LOGOUT_URL }}" method="post">
+      <fieldset>
+        <legend>{{ 'Authenticated'|trans }}</legend>
+        <div class="welcome">
+          <p>{{ 'Welcome back, %name%'|trans({'%name%':CMS_USER_DISPLAYNAME}) }}</p>
+          <p><input type="submit" value="{{ 'Logout'|trans }}" /></p>
+        </div>
+        <div class="account">
+          <a href="{{ CMS_USER_ACCOUNT_URL }}">{{ 'User account'|trans }}</a>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+{% endif %}

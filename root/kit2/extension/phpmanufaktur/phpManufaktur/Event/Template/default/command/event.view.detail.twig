@@ -2,7 +2,7 @@
   Event
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/Event
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
@@ -13,9 +13,10 @@
 {% block stylesheet %}
   {{ parent() }}
   <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.view.css" media="screen, projection" />
-  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-  
+  <link href="{{ LIBRARY_URL ~ '/font-awesome/latest/css/font-awesome.min.css' }}" rel="stylesheet">    
 {% endblock stylesheet %}
+{% block robots %}noindex,follow{% endblock %}
+{% block canonical %}<link rel="canonical" url="{{ FRAMEWORK_URL }}/event/perma/id/{{ event.event_id }}">{% endblock %}
 {% block jquery %}
   {{ parent() }}
   {% if config.rating.active and parameter.rating %}
@@ -23,6 +24,7 @@
   {% endif %}  
 {% endblock jquery %}
 {% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
   {{ parent() }}
   <div class="event view container" >
     {% include '@phpManufaktur/Event/Template/default/command/item/event.detail.twig' %}

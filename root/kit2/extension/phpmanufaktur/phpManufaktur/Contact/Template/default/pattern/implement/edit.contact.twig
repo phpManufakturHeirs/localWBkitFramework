@@ -1,0 +1,96 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+<!-- {{ _self.getTemplateName() }} -->
+
+{{ alert }}
+
+{# assign the bootstrap 3 theming for horizontal forms to the Symfony Form Factory output #}  
+{% form_theme form '@phpManufaktur/Contact/Template/default/pattern/form.fields.horizontal.twig' %}
+
+{% if form.contact_type.vars.value == 'PERSON' %}
+  {% set action = FRAMEWORK_URL ~ field.route.person ~ '?usage=' ~ usage %}
+{% else %}
+  {% set action = FRAMEWORK_URL ~ field.route.company ~ '?usage=' ~ usage %}
+{% endif %}
+
+<form action="{{ action }}" class="form-horizontal" method="post" role="form">
+  
+  {% set contact_fieldset = [] %}
+  {% set person_fieldset = [] %}
+  {% set company_fieldset = [] %}
+  {% set communication_fieldset = [] %}
+  {% set address_fieldset = [] %}
+  {% set address_secondary_fieldset = [] %}
+  {% set address_delivery_fieldset = [] %}
+  {% set address_delivery_secondary_fieldset = [] %}
+  {% set address_billing_fieldset = [] %}
+  {% set address_billing_secondary_fieldset = [] %}
+  {% set extra_fieldset = [] %}
+  
+  {% for child in form.children %}
+    {% if 'hidden' in child.vars.block_prefixes %}
+      {# prompt all hidden fields at the top of the form #}
+      {{ form_row(child) }}
+    {% elseif (('contact_' in child.vars.name) or ('category_' in child.vars.name) or ('tags' == child.vars.name) or ('note' == child.vars.name)) %}
+      {% set contact_fieldset = contact_fieldset|merge([child.vars.name]) %}
+    {% elseif 'person_' in child.vars.name %}
+      {% set person_fieldset = person_fieldset|merge([child.vars.name]) %}
+    {% elseif 'company_' in child.vars.name %}
+      {% set company_fieldset = company_fieldset|merge([child.vars.name]) %}
+    {% elseif 'communication_' in child.vars.name %}
+      {% set communication_fieldset = communication_fieldset|merge([child.vars.name]) %}
+    {% elseif 'address_secondary_' in child.vars.name %}
+      {% set address_secondary_fieldset = address_secondary_fieldset|merge([child.vars.name]) %}
+    {% elseif 'address_delivery_secondary_' in child.vars.name %}
+      {% set address_delivery_secondary_fieldset = address_delivery_secondary_fieldset|merge([child.vars.name]) %}
+    {% elseif 'address_delivery_' in child.vars.name %}
+      {% set address_delivery_fieldset = address_delivery_fieldset|merge([child.vars.name]) %}
+    {% elseif 'address_billing_secondary_' in child.vars.name %}
+      {% set address_billing_secondary_fieldset = address_billing_secondary_fieldset|merge([child.vars.name]) %}
+    {% elseif 'address_billing_' in child.vars.name %}
+      {% set address_billing_fieldset = address_billing_fieldset|merge([child.vars.name]) %}
+    {% elseif 'address_' in child.vars.name %}
+      {% set address_fieldset = address_fieldset|merge([child.vars.name]) %}
+    {% elseif 'extra_' in child.vars.name %}
+      {% set extra_fieldset = extra_fieldset|merge([child.vars.name]) %}
+    {% endif %}
+  {% endfor %}  
+  
+  {% set fieldsets = {'contact_settings':contact_fieldset,'person':person_fieldset,'company':company_fieldset,
+    'communication':communication_fieldset,'address':address_fieldset,'address_secondary':address_secondary_fieldset,
+    'address_delivery':address_delivery_fieldset,'address_delivery_secondary':address_delivery_secondary_fieldset,
+    'address_billing':address_billing_fieldset,'address_billing_secondary':address_billing_secondary_fieldset,
+    'extra_fields':extra_fieldset} %}
+    
+  {% for fieldset_name, fieldset_childs in fieldsets %}
+    {% if fieldset_childs|length > 0 %}
+      <fieldset>
+        <legend>{{ fieldset_name|humanize|trans }}</legend>
+        {% for child in form.children %}
+          {% if child.vars.name in fieldset_childs %}
+            {{ form_row(child) }}
+          {% endif %}  
+        {% endfor %}
+      </fieldset>
+    {% endif %}  
+  {% endfor %}
+  
+  {# and the rest of the form ... #}
+  {{ form_rest(form) }}     
+
+  <div class="form-group">
+    <div class="col-sm-9 col-sm-offset-3">
+      <button class="btn btn-default" type="submit">{{ 'Submit'|trans }}</button>&nbsp;
+      {% if field.route.list is defined %}
+        <a class="btn btn-default" href="{{ FRAMEWORK_URL ~ field.route.list ~ '?usage=' ~ usage }}" role="button" title="{{ 'Overview'|trans }}">{{ 'Overview'|trans }}</a>
+      {% endif %}  
+    </div>
+  </div>
+</form>    

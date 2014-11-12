@@ -2,7 +2,7 @@
   Event
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/Event
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
@@ -11,7 +11,7 @@
 {% block stylesheet %}
   {{ parent() }}
   <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.list.css" media="screen, projection" />
-  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  <link href="{{ LIBRARY_URL ~ '/font-awesome/3.2.1/css/font-awesome.min.css' }}" rel="stylesheet">
 {% endblock stylesheet %}
 {% block jquery %}
   {{ parent() }}
@@ -20,14 +20,15 @@
   {% endif %} 
 {% endblock jquery %}
 {% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
   {{ parent() }}
   <div class="event list container" >
     <table>
       <thead>
         <tr>
-          <th>{{ 'event_date_from'|trans }}</th>
-          <th>{{ 'event_date_to'|trans }}</th>
-          <th>{{ 'description_title'|trans }}</th>
+          <th>{{ 'event_date_from'|humanize|trans }}</th>
+          <th>{{ 'event_date_to'|humanize|trans }}</th>
+          <th>{{ 'description_title'|humanize|trans }}</th>
           <th>{{ 'Location'|trans }}</th>
           <th>{{ 'Organizer'|trans }}</th>
           {% if parameter.rating and config.rating.active %}
@@ -42,7 +43,7 @@
             <td>{{ event.event_date_from|date('DATE_FORMAT'|trans) }}</td>
             <td>{{ event.event_date_to|date('DATE_FORMAT'|trans) }}</td>
             <td><a href="{{ FRAMEWORK_URL }}/event/perma/id/{{ event.event_id }}?pid={{ basic.pid }}" target="_top">{{ event.description_title }}</a></td>            
-            <td>
+            <td>              
               {% if event.contact.location.contact.contact_type == 'COMPANY' %}
                 {{ event.contact.location.company.0.company_name }}
               {% else %}

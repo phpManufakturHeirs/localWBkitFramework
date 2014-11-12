@@ -1,0 +1,57 @@
+<!-- {{ _self.getTemplateName() }} -->
+<div class="media">
+  {% if parameter.content_image and content.teaser_image|length > 0 %}
+    {% if content.teaser_image_url is defined %}
+      {% set img_url = content.teaser_image_url %}
+    {% else %}
+      {% set img = image(content.teaser_image, parameter.content_image_small_max_width, parameter.content_image_small_max_height) %}
+      {% set img_url = img.src %}
+    {% endif %}   
+    {# add the margin, padding and border of img-thumbnail to the min-width! #}
+    <div class="pull-left media-object" style="width:{{ parameter.content_image_small_max_width }}px;min-height:{{ parameter.content_image_small_max_height+30 }}px;padding: 0 30px 30px 0;">
+      {% if url|length > 0 %}<a href="{{ url }}" target="{{ target }}">{% endif %}
+        <img class="img-responsive img-thumbnail" src="{{ img_url }}" alt="{{ content.title }}" title="{{ content.title }}" />
+      {% if url|length > 0 %}</a>{% endif %}
+    </div>
+  {% endif %}
+  <div class="media-body">
+    {% if parameter.content_title %}
+      {% if url|length > 0 %}<a href="{{ url }}" target="{{ target }}">{% endif %}
+        <h{{ parameter.title_level+2|default('3') }} class="media-heading">{{ content.title|default('') }}</h{{ parameter.title_level+2|default('3') }}>
+      {% if url|length > 0 %}</a>{% endif %}
+    {% endif %}
+    {% if content.event_date_from is defined %}
+      <div class="event-info">
+        {% set date_from = '<i class="fa fa-calendar-o"></i>  ' ~ content.event_date_from|date('DATE_FORMAT'|trans) %}
+        {% if content.event_location.contact_name is defined %}
+          {{ date_from ~ ', ' ~ content.event_location.contact_name }} 
+        {% else %}
+          {{ date_from }}
+        {% endif %}
+        {% include '@phpManufaktur/flexContent/Template/default/command/content.schema.org.twig' %}
+      </div>
+    {% endif %}
+    {% if (parameter.content_view == 'teaser') or (parameter.content_view == 'content') %}
+      {% if parameter.content_view == 'teaser' %}
+        {{ content.teaser }}
+      {% else %}
+        {{ content.content }}
+      {% endif %}
+      {% if url|length > 0 %}
+        <div class="go-ahead">
+          <a href="{{ url }}" target="{{ target }}">{{ 'read more'|trans }} ...</a>
+        </div>
+      {% endif %}
+      {% if parameter.content_tags and content.tags|length > 0 %}
+        <div class="content-tags">
+          {% for tag in content.tags %}
+            <span class="label {% if loop.first %}label-primary{% elseif loop.index < 4 %}label-info{% else %}label-default{% endif %}">
+              {# attach the primary category ?c= and the actual content ID &i= #}
+              <a href="{% if tag.tag_permalink_url is defined %}{{ tag.tag_permalink_url }}{% else %}{{ permalink_base_url ~ '/buzzword/' ~ tag.tag_permalink }}{% endif %}" title="{{ tag.tag_description|ellipsis }}">{{ tag.tag_name }}</a>
+            </span>
+          {% endfor %}
+        </div> 
+      {% endif %}
+    {% endif %}
+  </div>
+</div>

@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -22,6 +22,9 @@ use phpManufaktur\Event\Data\Event\Description as EventDescription;
 use phpManufaktur\Event\Data\Event\Extra;
 use phpManufaktur\Event\Data\Event\Images;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use phpManufaktur\Event\Data\Event\RecurringEvent as RecurringEventData;
 
 class EventEdit extends Backend {
 
@@ -34,6 +37,7 @@ class EventEdit extends Backend {
     protected $EventDescription = null;
     protected $Extra = null;
     protected $Images = null;
+    protected $RecurringData = null;
     protected static $config = null;
 
     public function __construct(Application $app=null)
@@ -55,6 +59,7 @@ class EventEdit extends Backend {
         $this->EventDescription = new EventDescription($this->app);
         $this->Extra = new Extra($this->app);
         $this->Images = new Images($this->app);
+        $this->RecurringData = new RecurringEventData($app);
         self::$config = $this->app['utils']->readConfiguration(MANUFAKTUR_PATH.'/Event/config.event.json');
     }
 
@@ -75,7 +80,9 @@ class EventEdit extends Backend {
             'data' => self::$event_id
         ))
         ->add('create_by', 'choice', array(
-            'choices' => array('GROUP' => 'by selecting a event group', 'COPY' => 'by copying from a existing event'),
+            'choices' => array(
+                'GROUP' => $this->app['translator']->trans('by selecting a event group'),
+                'COPY' => $this->app['translator']->trans('by copying from a existing event')),
             'expanded' => true,
             'label' => 'Create a new event',
             'data' => 'GROUP'
@@ -124,11 +131,10 @@ class EventEdit extends Backend {
             'data' => self::$event_id
         ))
         ->add('event_status', 'choice', array(
-            'choices' => array('ACTIVE' => 'active', 'LOCKED' => 'locked', 'DELETED' => 'deleted'),
+            'choices' => array('ACTIVE' => 'Active', 'LOCKED' => 'Locked', 'DELETED' => 'Deleted'),
             'empty_value' => false,
             'expanded' => false,
             'required' => true,
-            'label' => 'Status',
             'data' => $event['event_status']
         ))
         ->add('group_id', 'hidden', array(
@@ -144,7 +150,6 @@ class EventEdit extends Backend {
             'empty_value' => '- please select -',
             'expanded' => false,
             'required' => true,
-            'label' => 'Organizer',
             'data' => $event['event_organizer']
         ))
 
@@ -154,7 +159,6 @@ class EventEdit extends Backend {
             'empty_value' => '- please select -',
             'expanded' => false,
             'required' => true,
-            'label' => 'Event location',
             'data' => $event['event_location']
         ))
         // Participants
@@ -275,7 +279,7 @@ class EventEdit extends Backend {
             $fields->add($name, $form_type, array(
                 'attr' => array('class' => $name),
                 'data' => $value,
-                'label' => ucfirst(str_replace('_', ' ', strtolower($field['extra_type_name']))),
+                'label' => $this->app['utils']->humanize($field['extra_type_name']),
                 'required' => false
             ));
 
@@ -304,7 +308,7 @@ class EventEdit extends Backend {
             'mode' => 'public',
             'usage' => self::$usage
         )));
-        return FRAMEWORK_URL.'/admin/mediabrowser/init/'.$image_link_param;
+        return FRAMEWORK_URL.'/mediabrowser/init/'.$image_link_param;
     }
 
     /**
@@ -333,11 +337,11 @@ class EventEdit extends Backend {
                 'image_width' => $width
             );
             $this->Images->insert($data);
-            $this->setMessage('The image <b>%image%</b> has been added to the event.',
-                array('%image%' => basename($image), '%event_id%' => $event_id));
+            $this->setAlert('The image <b>%image%</b> has been added to the event.',
+                array('%image%' => basename($image), '%event_id%' => $event_id), self::ALERT_TYPE_SUCCESS);
         }
         else {
-            $this->setMessage('No image selected, nothing to do.');
+            $this->setAlert('No image selected, nothing to do.', array(), self::ALERT_TYPE_INFO);
         }
         return $this->exec($app, $event_id);
     }
@@ -350,8 +354,8 @@ class EventEdit extends Backend {
         $this->setEventID($event_id);
         // delete the image
         $this->Images->delete($image_id);
-        $this->setMessage('The image with the ID %image_id% was successfull deleted.',
-            array('%image_id%' => $image_id));
+        $this->setAlert('The image with the ID %image_id% was successfull deleted.',
+            array('%image_id%' => $image_id), self::ALERT_TYPE_SUCCESS);
         // show event dialog
         return $this->exec($app, $event_id);
     }
@@ -377,6 +381,12 @@ class EventEdit extends Backend {
         if (isset($form_request['event_id'])) {
             self::$event_id = $form_request['event_id'];
         }
+
+        if (null != ($alert = $this->app['request']->query->get('alert'))) {
+            $alert_type = $this->app['request']->query->get('alert_type', self::ALERT_TYPE_INFO);
+            $this->setAlert($alert, array(), $alert_type);
+        }
+
         // additional information for extra fields
         $extra_info = array();
         // help to detect if this is the first call of the function
@@ -387,17 +397,19 @@ class EventEdit extends Backend {
             if (isset($form_request['create_by'])) {
                 if ($form_request['create_by'] == 'COPY') {
                     // show the dialog to copy an existing event into a new one
-                    throw new \Exception('The COPY dialog is not implemented yet!');
+                    $subRequest = Request::create('/admin/event/copy', 'GET', array('usage' => self::$usage));
+                    return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
                 }
                 else {
                     // show the dialog to select a event group
                     $fields = $this->getCreateByGroupFormFields();
                     $form = $fields->getForm();
-                    return $this->app['twig']->render($this->app['utils']->getTemplateFile('@phpManufaktur/Event/Template', 'backend/event.create.by.group.twig'),
+                    return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+                        '@phpManufaktur/Event/Template', 'admin/group.event.twig'),
                         array(
                             'usage' => self::$usage,
                             'toolbar' => $this->getToolbar('event_edit'),
-                            'message' => $this->getMessage(),
+                            'alert' => $this->getAlert(),
                             'form' => $form->createView()
                         ));
                 }
@@ -418,11 +430,11 @@ class EventEdit extends Backend {
                 $fields = $this->getCreateStartFormFields();
                 $form = $fields->getForm();
                 return $this->app['twig']->render($this->app['utils']->getTemplateFile(
-                    '@phpManufaktur/Event/Template', 'backend/event.create.start.twig'),
+                    '@phpManufaktur/Event/Template', 'admin/create.event.twig'),
                     array(
                         'usage' => self::$usage,
                         'toolbar' => $this->getToolbar('event_edit'),
-                        'message' => $this->getMessage(),
+                        'alert' => $this->getAlert(),
                         'form' => $form->createView()
                     ));
             }
@@ -431,7 +443,8 @@ class EventEdit extends Backend {
         else {
             if (false === ($event = $this->EventData->selectEvent(self::$event_id))) {
                 $event = $this->EventData->getDefaultRecord();
-                $this->setMessage('The record with the ID %id% does not exists!', array('%id%' => self::$event_id));
+                $this->setAlert('The record with the ID %id% does not exists!',
+                    array('%id%' => self::$event_id), self::ALERT_TYPE_WARNING);
                 self::$event_id = -1;
             }
         }
@@ -452,8 +465,8 @@ class EventEdit extends Backend {
                 // check the event data
                 if (self::$config['event']['description']['title']['required'] &&
                     (!isset($event['description_title']) || (strlen(trim($event['description_title'])) < self::$config['event']['description']['title']['min_length']))) {
-                    $this->setMessage('Please type in a title with %minimum% characters at minimum.',
-                        array('%minimum%' => self::$config['event']['description']['title']['min_length']));
+                    $this->setAlert('Please type in a title with %minimum% characters at minimum.',
+                        array('%minimum%' => self::$config['event']['description']['title']['min_length']), self::ALERT_TYPE_WARNING);
                     $checked = false;
                 }
                 elseif (!isset($event['description_title'])) {
@@ -461,8 +474,8 @@ class EventEdit extends Backend {
                 }
                 if (self::$config['event']['description']['short']['required'] &&
                     (!isset($event['description_short']) || (strlen(trim($event['description_short'])) < self::$config['event']['description']['short']['min_length']))) {
-                    $this->setMessage('Please type in a short description with %minimum% characters at minimum.',
-                        array('%minimum%' => self::$config['event']['description']['short']['min_length']));
+                    $this->setAlert('Please type in a short description with %minimum% characters at minimum.',
+                        array('%minimum%' => self::$config['event']['description']['short']['min_length']), self::ALERT_TYPE_WARNING);
                     $checked = false;
                 }
                 elseif (!isset($event['description_short'])) {
@@ -470,8 +483,8 @@ class EventEdit extends Backend {
                 }
                 if (self::$config['event']['description']['long']['required'] &&
                     (!isset($event['description_long']) || (strlen(trim($event['description_long'])) < self::$config['event']['description']['long']['min_length']))) {
-                    $this->setMessage('Please type in a long description with %minimum% characters at minimum.',
-                        array('%minimum%' => self::$config['event']['description']['long']['min_length']));
+                    $this->setAlert('Please type in a long description with %minimum% characters at minimum.',
+                        array('%minimum%' => self::$config['event']['description']['long']['min_length']), self::ALERT_TYPE_WARNING);
                     $checked = false;
                 }
                 elseif (!isset($event['description_long'])) {
@@ -481,7 +494,7 @@ class EventEdit extends Backend {
                 if ($this->app['session']->get('create_new_event', false) &&
                     !self::$config['event']['date']['event_date_from']['allow_date_in_past'] &&
                     (strtotime($event['event_date_from']) < time())) {
-                    $this->setMessage('It is not allowed that the event start in the past!');
+                    $this->setAlert('It is not allowed that the event start in the past!', array(), self::ALERT_TYPE_WARNING);
                     $checked = false;
                 }
 
@@ -524,15 +537,18 @@ class EventEdit extends Backend {
 
 
                 if (strtotime($event['event_date_from']) > strtotime($event['event_date_to'])) {
-                    $this->setMessage('The event start date is behind the event end date!');
+                    $this->setAlert('The event start date is behind the event end date!',
+                        array(), self::ALERT_TYPE_WARNING);
                     $checked = false;
                 }
                 if (strtotime($event['event_publish_to']) < strtotime($event['event_date_from'])) {
-                    $this->setMessage('The publishing date ends before the event starts, this is not allowed!');
+                    $this->setAlert('The publishing date ends before the event starts, this is not allowed!',
+                        array(), self::ALERT_TYPE_WARNING);
                     $checked = false;
                 }
                 if (strtotime($event['event_deadline']) > strtotime($event['event_date_from'])) {
-                    $this->setMessage('The deadline ends after the event start date!');
+                    $this->setAlert('The deadline ends after the event start date!',
+                        array(), self::ALERT_TYPE_WARNING);
                     $checked = false;
                 }
 
@@ -573,19 +589,30 @@ class EventEdit extends Backend {
             }
             else {
                 // general error (timeout, CSFR ...)
-                $this->setMessage('The form is not valid, please check your input and try again!');
+                $this->setAlert('The form is not valid, please check your input and try again!', array(),
+                    self::ALERT_TYPE_DANGER, true, array('form_errors' => $form->getErrorsAsString(),
+                        'method' => __METHOD__, 'line' => __LINE__));
             }
         }
 
-        return $this->app['twig']->render($this->app['utils']->getTemplateFile('@phpManufaktur/Event/Template', 'backend/event.edit.twig'),
+        $recurring_dates = null;
+        if (isset($event['event_recurring_id']) && ($event['event_recurring_id'] > 0)) {
+            $this->setAlert($this->RecurringData->getReadableCurringEvent($event['event_recurring_id']));
+            $recurring_dates = $this->EventData->selectRecurringDates($event['event_recurring_id']);
+        }
+
+
+        return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+            '@phpManufaktur/Event/Template', 'admin/edit.event.twig'),
             array(
                 'usage' => self::$usage,
                 'toolbar' => $this->getToolbar('event_edit'),
-                'message' => $this->getMessage(),
+                'alert' => $this->getAlert(),
                 'form' => $form->createView(),
                 'extra_info' => $extra_info,
                 'add_image_url' => $this->createAddImageURL(),
-                'images' => $this->Images->selectByEventID(self::$event_id)
+                'images' => $this->Images->selectByEventID(self::$event_id),
+                'recurring_dates' => $recurring_dates
             ));
     }
 

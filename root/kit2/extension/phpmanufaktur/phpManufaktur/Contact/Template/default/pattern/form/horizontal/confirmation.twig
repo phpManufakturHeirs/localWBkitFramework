@@ -1,0 +1,69 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+
+{% block stylesheet %}
+  {# load all stylesheets defined in the parent template #}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Contact/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/form.horizontal.min.css') %}
+    {# load the CSS for this template from the PRIMARY template defined in framework.json #}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Contact/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/form.horizontal.min.css' }}" />
+  {% else %}
+    {# ... otherwise load the CSS from the /default directory for this template #}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Contact/Template/default/css/form.horizontal.min.css' }}" />
+  {% endif %}
+{% endblock %}
+  
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
+  {% if config.confirmation.text is defined and config.confirmation.text|length > 0 %}
+    
+    {# show the confirmation text from the form.json #}
+    <div class="panel panel-default">
+      {% if config.confirmation.header is defined and config.confirmation.header|length > 0 %}
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ config.confirmation.header }}</h3>
+        </div>
+      {% endif %}
+      <div class="panel-body">
+        {{ config.confirmation.text|trans }}
+      </div>
+    </div>
+    
+  {% elseif app.translator.locale == 'de' %}
+    
+    {# show the GERMAN Version (STANDARD) #}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Vielen Dank</h3>
+      </div>
+      <div class="panel-body">
+        <p>Wir haben Ihre Anfrage erhalten und werden uns so rasch wie möglich bei Ihnen melden.</p>
+        <p>Sofern Sie uns eine E-Mail Adresse mitgeteilt haben, haben wir Ihnen zusätzlich eine Bestätigung an Ihre E-Mail Adresse gesendet.</p>
+        <p><em>Ihr {{ CMS_TYPE }} Team</em></p>
+      </div>
+    </div>    
+    
+  {% else %}
+    
+    {# show the ENGLISH Version (STANDARD) #}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Thank you</h3>
+      </div>
+      <div class="panel-body">
+        <p>We have received your submission and will contact you as soon as possible.</p>
+        <p>If you have also submitted your email address, we have send you a confirmation mail.</p>
+        <p><em>Regards, your {{ CMS_TYPE }} Team</em></p>
+      </div>
+    </div> 
+  {% endif %}
+    
+{% endblock %}

@@ -12,7 +12,7 @@
 namespace phpManufaktur\Event\Control\Import\kitEvent;
 
 use Silex\Application;
-use phpManufaktur\Event\Control\Import\Dialog;
+use phpManufaktur\Basic\Control\Pattern\Alert;
 use phpManufaktur\Contact\Data\Import\KeepInTouch\KeepInTouch as KeepInTouchData;
 use phpManufaktur\Contact\Control\Contact;
 use phpManufaktur\Event\Data\Import\kitEvent\kitEvent as kitEventData;
@@ -24,7 +24,7 @@ use phpManufaktur\Event\Data\Event\ParticipantTag;
 use phpManufaktur\Event\Data\Event\Event;
 use phpManufaktur\Event\Data\Event\Description;
 
-class kitEvent extends Dialog {
+class kitEvent extends Alert {
 
     protected static $kit_release = null;
     protected static $import_is_possible = false;
@@ -41,6 +41,7 @@ class kitEvent extends Dialog {
     protected $ParticipantTag = null;
     protected $Event = null;
     protected $Description = null;
+    protected static $usage = null;
 
     /**
      * Initialize the class
@@ -80,6 +81,12 @@ class kitEvent extends Dialog {
                 }
             }
         }
+
+        self::$usage = $this->app['request']->get('usage', 'framework');
+        // set the locale from the CMS locale
+        if (self::$usage != 'framework') {
+            $app['translator']->setLocale($this->app['session']->get('CMS_LOCALE', 'en'));
+        }
     }
 
     /**
@@ -96,24 +103,25 @@ class kitEvent extends Dialog {
         $records = 0;
         if (self::$import_is_possible) {
             $records = $this->kitEvent->countKitEventRecords();
-            $this->setMessage('Detected a kitEvent installation (Release: %release%) with %count% active or locked events.',
-                array('%release%' => self::$event_release, '%count%' => $records));
+            $this->setAlert('Detected a kitEvent installation (Release: %release%) with %count% active or locked events.',
+                array('%release%' => self::$event_release, '%count%' => $records), self::ALERT_TYPE_INFO);
         }
         else {
-            $this->setMessage('There exists no kitEvent installation at the parent CMS!');
+            $this->setAlert('There exists no kitEvent installation at the parent CMS!', array(), self::ALERT_TYPE_WARNING);
         }
 
         $this->app['session']->set('EVENT_IMPORT_EVENTS_DETECTED', $records);
         $this->app['session']->set('EVENT_IMPORT_EVENTS_IMPORTED', 0);
 
         return $this->app['twig']->render($this->app['utils']->getTemplateFile(
-            '@phpManufaktur/Event/Template', 'import/start.kitevent.twig'),
+            '@phpManufaktur/Event/Template', 'admin/import/kitevent/start.twig'),
             array(
-                'message' => $this->getMessage(),
+                'alert' => $this->getAlert(),
                 'records' => $records,
                 'import_is_possible' => self::$import_is_possible,
                 'kit_release' => self::$kit_release,
-                'event_release' => self::$event_release
+                'event_release' => self::$event_release,
+                'usage' => self::$usage
             ));
     }
 
@@ -144,7 +152,14 @@ class kitEvent extends Dialog {
                 $participant = $this->KeepInTouch->getIdentifierValue($group['kit_distribution_participant']);
                 $participant = $this->KeepInTouch->createIdentifier($participant);
                 if (!$this->TagType->existsTag($participant)) {
-                    throw new \Exception("The Tag $participant does not exists, please check settings for the kitEvent Groups");
+                    // create the missing #tag
+                    $data = array(
+                        'tag_name' => $participant,
+                        'tag_description' => 'Import from kitEvent'
+                    );
+                    $this->TagType->insert($data);
+                    $this->setAlert('Created the tag %tag% in Contact.',
+                        array('%tag%' => $participant), self::ALERT_TYPE_INFO);
                 }
                 $data = array(
                     'group_id' => $group_id,
@@ -156,7 +171,15 @@ class kitEvent extends Dialog {
                 $organizer = $this->KeepInTouch->getIdentifierValue($group['kit_distribution_organizer']);
                 $organizer = $this->KeepInTouch->createIdentifier($organizer);
                 if (!$this->TagType->existsTag($organizer)) {
-                    throw new \Exception("The Tag $organizer does not exists, please check settings for the kitEvent Groups");
+                    // create the missing #tag
+                    $data = array(
+                        'tag_name' => $participant,
+                        'tag_description' => 'Import from kitEvent'
+                    );
+                    $this->TagType->insert($data);
+                    $this->setAlert('Created the tag %tag% in Contact.',
+                        array('%tag%' => $participant), self::ALERT_TYPE_INFO);
+                    //throw new \Exception("The Tag $organizer does not exists, please check settings for the kitEvent Groups");
                 }
                 $data = array(
                     'group_id' => $group_id,
@@ -168,7 +191,15 @@ class kitEvent extends Dialog {
                 $location = $this->KeepInTouch->getIdentifierValue($group['kit_distribution_location']);
                 $location = $this->KeepInTouch->createIdentifier($location);
                 if (!$this->TagType->existsTag($location)) {
-                    throw new \Exception("The Tag $location does not exists, please check settings for the kitEvent Groups");
+                    // create the missing #tag
+                    $data = array(
+                        'tag_name' => $participant,
+                        'tag_description' => 'Import from kitEvent'
+                    );
+                    $this->TagType->insert($data);
+                    $this->setAlert('Created the tag %tag% in Contact.',
+                        array('%tag%' => $participant), self::ALERT_TYPE_INFO);
+                    //throw new \Exception("The Tag $location does not exists, please check settings for the kitEvent Groups");
                 }
                 $data = array(
                     'group_id' => $group_id,
@@ -194,31 +225,41 @@ class kitEvent extends Dialog {
         $check = array('organizer_id', 'location_id', 'group_id', 'item_id');
         foreach ($check as $key => $value) {
             if ($event[$value] < 1) {
-                $this->setMessage('Skipped kitEvent ID %event_id%: No valid value in %field%',
-                    array('%event_id%' => $event_id, '%field%' => $value), true);
+                $this->setAlert('Skipped kitEvent ID %event_id%: No valid value in %field%',
+                    array('%event_id%' => $event_id, '%field%' => $value), self::ALERT_TYPE_WARNING);
                 return false;
             }
         }
         if (false === ($organizer_id = $this->KeepInTouch->getContactID4KeepInTouchID($event['organizer_id']))) {
-            $this->setMessage('Skipped kitEvent ID %event_id%: Can not find the contact ID for the KIT ID %kit_id%.',
-                array('%event_id%' => $event_id, '%kit_id%' => $event['organizer_id']), true);
+            $this->setAlert('Skipped kitEvent ID %event_id%: Can not find the contact ID for the KIT ID %kit_id%.',
+                array('%event_id%' => $event_id, '%kit_id%' => $event['organizer_id']), self::ALERT_TYPE_WARNING);
+            return false;
         }
 
         if (false === ($location_id = $this->KeepInTouch->getContactID4KeepInTouchID($event['location_id']))) {
-            $this->setMessage('Skipped kitEvent ID %event_id%: Can not find the contact ID for the KIT ID %kit_id%.',
-                array('%event_id%' => $event_id, '%kit_id%' => $event['location_id']), true);
+            $this->setAlert('Skipped kitEvent ID %event_id%: Can not find the contact ID for the KIT ID %kit_id%.',
+                array('%event_id%' => $event_id, '%kit_id%' => $event['location_id']), self::ALERT_TYPE_WARNING);
+            return false;
         }
 
         if (false === ($group_id = $this->kitEvent->getEventGroupID4kitEventGroupID($event['group_id']))) {
-            $this->setMessage('Skipped kitEvent ID %event_id%: Can not determine the Event Group ID for the kitEvent Group ID %group_id%.',
-                array('%event_id%' => $event_id, '%group_id%' => $event['group_id']), true);
+            $this->setAlert('Skipped kitEvent ID %event_id%: Can not determine the Event Group ID for the kitEvent Group ID %group_id%.',
+                array('%event_id%' => $event_id, '%group_id%' => $event['group_id']), self::ALERT_TYPE_WARNING);
+            return false;
         }
 
         if (false === ($item = $this->kitEvent->getEventItem($event['item_id']))) {
-            $this->setMessage('Skipped kitEvent ID %event_id%: Can not read the items for this event.',
-                array('%event_id%' => $event_id), true);
+            $this->setAlert('Skipped kitEvent ID %event_id%: Can not read the items for this event.',
+                array('%event_id%' => $event_id), self::ALERT_TYPE_WARNING);
+            return false;
         }
 
+        if (false !== ($id = $this->kitEvent->isAlreadyImported($organizer_id, $location_id, $event['evt_event_date_from'],
+            $event['evt_event_date_to'], $this->app['utils']->sanitizeText($item['item_title'])))) {
+            $this->setAlert('Skipped kitEvent ID %event_id%: This entry exists already as Event ID %id%.',
+                array('%event_id%' => $event_id, '%id%' => $id), self::ALERT_TYPE_INFO);
+            return false;
+        }
 
         try {
             // start transaction
@@ -237,9 +278,9 @@ class kitEvent extends Dialog {
                 'event_participants_max' => $event['evt_participants_max'],
                 'event_participants_total' => $event['evt_participants_total'],
                 'event_deadline' => $event['evt_deadline'],
-                'description_title' => $item['item_title'],
-                'description_short' => $item['item_desc_short'],
-                'description_long' => $item['item_desc_long'],
+                'description_title' => $this->app['utils']->sanitizeText($item['item_title']),
+                'description_short' => $this->app['utils']->sanitizeText($item['item_desc_short']),
+                'description_long' => $this->app['utils']->sanitizeText($item['item_desc_long']),
                 'event_status' => ($event['evt_status'] == '1') ? 'ACTIVE' : 'LOCKED'
             );
 
@@ -275,8 +316,8 @@ class kitEvent extends Dialog {
         $prompt_success = true;
         if (self::$import_is_possible) {
             // execute the import
-
-            $event_ids = $this->kitEvent->getAllKitEventIDs();
+            $start_id = $this->app['session']->get('EVENT_IMPORT_LAST_ID', 1);
+            $event_ids = $this->kitEvent->getAllKitEventIDs($start_id);
 
             // first handle the kitEvent Groups
             $groups = $this->kitEvent->getEventGroups();
@@ -290,6 +331,7 @@ class kitEvent extends Dialog {
                     // dont count
                     continue;
                 }
+                $this->app['session']->set('EVENT_IMPORT_LAST_ID', $event['evt_id']);
                 // increase counter
                 $counter++;
                 $total = $this->app['session']->get('EVENT_IMPORT_EVENTS_IMPORTED', 0) + $counter;
@@ -297,8 +339,8 @@ class kitEvent extends Dialog {
 
                 if (((microtime(true) - self::$script_start) + 5) > self::$max_execution_time) {
                     // abort import to prevent timeout
-                    $this->setMessage('To prevent a timeout of the script the import was aborted after import of %counter% records. Please reload this page to continue the import process.',
-                        array('%counter%' => $counter));
+                    $this->setAlert('To prevent a timeout of the script the import was aborted after import of %counter% records. Please reload this page to continue the import process.',
+                        array('%counter%' => $counter), self::ALERT_TYPE_INFO);
                     $this->app['monolog']->addInfo(sprintf('[Import kitEvent] Script aborted after %.3f seconds and %d records to prevent a timeout', microtime(true) - self::$script_start, $counter));
                     $prompt_success = false;
                     break;
@@ -309,24 +351,26 @@ class kitEvent extends Dialog {
             $events_imported = $this->app['session']->get('EVENT_IMPORT_EVENTS_IMPORTED', 0);
 
             if ($prompt_success) {
-                $this->setMessage('The import from kitEvent was successfull finished.');
+                $this->setAlert('The import from kitEvent was successfull finished.', array(), self::ALERT_TYPE_SUCCESS);
                 $this->app['monolog']->addInfo('The import from kitEvent was successfull finished.');
 
                 $this->app['session']->remove('EVENT_IMPORT_EVENTS_DETECTED');
                 $this->app['session']->remove('EVENT_IMPORT_EVENTS_IMPORTED');
+                $this->app['session']->remove('EVENT_IMPORT_LAST_ID');
             }
         }
         else {
-            $this->setMessage('There exists no kitEvent installation at the parent CMS!');
+            $this->setAlert('There exists no kitEvent installation at the parent CMS!', array(), self::ALERT_TYPE_WARNING);
         }
         return $this->app['twig']->render($this->app['utils']->getTemplateFile(
-            '@phpManufaktur/Event/Template', 'import/import.kitevent.twig'),
+            '@phpManufaktur/Event/Template', 'admin/import/kitevent/result.twig'),
             array(
-                'message' => $this->getMessage(),
+                'alert' => $this->getAlert(),
                 'events' => array(
                     'detected' => $events_detected,
                     'imported' => $events_imported
-                )
+                ),
+                'usage' => self::$usage
             ));
     }
 }

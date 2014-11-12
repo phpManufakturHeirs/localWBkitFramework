@@ -1,0 +1,20 @@
+<div class="media extension">
+  <img class="pull-left" src="{% if item.logo_blob|length > 0 %}data:image/{{ item.logo_type }};charset=utf-8;base64,{{ item.logo_blob }}{% else %}{{ item.logo_url }}{% endif %}" width="{{ item.logo_width }}" height="{{ item.logo_height }}" alt="{{ item.description.title }}" />
+  <div class="media-body">
+    <h3 class="media-heading">{{ item.name }}</h3>
+    <div class="description">
+      {{ item.description.short }}    
+    </div>
+    {% if item.release is defined %}
+      <div class="release">{{ 'Installed release'|trans }}: <strong>{{ item.release }}</strong></div>
+      <div class="release">{{ 'Available release'|trans }}: <strong>{{ item.release_available }}</strong></div>
+    {% endif %}
+    
+  </div>
+  <div class="media-control">
+    {% if item.changelog is not null %}
+      <a href="{{ item.changelog }}" target="_blank" class="btn btn-info" role="button">{{ 'Changelog'|trans }}</a>
+    {% endif %}
+    <a href="{{ FRAMEWORK_URL }}/admin/updater/update/{{ item.id }}?usage={{ usage }}" class="btn {% if item.update_available %}btn-success{% else %}btn-default disabled{% endif %}" role="button">{{ 'Update'|trans }}</a>
+  </div>
+</div>

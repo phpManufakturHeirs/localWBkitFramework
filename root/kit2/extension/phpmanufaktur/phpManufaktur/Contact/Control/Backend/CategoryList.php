@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -27,22 +27,31 @@ class CategoryList extends Backend {
         }
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Contact\Control\Backend\Backend::initialize()
+     */
     protected function initialize(Application $app)
     {
         parent::initialize($app);
         $this->SimpleCategoryList = new SimpleCategoryList($this->app, array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Contact/Template',
-                'message' => 'backend/message.twig',
-                'list' => 'backend/admin/contact.category.list.twig'
+                'alert' => 'pattern/alert.twig',
+                'list' => 'admin/list.category.twig'
             ),
             'route' => array(
-                'create' => '/admin/contact/backend/category/create?usage='.self::$usage,
-                'edit' => '/admin/contact/backend/category/edit/id/{category_id}?usage='.self::$usage
+                'create' => '/admin/contact/category/create?usage='.self::$usage,
+                'edit' => '/admin/contact/category/edit/id/{category_id}?usage='.self::$usage
             )
         ));
     }
 
+    /**
+     * Controller to show the category list
+     *
+     * @param Application $app
+     */
     public function controller(Application $app)
     {
         $this->initialize($app);

@@ -6,9 +6,9 @@
       <a href="{{ parameter.link.edit.url }}" target="{{ parameter.link.edit.target }}" title="{{ 'Edit event'|trans }}"><i class="icon-edit"></i></a>
     </div>
   {% endif %}
-  
+
   <h2>{{ event.description_title }}</h2>
-  
+
   <div class="event view date">{{ event.event_date_from|date('d.m.Y') }}</div>
   <div class="event view description long">{{ event.description_long }}</div>
 
@@ -21,7 +21,7 @@
           {{ event.contact.organizer.company.0.company_name }}
         {% else %}
           {% set person = event.contact.organizer.person.0 %}
-          {{ person.person_gender|trans }}
+          {{ person.person_gender|humanize|trans }}
           {% if person.person_first_name|length > 0 %}{{ person.person_first_name }} {% endif %}
           {{ person.person_last_name }}
         {% endif %}
@@ -32,7 +32,7 @@
         </div>
       {% endif %}
     </div>
-    
+
     {# sample: loop through the extra fields of the organizer contact #}
     {#% for extra in event.contact.organizer.extra_fields %}
       <div class="row">
@@ -54,7 +54,7 @@
         </div>
       </div>
     {% endfor %#}
-    
+
     <div class="row">
       <div class="cell width-150 right">{{ 'Location'|trans }}</div>
       <div class="cell width-150">
@@ -132,7 +132,7 @@
   </div>
 
   <div class="table">
-    
+
     {# loop through user defined event fields #}
     {% for extra in event.extra_fields %}
       {# if you want to show only a specific extra field place a condition here: #}
@@ -157,7 +157,7 @@
       </div>
       {#% endif %#}
     {% endfor %}
-    
+
     <div class="row">
       <div class="cell width-150 right">{{ 'Event date from'|trans }}</div>
       <div class="cell width-150">{{ event.event_date_from|date('d.m.Y H:i') }}</div>
@@ -209,11 +209,11 @@
   </div>
   {% if parameter.rating and config.rating.active %}
     <div class="rating-container">
-      <div class="rating-stars rating_{{ event.rating.identifier_id }}" 
-           data-average="{{ event.rating.average }}" 
-           data-id="{{ event.rating.identifier_id }}" 
+      <div class="rating-stars rating_{{ event.rating.identifier_id }}"
+           data-average="{{ event.rating.average }}"
+           data-id="{{ event.rating.identifier_id }}"
            title="{{ 'Votes: %count% - Average: %average%'|trans({'%count%':event.rating.count,'%average%':event.rating.average|number_format(2,'DECIMAL_SEPARATOR'|trans,'THOUSAND_SEPARATOR'|trans)}) }}"></div>
     </div>
   {% endif %}
-  
+
 </div>

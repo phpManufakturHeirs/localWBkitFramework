@@ -19,9 +19,10 @@
   "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Basic",
   "namespace":"phpManufaktur\\Basic",
   "release":{
-    "number":"0.61",
-    "date":"2013-11-27",
-    "status":"beta"
+    "number":"1.0.17",
+    "date":"2014-11-03",
+    "status":"release",
+    "changelog":"https:\/\/github.com\/webbird\/kfBasic\/blob\/master\/CHANGELOG.md"
   },
   "description": {
     "en":{
@@ -31,15 +32,18 @@
       "url":"https:\/\/kit2.phpmanufaktur.de"
     },
     "de":{
-      "title":"Basis Funktionen und Einstellungen für das kitFramework",
+      "title":"Basis Funktionen für das kitFramework",
       "short":"Essentielle Basis Funktionen und Einstellungen für das kitFramework - fester Bestandteil des Framework, muss installiert sein.",
-      "long":"(lang) Essentielle Basis Funktionen und Einstellungen für das kitFramework - fester Bestandteil des Framework, muss installiert sein.",
+      "long":"Diese Erweiterung bildet das Herzstück des kitFramework und wird zwingend benötigt. BASIC ist u.a. für die Interaktion mit dem übergeordneten CMS verantwortlich, initialisiert alle Erweiterungen und kümmert sich um die Installation sowie Aktualisierung von Anwendungen.",
       "url":"https:\/\/kit2.phpmanufaktur.de"
     }
   },
   "require":{
     "framework": {
-      "release":"0.26"
+      "release":"0.27"
+    },
+    "Library":{
+        "release":"0.37"
     }
   },
   "setup":{
@@ -49,15 +53,15 @@
   },
   "license": {
     "name":"MIT License",
-    "url":"https:\/\/github.com\/phpManufaktur\/kfBasic\/raw\/master\/LICENSE.md"
+    "url":"https:\/\/github.com\/webbird\/kfBasic\/raw\/master\/LICENSE.md"
   },
   "download": {
     "availability":"public",
     "agreement":"free",
     "github":{
-      "organization":"phpManufaktur",
+      "organization":"webbird",
       "repository":"kfBasic"
     },
-    "url":"https:\/\/github.com\/phpManufaktur\/kfBasic"
+    "url":"https:\/\/github.com\/webbird\/kfBasic"
   }
 }

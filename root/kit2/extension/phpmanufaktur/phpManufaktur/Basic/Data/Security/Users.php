@@ -11,7 +11,7 @@
 
 namespace phpManufaktur\Basic\Data\Security;
 
-use phpManufaktur\Basic\Control\manufakturPasswordEncoder;
+use phpManufaktur\Basic\Control\Account\manufakturPasswordEncoder;
 use Silex\Application;
 
 /**
@@ -72,6 +72,7 @@ class Users
       `guid` VARCHAR(64) NOT NULL DEFAULT '',
       `guid_timestamp` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
       `guid_status` ENUM('ACTIVE', 'LOCKED') NOT NULL DEFAULT 'ACTIVE',
+      `status` ENUM('ACTIVE','LOCKED') NOT NULL DEFAULT 'ACTIVE',
       `timestamp` TIMESTAMP,
       PRIMARY KEY (`id`),
       UNIQUE (`username`, `email`, `guid`)
@@ -112,6 +113,21 @@ EOD;
     }
 
     /**
+     * Delete the record with the given ID
+     *
+     * @param integer $id
+     * @throws \Exception
+     */
+    public function delete($id)
+    {
+        try {
+            $this->app['db']->delete(self::$table_name, array('id' => $id));
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
      * Select a User record from the given $name where $name can be the login name
      * or the email address of the user
      *
@@ -140,6 +156,28 @@ EOD;
     } // selectUser()
 
     /**
+     * Select a user record by the given ID
+     *
+     * @param integer $id
+     * @throws \Exception
+     * @return boolean|array FALSE if the record not exists
+     */
+    public function select($id)
+    {
+        try {
+            $SQL = "SELECT * FROM `".self::$table_name."` WHERE `id`=$id";
+            $result = $this->app['db']->fetchAssoc($SQL);
+            $user = array();
+            foreach ($result as $key => $value) {
+                $user[$key] = is_string($value) ? $this->app['utils']->unsanitizeText($value) : $value;
+            }
+            return (isset($user['id'])) ? $user : false;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e->getMessage(), 0, $e);
+        }
+    }
+
+    /**
      * Insert a new User into the table.
      * Create a GUID if none exists.
      *
@@ -147,7 +185,7 @@ EOD;
      * @param integer $user_id
      * @throws \Exception
      */
-    public function insertUser ($data, $user_id = -1)
+    public function insertUser ($data, &$user_id = -1)
     {
         try {
             if (! isset($data['username']) || ! isset($data['email']) || ! isset($data['password']) || ! isset($data['roles']))
@@ -165,6 +203,7 @@ EOD;
             // insert a new record
             $this->app['db']->insert(self::$table_name, $data);
             $user_id = $this->app['db']->lastInsertId();
+            return $user_id;
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e->getMessage(), 0, $e);
         }
@@ -237,7 +276,7 @@ EOD;
                 $user[$key] = (is_string($value)) ? $this->app['utils']->unsanitizeText($value) : $value;
             return $user;
         } catch (\Doctrine\DBAL\DBALException $e)  {
-            throw new \Exception($e->getMessage());
+            throw new \Exception($e);
         }
     } // selectUserByGUID()
 
@@ -250,33 +289,80 @@ EOD;
      */
     public function updateUser($username, $data) {
         try {
-            $where = array('username' => $username);
             $update = array();
-            foreach ($data as $key => $value)
-                // quote keys!
+            foreach ($data as $key => $value) {
                 $update[$this->app['db']->quoteIdentifier($key)] = (is_string($value)) ? $this->app['utils']->sanitizeText($value) : $value;
-            $this->app['db']->update(self::$table_name, $update, $where);
+            }
+            $this->app['db']->update(self::$table_name, $update, array('username' => $username));
         } catch (\Doctrine\DBAL\DBALException $e) {
-            throw new \Exception($e->getMessage(), 0, $e);
+            throw new \Exception($e);
         }
-    } // updateUser()
+    }
+
+    /**
+     * Update a user record by the given user ID
+     *
+     * @param integer $id
+     * @param array $data
+     * @throws \Exception
+     */
+    public function updateUserByID($id, $data)
+    {
+        try {
+            $update = array();
+            foreach ($data as $key => $value) {
+                if (($key == 'id') || ($key == 'timestamp') || ($key == 'last_login')) {
+                    continue;
+                }
+                $update[$key] = (is_string($value)) ? $this->app['utils']->sanitizeText($value) : $value;
+            }
+            $this->app['db']->update(self::$table_name, $update, array('id' => $id));
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
 
     /**
      * Check if the user with the given username or email exists
      *
      * @param string $username username or email
+     * @param integer $ignore_id dont't check the given user ID
      * @throws \Exception
      * @return boolean
      */
-    public function existsUser($username) {
+    public function existsUser($username, $ignore_id=null) {
         try {
             $SQL = "SELECT `id` FROM `".self::$table_name."` WHERE `username`='$username' OR `email`='$username'";
-            $result = $this->app['db']->fetchAssoc($SQL);
+            if (!is_numeric($ignore_id)) {
+                $SQL .= " AND `id`!='$ignore_id'";
+            }
+            $id = $this->app['db']->fetchColumn($SQL);
+            return ($id > 0);
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e->getMessage(), 0, $e);
         }
-        return (!is_array($result) || !isset($result['id'])) ? false : true;
-    } // existsUser()
+    }
+
+    /**
+     * Check if the given displayname is already in use
+     *
+     * @param string $displayname
+     * @param integer $ignore_id don't check the given user ID
+     * @throws \Exception
+     * @return boolean
+     */
+    public function existsDisplayName($displayname, $ignore_id=null) {
+        try {
+            $SQL = "SELECT `id` FROM `".self::$table_name."` WHERE `displayname`='$displayname'";
+            if (!is_numeric($ignore_id)) {
+                $SQL .= " AND `id`!='$ignore_id'";
+            }
+            $id = $this->app['db']->fetchColumn($SQL);
+            return ($id > 0);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e->getMessage(), 0, $e);
+        }
+    }
 
     /**
      * Check if the login is valid
@@ -290,7 +376,7 @@ EOD;
     {
         try {
             $pass = $this->encodePassword($password);
-            $SQL = "SELECT `roles` FROM `".self::$table_name."` WHERE (`username`='$username' OR `email`='$username') AND `password`='$pass'";
+            $SQL = "SELECT `roles` FROM `".self::$table_name."` WHERE (`username`='$username' OR `email`='$username') AND `password`='$pass' AND `status`='ACTIVE'";
             $result = $this->app['db']->fetchAssoc($SQL);
             if (!is_array($result) || !isset($result['roles'])) {
                 return false;
@@ -312,7 +398,57 @@ EOD;
     public function encodePassword($raw, $salt='')
     {
         $passwordEncoder = new manufakturPasswordEncoder($this->app);
-        return $passwordEncoder->encodePassword($raw, '');
+        return $passwordEncoder->encodePassword($raw, $salt);
+    }
+
+    /**
+     * Return the number of records of the user table
+     *
+     * @return integer
+     * @throws \Exception
+     */
+    public function count()
+    {
+        try {
+            $SQL = "SELECT COUNT(*) FROM `".self::$table_name."`";
+            return $this->app['db']->fetchColumn($SQL);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    public function selectList($limit_from, $rows_per_page, $columns, $order_by=null, $order_direction='ASC')
+    {
+        try {
+            $SQL = "SELECT * FROM `".self::$table_name."`";
+            if (is_array($order_by) && !empty($order_by)) {
+                $SQL .= " ORDER BY ";
+                $start = true;
+                foreach ($order_by as $by) {
+                    if (!$start) {
+                        $SQL .= ", ";
+                    }
+                    else {
+                        $start = false;
+                    }
+                    $SQL .= "$by";
+                }
+                $SQL .= " $order_direction";
+            }
+            $SQL .= " LIMIT $limit_from, $rows_per_page";
+            $results = $this->app['db']->fetchAll($SQL);
+            $accounts = array();
+            foreach ($results as $result) {
+                $account = array();
+                foreach ($columns as $column) {
+                    $account[$column] = (is_string($result[$column])) ? $this->app['utils']->unsanitizeText($result[$column]) : $result[$column];
+                }
+                $accounts[] = $account;
+            }
+            return $accounts;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
     }
 
 }

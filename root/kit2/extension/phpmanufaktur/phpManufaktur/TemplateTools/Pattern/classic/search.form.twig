@@ -1,0 +1,17 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+
+  This search form is ready to use, just place it in your template.
+#}
+<!-- {{ _self.getTemplateName() }} -->
+<form action="{{ CMS_URL ~ '/search/index.php' }}" name="search" method="get">      
+  <div class="search-field">
+    <input name="string" type="text" placeholder="{{ 'Search'|trans }}..." />
+    <button type="submit">{{ 'Search'|trans }}</button>
+  </div>
+</form>

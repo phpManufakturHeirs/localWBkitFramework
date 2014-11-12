@@ -1,0 +1,81 @@
+{#
+  kitFramework::Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/tool/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework' }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/default/framework/css/framework.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container">
+    {% if usage != 'framework' %}
+      {% include '@phpManufaktur/Basic/Template/default/framework/tool/toolbar.twig' %}
+    {% endif %}
+    
+    {% include '@phpManufaktur/Basic/Template/default/framework/tool/extensions.toolbar.twig' with {'toolbar': toolbar_extensions} %}
+    
+    <div class="page-header">
+      <h1>{{ 'Updates'|trans }} <small>kitFramework</small></h1>
+    </div>
+    
+    {{ alert }}
+    
+    {% if alert|length == 0 and update_items|length == 0 %}
+      <div class="panel panel-default">
+        <div class="panel-body">
+          {% if app.translator.locale == 'de' %}
+            {# GERMAN translation #}
+            <p>Momentan liegen keine Aktualisierungen für die von Ihnen verwendeten Erweiterungen vor.</p>
+          {% else %}
+            {# ENGLISH translation #}
+            <p>Currently there exists no updates for the extensions you are using.</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}  
+    
+    {% if update_items|length > 0 %}
+      {% set counter = 1 %}
+      {% for item in update_items %}
+        {#<pre>{{ dump(item) }}</pre>#}
+        {% if counter == 1 %}
+          <div class="row">
+        {% endif %}
+        <div class="col-sm-6">
+          {% include '@phpManufaktur/Basic/Template/default/framework/tool/extension.update.twig' %}
+        </div>
+        {% if counter == 2 %}
+          </div>
+          {% set counter = 1 %}
+        {% else %}
+          {% set counter = counter + 1 %}
+        {% endif %}
+      {% endfor %}
+      {% if counter != 1 %}</div>{% endif %}
+    {% endif %}
+    
+    <div class="media-control">
+      <a href="{{ FRAMEWORK_URL ~ '/admin/scan/extensions?usage=' ~ usage }}" class="btn btn-primary" role="button"><i class="fa fa-eye"></i> {{ 'Scan for installed extensions'|trans }}</a>
+      <a href="{{ FRAMEWORK_URL ~ '/admin/scan/catalog?usage=' ~ usage }}" class="btn btn-primary" role="button"><i class="fa fa-cloud-download"></i> {{ 'Scan the online catalog for available extensions'|trans }}</a>
+    </div>
+  </div>
+{% endblock content %}

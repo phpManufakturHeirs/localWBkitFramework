@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -80,18 +80,21 @@ class ConfirmSubscription extends Basic
         self::$guid = $guid;
 
         if ('RELOAD' == $this->initParameters($app)) {
-            $app['session']->set('COMMAND_LOCKED', true);
+            //$app['session']->set('COMMAND_LOCKED', true);
             // reload this page to fold the iframe into the CMS before performing anything
             $app['monolog']->addInfo(sprintf("Reload route %s into CMS URL %s before performing anything",
                 '/event/subscribe/guid/'.self::$guid, $this->getCMSpageURL()));
             return $app['twig']->render($app['utils']->getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/reload.twig'),
                 array('basic' => $this->getBasicSettings()));
         }
+        /*
         if ($app['session']->get('COMMAND_LOCKED', false)) {
             $app['session']->remove('COMMAND_LOCKED');
             return $app['twig']->render($app['utils']->getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/null.twig'),
                 array('basic' => $this->getBasicSettings()));
         }
+        */
+
         $SubscriptionData = new Subscription($app);
         if (false === ($subscription = $SubscriptionData->selectGUID($guid))) {
             $message = $app['translator']->trans('The submitted GUID %guid% does not exists.', array('%guid%' => self::$guid));
@@ -102,7 +105,7 @@ class ConfirmSubscription extends Basic
                 $this->getPreferredTemplateStyle()),
                 array(
                     'basic' => $this->getBasicSettings(),
-                    'title' => 'Checking the GUID identifier',
+                    'title' => $this->app['translator']->trans('Checking the GUID identifier'),
                     'message' => $message
                     ));
         }
@@ -116,7 +119,7 @@ class ConfirmSubscription extends Basic
                 $this->getPreferredTemplateStyle()),
                 array(
                     'basic' => $this->getBasicSettings(),
-                    'title' => 'Checking the GUID identifier',
+                    'title' => $this->app['translator']->trans('Checking the GUID identifier'),
                     'message' => $app['translator']->trans('Your subscription for the event %event% is already confirmed.',
                         array('%event%' => $event['description_title']))
                 ));
@@ -134,7 +137,7 @@ class ConfirmSubscription extends Basic
                 $this->getPreferredTemplateStyle()),
                 array(
                     'basic' => $this->getBasicSettings(),
-                    'title' => 'Checking the GUID identifier',
+                    'title' => $this->app['translator']->trans('Checking the GUID identifier'),
                     'message' => $message
                 ));
         }
@@ -235,7 +238,7 @@ class ConfirmSubscription extends Basic
                     $this->getPreferredTemplateStyle()),
                     array(
                         'basic' => $this->getBasicSettings(),
-                        'title' => 'Checking the GUID identifier',
+                        'title' => $this->app['translator']->trans('Checking the GUID identifier'),
                         'message' => $message
                     ));
             }
@@ -290,7 +293,7 @@ class ConfirmSubscription extends Basic
                     $this->getPreferredTemplateStyle()),
                     array(
                         'basic' => $this->getBasicSettings(),
-                        'title' => 'Checking the GUID identifier',
+                        'title' => $this->app['translator']->trans('Checking the GUID identifier'),
                         'message' => $message
                     ));
             }

@@ -1,0 +1,48 @@
+{#
+  kitFramework:Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}{{ 'Simulate the given kitCommand expression'|trans }}{% endblock %}
+{% block description %}{{ 'Show the given kitCommand expression but dont execute it'|trans }}{% endblock %}
+{% block robots %}noindex,follow{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/kitcommand/bootstrap/css/simulate.min.css" />
+{% endblock %}  
+{% block jquery %}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/zeroclipboard/latest/ZeroClipboard.min.js"></script>
+{% endblock %}
+{% block content %}
+  {# need the parent to enable prompting messages #}
+  {{ parent() }}
+  {% if parameter.expression is defined %}
+      <code class="command-code">{{ parameter.expression }}</code>&nbsp;<a id="command-copy" class="btn btn-default" role="button" href="#" title="{{ 'Copy this kitCommand to the clipboard'|trans }}"><i class="fa fa-files-o"></i></a>
+  {% endif %}
+{% endblock %} 
+{% block footer %}
+  {{ parent() }}
+  {% if parameter.command is defined %}
+    <script type="text/javascript">
+      if (typeof 'jQuery' !== 'undefined') {
+        ZeroClipboard.config({ moviePath: '{{ LIBRARY_URL }}/jquery/zeroclipboard/latest/ZeroClipboard.swf' });      
+        var clip = new ZeroClipboard(document.getElementById('command-copy'));
+        clip.on( 'dataRequested', function (client, args) {
+          var command = '{{ parameter.expression }}';
+          command = command.replace('~<span class="command-disturb">~</span>', '~~');
+          command = command.replace('~<span class="command-disturb">~</span>', '~~');
+          client.setText(command);
+        });
+        clip.on('complete', function(client, args){
+          alert('{{ 'Copied kitCommand to clipboard!'|trans }}');
+        });
+      }
+    </script>
+  {% endif %}
+{% endblock footer %}

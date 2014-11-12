@@ -1,12 +1,14 @@
 <?php
 
 /**
- * MediaBrowser
+ * kitFramework::MediaBrowser
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de
- * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link https://kit2.phpmanufaktur.de/MediaBrowser
+ * @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ *
+ * This file was created by the kitFramework i18nEditor
  */
 
 if ('á' != "\xc3\xa1") {
@@ -15,37 +17,53 @@ if ('á' != "\xc3\xa1") {
 }
 
 return array(
-    '- please select -'
-        => '- bitte auswählen -',
-    "Can't change the access rights for the file <b>%file%</b>!"
-        => 'Konnte die Zugriffsrechte für die Datei <b>%file%</b> nicht ändern!',
-    "Can't create the directory <b>%directory%</b>, message: <em>%message%</em>"
-        => 'Konnte das Verzeichnis <b>%directory%</b> nicht anlegen, Meldung: <em>%message%</em>',
-    "Can't change the last modification time for the file <b>%file%</b>!"
-        => 'Konnte die Zeit der letzten Änderung für die Datei <b>%file%</b> nicht setzen!',
-    'Create directory'
-        => 'Verzeichnis anlegen',
-    'Delete'
-        => 'Löschen',
-    'No file selected!'
-        => 'Es wurde keine Datei ausgewählt!',
-    'one level up'
-        => 'eine Verzeichnisebene höher',
-    'Submit file'
-        => 'Datei übermitteln',
-    '<p>The directory <b>%directory%</b> was successfull created.</p>'
-        => '<p>Das Verzeichnis <b>%directory%</b> wurde erfolgreich angelegt.</p>',
-    '<p>The directory <b>%directory%</b> was successfull deleted.</p>'
-        => '<p>Das Verzeichnis <b>%directory%</b> wurde erfolgreich gelöscht.</p>',
-    'The file extension <b>%extension%</b> is not supported!'
-        => 'Die Dateiendung <b>%extension%</b> wird nicht unterstützt!',
-    '<p>The file <b>%file%</b> was successfull deleted.</p>'
-        => '<p>Die Datei <b>%file%</b> wurde erfolgreich gelöscht.</p>',
-    '<p>The file <b>%file%</b> was successfull uploaded.</p>'
-        => '<p>Die Datei <b>%file%</b> wurde erfolgreich übermittelt.</p>',
-    '<p>This directory does not contain any media files</p>'
-        => '<p>Dieses Verzeichnis enthält keine Medien Dateien</p>',
-    'Upload file'
-        => 'Datei hochladen',
-
+  'Can\'t change the access rights for the file <b>%file%</b>!'
+    => 'Konnte die Zugriffsrechte für die Datei <b>%file%</b> nicht ändern!',
+  'Can\'t change the last modification time for the file <b>%file%</b>!'
+    => 'Konnte die Zeit der letzten Änderung für die Datei <b>%file%</b> nicht setzen!',
+  'Can\'t create the directory <b>%directory%</b>, message: <em>%message%</em>'
+    => 'Konnte das Verzeichnis <b>%directory%</b> nicht anlegen, Meldung: <em>%message%</em>',
+  'Create directory'
+    => 'Verzeichnis anlegen',
+  'Delete directory: %directory%'
+    => 'Verzeichnis löschen: %directory%',
+  'Delete file: %file%'
+    => 'Datei löschen: %file%',
+  'Directory'
+    => 'Verzeichnis',
+  'Exit MediaBrowser'
+    => 'MediaBrowser schließen',
+  'kitFramework MediaBrowser'
+    => 'kitFramework MediaBrowser',
+  'Media file'
+    => 'Mediendatei',
+  'Mode'
+    => 'Modus',
+  'No file selected!'
+    => 'Es wurde keine Datei ausgewählt!',
+  'one level up'
+    => 'eine Verzeichnisebene höher',
+  'Ooops, can\'t validate the upload form, something went wrong ...'
+    => 'Oh, das ist etwas schiefgelaufen, kann den Upload Dialog nicht überprüfen ...',
+  'Select file: %file%'
+    => 'Datei auswählen: %file%',
+  'Start'
+    => 'Start',
+  'Submit file'
+    => 'Datei übermitteln',
+  'The directory %directory% was successfull created.'
+    => 'Das Verzeichnis %directory% wurde erfolgreich angelegt.',
+  'The directory %directory% was successfull deleted.'
+    => 'Das Verzeichnis %directory% wurde erfolgreich gelöscht.',
+  'The file %file% was successfull deleted.'
+    => 'Die Datei %file% wurde erfolgreich gelöscht.',
+  'The file %file% was successfull uploaded.'
+    => 'Die Datei %file% wurde erfolgreich übertragen.',
+  'The file extension %extension% is not supported!'
+    => 'Die Dateiendung %extension% wird nicht unterstützt!',
+  'This directory does not contain any media files.'
+    => 'Dieses Verzeichnis enthält keine Medien Dateien.',
+  'Upload file'
+    => 'Datei hochladen',
+  
 );

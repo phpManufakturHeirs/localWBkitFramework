@@ -1,0 +1,94 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}{{ 'Contact list'|trans }}{% endblock %}
+{% block description %}{{ 'Contact list'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Contact/Template/default/css/command.min.css" />
+{% endblock %}  
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  {# need the parent to enable prompting messages #}
+  {{ parent() }}
+  
+  {% if contacts|length < 1 %}
+    {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig' 
+        with {content:'The contact list is empty.'|trans} only %}
+  {% else %}
+    <div class="table-responsive">
+      <table class="table table-striped table-condensed table-hover">
+        <thead>
+          {% for head in columns %}
+            <th>{{ head|humanize|trans }}</th>
+          {% endfor %}  
+        </thead>
+        <tbody>
+          {% for contact in contacts %}
+            <tr>
+              {% for key in columns %}
+                <td class="{{ key }}">
+                  {% if key == 'contact_id' %}
+                    <a href="{{ FRAMEWORK_URL ~ '/contact/public/view/id/' ~ contact.contact_id ~ '?&origin=' ~ basic.cms.page_url|url_encode() }}" target="_parent">{{ '%05d'|format(contact.contact_id) }}</a>
+                  {% elseif (key == 'order_name') or (key == 'contact_name') %}
+                    <a href="{{ FRAMEWORK_URL ~ '/contact/public/view/id/' ~ contact.contact_id  ~ '?&origin=' ~ basic.cms.page_url|url_encode() }}" target="_parent">{{ attribute(contact, key) }}</a>
+                  {% elseif key == 'person_gender' %}
+                    {{ attribute(contact, key)|trans }}  
+                  {% elseif key == 'communication_email' %}
+                    <a href="mailto:{{ contact.communication_email }}">{{ contact.communication_email }}</a>
+                  {% else %}
+                    {{ attribute(contact, key) }}
+                  {% endif %}
+                </td>
+              {% endfor %}  
+            </tr>
+          {% endfor %}  
+        </tbody>
+      </table>
+    </div>
+  {% endif %}  
+{% endblock %} 
+{% block footer_jquery %}
+  {{ parent() }}
+  {# tablesorter #}
+  <script src="{{ LIBRARY_URL ~ '/jquery/tablesorter/latest/js/jquery.tablesorter.js' }}"></script>
+  <script src="{{ LIBRARY_URL ~ '/jquery/tablesorter/latest/js/jquery.tablesorter.widgets.js' }}"></script>
+  <script type="text/javascript">
+    $(function() {
+      $.extend($.tablesorter.themes.bootstrap, {
+        table      : 'table table-bordered',
+        caption    : 'caption',
+        header     : 'bootstrap-header',
+        footerRow  : '',
+        footerCells: '',
+        icons      : '',
+        sortNone   : 'bootstrap-icon-unsorted',
+        sortAsc    : 'icon-chevron-up glyphicon glyphicon-chevron-up',
+        sortDesc   : 'icon-chevron-down glyphicon glyphicon-chevron-down',
+        active     : '',
+        hover      : '',
+        filterRow  : '',
+        even       : '',
+        odd        : '' 
+      });
+
+      $("table").tablesorter({
+        theme : "bootstrap",
+        widthFixed: true,
+        headerTemplate : '{content} {icon}', 
+        widgets : [ "uitheme", "zebra" ],  // add "filter" for an additional filter row
+        widgetOptions : {
+          zebra : ["even", "odd"],
+          filter_reset : ".reset"
+        }
+      })
+    });
+  </script>
+{% endblock %}

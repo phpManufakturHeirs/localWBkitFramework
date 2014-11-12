@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -50,8 +50,8 @@ class ContactCompany extends ContactParent
 
         // the company_id must be always set!
         if (!isset($company_data['company_id'])) {
-            $this->setMessage("Missing the %identifier%! The ID should be set to -1 if you insert a new record.",
-                array('%identifier%' => 'company_id'));
+            $this->setAlert("Missing the %identifier%! The ID should be set to -1 if you insert a new record.",
+                array('%identifier%' => 'company_id'), self::ALERT_TYPE_WARNING);
             return false;
         }
 
@@ -124,7 +124,7 @@ class ContactCompany extends ContactParent
         $changed = array();
 
         foreach ($new_data as $key => $value) {
-            if ($key === 'company_id') continue;
+            if ($key == 'company_id') continue;
             if (isset($old_data[$key]) && ($old_data[$key] != $value)) {
                 $changed[$key] = $value;
             }

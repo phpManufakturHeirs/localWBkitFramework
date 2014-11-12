@@ -1,0 +1,41 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/miniShop/Template/default/css/basket.min.css" media="screen, projection" />
+{% endblock stylesheet %}
+
+{% block content %}
+
+  <!-- {{ _self.getTemplateName() }} -->
+
+  <h1>{{ 'Order'|trans }}</h1>  
+    
+    {{ alert }}
+
+    <a href="{{ permalink_base_url ~ '/basket' }}" target="_parent" class="btn btn-default" role="button"><i class="fa fa-arrow-circle-left"></i> {{ 'Back to the shopping basket'|trans }}</a>
+    
+    {# show a summary of the basket content #}
+    {% include '@phpManufaktur/miniShop/Template/default/command/basket/summary.twig' %}  
+    
+    {# assign the bootstrap 3 theming for horizontal forms to the Symfony Form Factory output #}  
+    {% form_theme form '@phpManufaktur/Contact/Template/default/pattern/form.fields.horizontal.twig' %}
+    
+    <form action="{{ FRAMEWORK_URL ~ '/minishop/order/check/' ~ form.form_action.vars.value }}" class="form-horizontal" method="post" role="form">
+      {{ form_rest(form) }}   
+      <div class="row">
+        <div class="col-sm-9 col-sm-offset-3">
+      <a href="{{ permalink_base_url ~ '/basket' }}" target="_parent" class="btn btn-default" role="button">{{ 'Abort'|trans }}</a>&nbsp;
+      <button class="btn btn-default pull-right" type="submit">{% if form.form_action.vars.value == 'check_contact' %}{{ 'Order now'|trans }}{% else %}{{ 'Next step'|trans }} <i class="fa fa-arrow-circle-right"></i>{% endif %}</button>
+        </div>
+      </div>
+    </form>
+{% endblock content %}

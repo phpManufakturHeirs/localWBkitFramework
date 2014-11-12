@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -33,9 +33,8 @@ class ContactList extends Backend {
         $options = array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Event/Template',
-                'settings' => 'backend/contact.list.json',
-                'message' => 'backend/message.twig',
-                'list' => 'backend/contact.list.twig'
+                'settings' => 'admin/contact/list.contact.json',
+                'list' => 'admin/contact/list.contact.twig'
             ),
             'route' => array(
                 'pagination' => '/admin/event/contact/list/page/{page}?order={order}&direction={direction}&usage='.self::$usage,

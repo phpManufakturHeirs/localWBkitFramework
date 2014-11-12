@@ -11,11 +11,13 @@
 
 namespace phpManufaktur\FacebookGallery\Control;
 
-use phpManufaktur\Basic\Control\kitCommand\Basic as kitCommand;
-use phpManufaktur\Basic\Control\kitCommand\Help;
+use phpManufaktur\Basic\Control\kitCommand\Basic;
 use Silex\Application;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpFoundation\Request;
 
-class Gallery extends kitCommand {
+
+class Gallery extends Basic {
 
     const USERAGENT = 'kitFramework:FacebookGallery';
 
@@ -23,6 +25,15 @@ class Gallery extends kitCommand {
     protected static $size = null;
     protected static $description = null;
 
+    /**
+     * Execute the Facebook Graph to process information
+     *
+     * @param string $command
+     * @param array reference $result
+     * @param array reference $info
+     * @throws \Exception
+     * @return boolean
+     */
     protected function execFacebookGraph($command, &$result = array(), &$info = array())
     {
         if (false === ($ch = curl_init())) {
@@ -56,6 +67,11 @@ class Gallery extends kitCommand {
         return (!isset($info['http_code']) || ($info['http_code'] != '200')) ? false : true;
     }
 
+    /**
+     * Get the requested Gallery
+     *
+     * @param string $gallery_id
+     */
     protected function getGallery($gallery_id)
     {
         $parameter = $this->app['request']->query->all();
@@ -68,6 +84,7 @@ class Gallery extends kitCommand {
         $result = array();
         $info = array();
         $this->execFacebookGraph($command, $result, $info);
+
         return $this->app['twig']->render($this->app['utils']->getTemplateFile(
             '@phpManufaktur/FacebookGallery/Template',
             'gallery.twig',
@@ -84,6 +101,12 @@ class Gallery extends kitCommand {
             ));
     }
 
+    /**
+     * Get a list of available Facebook galleries for the given Facebook ID
+     *
+     * @param string $facebook_id
+     * @throws \Exception
+     */
     protected function getList($facebook_id)
     {
         $command = sprintf('%s/albums?fields=id,name,type&limit=1000', $facebook_id);
@@ -103,7 +126,8 @@ class Gallery extends kitCommand {
                 throw new \Exception(sprintf('[ %d - %s ] %s', $result['error']['code'], $result['error']['type'], $result['error']['message']));
             }
         }
-        return $this->app['twig']->render($this->app['utils']->getTemplateFile('@phpManufaktur/FacebookGallery/Template', 'list.twig', $this->getPreferredTemplateStyle()),
+        return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+            '@phpManufaktur/FacebookGallery/Template', 'list.twig', $this->getPreferredTemplateStyle()),
             array(
                 'facebook_id' => $facebook_id,
                 'basic' => $this->getBasicSettings(),
@@ -111,57 +135,66 @@ class Gallery extends kitCommand {
             ));
     }
 
-    public function exec(Application $app)
+    /**
+     * Controller to execute the specified Facebook Gallery
+     *
+     * @param Application $app
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function ControllerFacebookGallery(Application $app)
     {
         $this->initParameters($app);
 
-        try {
-            // get the kitCommand parameters
-            $parameter = $this->getCommandParameters();
+        // get the kitCommand parameters
+        $parameter = $this->getCommandParameters();
 
-            // exists a settings.json ?
-            $style = $this->getPreferredTemplateStyle();
-            if (file_exists(MANUFAKTUR_PATH."/FacebookGallery/Template/$style/settings.json")) {
-                $settings = $this->app['utils']->readConfiguration(MANUFAKTUR_PATH."/FacebookGallery/Template/$style/settings.json");
-                // set default parameter but do not override them!
-                foreach ($settings['parameter'] as $key => $value) {
-                    if (!isset($parameter[$key])) {
-                        $parameter[$key] = $value;
-                    }
+        // exists a settings.json ?
+        $style = $this->getPreferredTemplateStyle();
+        $settings = null;
+        if (file_exists(MANUFAKTUR_PATH."/FacebookGallery/Template/$style/settings.json")) {
+            $settings = $this->app['utils']->readConfiguration(MANUFAKTUR_PATH."/FacebookGallery/Template/$style/settings.json");
+        }
+        elseif (file_exists(MANUFAKTUR_PATH."/FacebookGallery/Template/default/settings.json")) {
+            // fallback to the default template
+            $settings = $this->app['utils']->readConfiguration(MANUFAKTUR_PATH."/FacebookGallery/Template/default/settings.json");
+        }
+
+        if (!is_null($settings)) {
+            // set default parameter but do not override them!
+            foreach ($settings['parameter'] as $key => $value) {
+                if (!isset($parameter[$key])) {
+                    $parameter[$key] = $value;
                 }
             }
-
-            self::$limit = (isset($parameter['limit'])) ? (int) $parameter['limit'] : 200;
-            self::$size = (isset($parameter['size'])) ? (int) $parameter['size'] : 7;
-            self::$description = (isset($parameter['description']) && ((strtolower($parameter['description']) == 'false') || ($parameter['description'] == '0'))) ? false : true;
-
-            if (isset($parameter['id'])) {
-                // return the Facebook gallery
-                return $this->getGallery($parameter['id']);
-            }
-            elseif (isset($parameter['account'])) {
-                // return the Facebook albums for the given facebook ID
-                return $this->getList($parameter['account']);
-            }
-            else {
-                // no parameter set, so get the help function and give a hint for the user
-                $help = new Help($this->app);
-                return $this->app['twig']->render($this->app['utils']->getTemplateFile('@phpManufaktur/FacebookGallery/Template', 'help.twig', $this->getPreferredTemplateStyle()),
-                    array(
-                        'basic' => $this->getBasicSettings(),
-                        'help' => $help->getContent(MANUFAKTUR_PATH.'/FacebookGallery/command.facebookgallery.json')
-                    ));
-            }
-        } catch (\Exception $e) {
-            return $this->app['twig']->render($this->app['utils']->getTemplateFile('@phpManufaktur/FacebookGallery/Template', 'error.twig', $this->getPreferredTemplateStyle()),
-                array(
-                    'basic' => $this->getBasicSettings(),
-                    'error' => array(
-                        'file' => substr($e->getFile(), strlen(MANUFAKTUR_PATH)+1),
-                        'line' => $e->getLine(),
-                        'message' => $e->getMessage()
-                    )
-                ));
         }
+
+        self::$limit = (isset($parameter['limit'])) ? (int) $parameter['limit'] : 200;
+        self::$size = (isset($parameter['size'])) ? (int) $parameter['size'] : 7;
+        self::$description = (isset($parameter['description']) && ((strtolower($parameter['description']) == 'false') || ($parameter['description'] == '0'))) ? false : true;
+
+        if (isset($parameter['id'])) {
+            // return the Facebook gallery
+            return $this->getGallery($parameter['id']);
+        }
+        elseif (isset($parameter['account'])) {
+            // return the Facebook albums for the given facebook ID
+            return $this->getList($parameter['account']);
+        }
+        else {
+            // no parameter set, so get the help function and give a hint for the user
+            $subRequest = Request::create('/basic/help/facebookgallery', 'GET');
+            return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        }
+    }
+
+    /**
+     * Controller to create the iFrame for the FacebookGallery
+     *
+     * @param Application $app
+     */
+    public function ControllerCreateIFrame(Application $app)
+    {
+        $this->initParameters($app);
+        return $this->createIFrame('/facebookgallery');
     }
 }

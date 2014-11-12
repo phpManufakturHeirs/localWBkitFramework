@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -15,10 +15,12 @@ use Silex\Application;
 use phpManufaktur\Basic\Control\kitCommand\Basic;
 use phpManufaktur\Event\Data\Event\Event as EventData;
 use phpManufaktur\Basic\Data\CMS\Page;
+use phpManufaktur\Event\Data\Event\RecurringEvent as RecurringEventData;
 
 class Event extends Basic
 {
     protected $EventData = null;
+    protected $RecurringData = null;
     protected $Message = null;
     protected static $parameter = null;
     protected static $event_id = -1;
@@ -64,6 +66,7 @@ class Event extends Basic
 
         $this->EventData = new EventData($app);
         $this->Message = new Message($app);
+        $this->RecurringData = new RecurringEventData($app);
     }
 
     /**
@@ -94,15 +97,51 @@ class Event extends Basic
         if (isset(self::$parameter['view'])) {
             $view = strtolower(self::$parameter['view']);
         }
-        if (!in_array($view, array('small', 'detail', 'custom'))) {
+        if (!in_array($view, array('small', 'detail', 'custom', 'recurring'))) {
             // undefined view!
             return $this->Message->render('The view <b>%view%</b> does not exists for the action event!',
                 array('%view%' => $view));
         }
 
+        $recurring = array();
+        $recurring_events = array();
+        $recurring_count = 0;
+        if ($view == 'recurring') {
+            if ($event['event_recurring_id'] < 1) {
+                // no recurring event
+                $view = 'detail';
+            }
+            elseif (false !== ($recurring = $this->RecurringData->select($event['event_recurring_id']))) {
+                // this is a recurring event
+                // first get the parent event record
+                if (false === ($event = $this->EventData->selectEvent($recurring['parent_event_id']))) {
+                    return $this->Message->render('The record with the ID %id% does not exists!', array('%id%' => $recurring['parent_event_id']));
+                }
+                // get all active recurring events
+                if (false === ($items = $this->EventData->selectRecurringEvents($recurring['recurring_id']))) {
+                    return $this->Message->render('No active events for the recurring ID %id%!',
+                        array('%id%' => $recurring['recurring_id']));
+                }
+                foreach ($items as $item) {
+                    $route = base64_encode('/event/id/'.$event_id.'/view/'.$view);
+                    $item['link']['subscribe'] = FRAMEWORK_URL.'/event/subscribe/id/'.$item['event_id'].'/redirect/'.$route.'?pid='.$this->getParameterID();
+                    $recurring_events[] = $item;
+                }
+                // count all recurring events
+                $recurring_count = $this->EventData->countRecurringEvents($event['event_recurring_id']);
+            }
+            else {
+                // recurring ID does not exists
+                $view = 'detail';
+                $this->setAlert('The record with the ID %id% does not exists!',
+                    array('%id%' => $event['event_recurring_id']), self::ALERT_TYPE_DANGER, true, array(__METHOD__, __LINE__));
+            }
+        }
+
         // set redirect route
         $this->setRedirectRoute("/event/id/$event_id");
         $this->setRedirectActive(true);
+        $this->setPageTitle(strip_tags($event['description_title']));
         // return the event dialog
         return $this->app['twig']->render($this->app['utils']->getTemplateFile(
             '@phpManufaktur/Event/Template',
@@ -113,6 +152,9 @@ class Event extends Basic
                 'event' => $event,
                 'parameter' => self::$parameter,
                 'config' => self::$config,
+                'recurring' => $recurring,
+                'recurring_events' => $recurring_events,
+                'recurring_count' => $recurring_count
             ));
     }
 
@@ -169,7 +211,7 @@ class Event extends Basic
                             http_build_query(array(
                                 'cmd' => 'event',
                                 'id' => $event_id
-                            )));
+                            ), '', '&'));
                     }
                     else {
                         // use the route to event ID
@@ -228,7 +270,7 @@ class Event extends Basic
 
         if ($use_qrcode) {
             if (!self::$config['qrcode']['active']) {
-                $this->setMessage('Using qrcode[] is not enabled in config.event.json!');
+                $this->setAlert('Using qrcode[] is not enabled in config.event.json!');
                 return false;
             }
             $subdir = (self::$config['qrcode']['settings']['content'] == 'ical') ? 'ical' : 'link';
@@ -236,7 +278,7 @@ class Event extends Basic
                 list($width, $height) = getimagesize(FRAMEWORK_PATH.self::$config['qrcode']['framework']['path'][$subdir]."/".self::$parameter['id'].".png");
             }
             else {
-                $this->setMessage('The QR-Code file does not exists, please rebuild all QR-Code files.');
+                $this->setAlert('The QR-Code file does not exists, please rebuild all QR-Code files.');
                 return false;
             }
             self::$parameter['qrcode'] = array(
@@ -308,7 +350,11 @@ class Event extends Basic
                 http_build_query(array(
                     'cmd' => 'event',
                     'id' => $event_id
-                )));
+                ), '', '&'));
+            // check if a scroll_to_id parameter exists
+            if ($this->isSetFrameScrollToID()) {
+                $redirect .= '&fsti='.$this->getFrameScrollToID();
+            }
             // redirect - no direct call
             return $this->app->redirect($redirect);
         }

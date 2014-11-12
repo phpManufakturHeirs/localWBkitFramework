@@ -1,0 +1,33 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if app.translator.locale == 'de' %}
+  {# GERMAN translation #}
+  {% if contact.contact_type == 'COMPANY' %}
+    <p>Sehr geehrte Damen und Herren,</p>
+  {% elseif contact.person_gender == 'FEMALE' %}
+    <p>Sehr geehrte Frau {{ contact.person_last_name }},</p>
+  {% else %}
+    <p>Sehr geehter Herr {{ contact.person_last_name }},</p>
+  {% endif %}
+  <p>Vielen Dank für Ihre Bestellung im miniShop am {{ order.order_timestamp|date('DATE_FORMAT'|trans) }}.</p>
+  <p>Bitte bestätigen Sie Ihre Bestellung mit dem folgenden Link:</p>
+  <p><a href="{{ permalink_base_url ~ '/order/confirm/' ~ order.guid }}">{{ permalink_base_url ~ '/order/confirm/' ~ order.guid }}</a></p>
+  <p>Ihre Bestellung wird anschließend direkt bearbeitet.</p>
+{% else %}
+  {# ENGLISH translation #}
+  {% if contact.contact_type == 'COMPANY' %}
+    <p>Dear ladies and gentlemen,</p>
+  {% else %}
+    <p>Dear {{ contact.person_last_name }},</p>
+  {% endif %}
+  <p>Thank your for your order in the miniShop at {{ order.order_timestamp|date('DATE_FORMAT'|trans) }}.</p>
+  <p>Please confirm your order by clicking the following link:</p>
+  <p><a href="{{ permalink_base_url ~ '/order/confirm/' ~ order.guid }}">{{ permalink_base_url ~ '/order/confirm/' ~ order.guid }}</a></p>
+  <p>Your order will be processed immediately.</p>
+{% endif %}

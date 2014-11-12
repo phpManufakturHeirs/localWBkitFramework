@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -33,12 +33,13 @@ class CategoryEdit extends Backend {
         $this->SimpleCategoryEdit = new SimpleCategoryEdit($this->app, array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Contact/Template',
-                'message' => 'backend/message.twig',
-                'edit' => 'backend/admin/contact.category.edit.twig'
+                'alert' => 'pattern/alert.twig',
+                'edit' => 'admin/edit.category.twig'
             ),
             'route' => array(
-                'action' => '/admin/contact/backend/category/create?usage='.self::$usage,
-                'extra' => '/admin/contact/backend/extra/list?usage='.self::$usage
+                'action' => '/admin/contact/category/create?usage='.self::$usage,
+                'extra' => '/admin/contact/extra/list?usage='.self::$usage,
+                'list' => '/admin/contact/category/list?usage='.self::$usage
             )
         ));
     }
@@ -51,6 +52,12 @@ class CategoryEdit extends Backend {
         $this->SimpleCategoryEdit->setCategoryID($category_id);
     }
 
+    /**
+     * Controller to edit a category
+     *
+     * @param Application $app
+     * @param integer $category_id
+     */
     public function controller(Application $app, $category_id=null)
     {
         $this->initialize($app);

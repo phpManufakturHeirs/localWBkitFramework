@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -24,7 +24,7 @@ class TagEdit extends Backend {
         parent::__construct($app);
         if (!is_null($app)) {
             $this->initialize($app);
-        }        
+        }
     }
 
     protected function initialize(Application $app)
@@ -33,15 +33,15 @@ class TagEdit extends Backend {
         $this->SimpleTagEdit = new SimpleTagEdit($this->app, array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Event/Template',
-                'message' => 'backend/message.twig',
-                'edit' => 'backend/contact.tag.edit.twig'
+                'edit' => 'admin/contact/edit.tag.twig'
             ),
             'route' => array(
-                'action' => '/admin/event/contact/tag/edit?usage='.self::$usage
+                'action' => '/admin/event/contact/tag/edit?usage='.self::$usage,
+                'list' => '/admin/event/contact/tag/list?usage='.self::$usage
             )
         ));
     }
-    
+
     /**
      * @param number $tag_id
      */

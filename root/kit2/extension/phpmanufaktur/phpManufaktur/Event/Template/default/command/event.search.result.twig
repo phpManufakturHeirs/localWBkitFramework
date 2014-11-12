@@ -2,7 +2,7 @@
   Event
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/Event
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
@@ -11,9 +11,10 @@
 {% block stylesheet %}
   {{ parent() }}
   <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.list.css" media="screen, projection" />
-  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  <link href="{{ LIBRARY_URL ~ '/font-awesome/latest/css/font-awesome.min.css' }}" rel="stylesheet">    
 {% endblock stylesheet %}
 {% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
   {{ parent() }}
   <div class="search-container">
     <h2>{{ 'Search'|trans }}</h2>
@@ -30,12 +31,12 @@
       <table>
         <thead>
           <tr>
-            <th>{{ 'event_date_from'|trans }}</th>
-            <th>{{ 'event_date_to'|trans }}</th>
-            <th>{{ 'description_title'|trans }}</th>
-            <th>{{ 'zip'|trans }}</th>
-            <th>{{ 'location'|trans }}</th>
-            <th>{{ 'organizer'|trans }}</th>
+            <th>{{ 'event_date_from'|humanize|trans }}</th>
+            <th>{{ 'event_date_to'|humanize|trans }}</th>
+            <th>{{ 'description_title'|humanize|trans }}</th>
+            <th>{{ 'zip'|humanize|trans }}</th>
+            <th>{{ 'location'|humanize|trans }}</th>
+            <th>{{ 'organizer'|humanize|trans }}</th>
           </tr>
         </thead>
         <tbody>

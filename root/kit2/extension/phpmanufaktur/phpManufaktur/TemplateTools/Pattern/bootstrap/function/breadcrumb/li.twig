@@ -1,0 +1,7 @@
+<li{% if active %} class="active"{% endif %} itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+  {% if active %}
+    <a class="active" href="{{ page_url }}" title="{{ page_title }}" itemprop="url"><span itemprop="title">{{ menu_title }}</span></a>
+  {% else %}  
+    <a href="{{ page_url }}" title="{{ page_title }}" itemprop="url"><span itemprop="title">{{ menu_title }}</span></a>
+  {% endif %}
+</li>

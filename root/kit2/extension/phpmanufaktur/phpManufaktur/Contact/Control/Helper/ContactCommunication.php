@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -62,8 +62,8 @@ class ContactCommunication extends ContactParent
     {
         // the communication_id must be always set!
         if (!isset($communication_data['communication_id']) || !is_numeric($communication_data['communication_id'])) {
-            $this->setMessage("Missing the %identifier%! The ID should be set to -1 if you insert a new record.",
-                array('%identifier%' => 'communication_id'));
+            $this->setAlert("Missing the %identifier%! The ID should be set to -1 if you insert a new record.",
+                array('%identifier%' => 'communication_id'), self::ALERT_TYPE_WARNING);
             return false;
         }
 
@@ -92,13 +92,13 @@ class ContactCommunication extends ContactParent
         }
 
         if (!isset($communication_data['communication_type']) || empty($communication_data['communication_type'])) {
-            $this->setMessage("The COMMUNICATION TYPE must be set!");
+            $this->setAlert("The COMMUNICATION TYPE must be set!", array(), self::ALERT_TYPE_WARNING);
             return false;
         }
 
         if (!$this->CommunicationType->existsType($communication_data['communication_type'])) {
-            $this->setMessage("The COMMUNICATION TYPE %type% does not exists!",
-                array('%type%' => $communication_data['communication_type']));
+            $this->setAlert("The COMMUNICATION TYPE %type% does not exists!",
+                array('%type%' => $communication_data['communication_type']), self::ALERT_TYPE_WARNING);
             return false;
         }
 
@@ -107,21 +107,21 @@ class ContactCommunication extends ContactParent
                 $communication_data['communication_usage'] = $option['usage']['default'];
             }
             else {
-                $this->setMessage("The COMMUNICATION USAGE must be set!");
+                $this->setAlert("The COMMUNICATION USAGE must be set!", array(), self::ALERT_TYPE_WARNING);
                 return false;
             }
         }
 
         if (!$this->CommunicationUsage->existsUsage($communication_data['communication_usage'])) {
-            $this->setMessage("The COMMUNICATION USAGE %usage% does not exists!",
-                array('%usage%' => $communication_data['communication_usage']));
+            $this->setAlert("The COMMUNICATION USAGE %usage% does not exists!",
+                array('%usage%' => $communication_data['communication_usage']), self::ALERT_TYPE_WARNING);
             return false;
         }
 
         if (!isset($communication_data['communication_value']) || empty($communication_data['communication_value'])) {
             if (isset($option['value']['ignore_if_empty']) && (false === $option['value']['ignore_if_empty'])) {
                 // dont ignore an empty value
-                $this->setMessage("The COMMUNICATION VALUE should not be empty!");
+                $this->setAlert("The COMMUNICATION VALUE should not be empty!", array(), self::ALERT_TYPE_WARNING);
                 return false;
             }
         }
@@ -129,8 +129,8 @@ class ContactCommunication extends ContactParent
         if (($communication_data['communication_type'] === 'EMAIL') && !empty($communication_data['communication_value'])) {
             $errors = $this->app['validator']->validateValue($communication_data['communication_value'], new Assert\Email());
             if (count($errors) > 0) {
-                $this->setMessage('The email address %email% is not valid, please check your input!',
-                    array('%email%' => $communication_data['communication_value']));
+                $this->setAlert('The email address %email% is not valid, please check your input!',
+                    array('%email%' => $communication_data['communication_value']), self::ALERT_TYPE_WARNING);
                 return false;
             }
         }
@@ -204,14 +204,15 @@ class ContactCommunication extends ContactParent
             if (($this->ContactData->getPrimaryEmailID($old_data['contact_id']) == $communication_id) ||
                 ($this->ContactData->getPrimaryPhoneID($old_data['contact_id']) == $communication_id)) {
                 // entry is marked for primary communication and can not deleted!
-                $this->setMessage("The %type% entry %value% is marked for primary communication and can not removed!",
-                    array('%type%' => $old_data['communication_type'], '%value%' => $old_data['communication_value']));
+                $this->setAlert("The %type% entry %value% is marked for primary communication and can not removed!",
+                    array('%type%' => $old_data['communication_type'], '%value%' => $old_data['communication_value']),
+                    self::ALERT_TYPE_WARNING);
                 return false;
             }
             // delete the entry
             $this->Communication->delete($communication_id);
-            $this->setMessage("The communication entry %communication% was successfull deleted.",
-                array('%communication%' => $old_data['communication_value']));
+            $this->setAlert("The communication entry %communication% was successfull deleted.",
+                array('%communication%' => $old_data['communication_value']), self::ALERT_TYPE_SUCCESS);
             $has_changed = true;
             return true;
         }

@@ -1,0 +1,424 @@
+{#
+  flexContent
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/flexContent
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/flexContent/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'flexContent - Create or Edit Content'|trans }}{% endblock %}
+{% block jquery %}
+  {# most jQuery files are loaded at the end of file in block footer_jquery! #}
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CKEditor/Source/ckeditor.js"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/zeroclipboard/latest/ZeroClipboard.min.js"></script>
+{% endblock jquery %}
+{% block stylesheet %}
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/ui/latest/themes/smoothness/jquery-ui.min.css" media="screen, projection" />
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/timepicker/latest/jquery-ui-timepicker-addon.min.css" media="screen, projection" />
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/tagedit/latest/css/jquery.tagedit.css" media="all"/>
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/flexContent/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/flexContent/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/flexContent/Template/default/css/admin.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/flexContent/Template/default/admin/toolbar.twig' %}
+    <div id="edit"></div>
+    <div class="height-15"></div>
+
+    {{ alert }}
+    
+    {% if (form.content_id.vars.value > 0) and (form.primary_category.vars.value > 0) and (form.check_kitcommand.vars.value == 0) %}
+      {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig' 
+        with {content:'In the target URL <strong>%target_url%</strong> for the category <strong>%category_name%</strong> is the kitCommand <strong>~~ flexContent action[category] category_id[%category_id%] ~~</strong> needed!'|trans(
+        {'%category_id%':form.primary_category.vars.value, '%target_url%':form.primary_category_target_url.vars.value, '%category_name%':form.primary_category_name.vars.value}),
+        'type':'alert-warning'} only %}
+    {% endif %}
+
+    <form id="content_edit" method="post" role="form">
+      {{ form_errors(form) }}
+      {{ form_row(form._token) }}
+      {{ form_row(form.content_id) }}
+      {{ form_row(form.language) }}
+      {{ form_row(form.permalink_url) }}
+      {{ form_row(form.check_kitcommand) }}
+      {{ form_row(form.primary_category_target_url) }}
+      {{ form_row(form.primary_category_name) }}
+      {{ form_row(form.category_type) }}
+      {% if form.category_type.vars.value != 'EVENT' %}
+        {{ form_row(form.event_date_from) }}
+        {{ form_row(form.event_date_to) }}
+        {{ form_row(form.event_organizer) }}
+        {{ form_row(form.event_location) }}
+      {% endif %}
+      {% if form.category_type.vars.value != 'GLOSSARY' %}
+        {{ form_row(form.glossary_type) }}
+      {% endif %}
+      <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+          {# form contents at the left column #}
+          <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 no-padding-left">
+              <div class="form-group">
+                <label>{{ 'content_id'|humanize|trans }}</label>
+                <div>
+                {% if form.content_id.vars.value > 0 %}
+                  {{ '%05d'|format(form.content_id.vars.value) }}&nbsp;
+                  {% if form.check_kitcommand.vars.value == 1 %}
+                    {% set kitcommand = '~~ flexContent action[view] content_id[' ~ form.content_id.vars.value ~ '] ~~' %}
+                  {% else %}
+                    {% set kitcommand = '~~ flexContent action[category] category_id[' ~ form.primary_category.vars.value ~ '] ~~' %}
+                  {% endif %}    
+                  <a id="copycommand" class="btn btn-default" role="button" href="#" data-clipboard-text="{{ kitcommand }}">~~</a>
+                {% else %}
+                  {{ '- new entry -'|trans }}
+                {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+              <div class="form-group">
+                {{ form_label(form.status) }}
+                {{ form_widget(form.status, {'attr':{'class':'form-control input-sm'}}) }}
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+              <div class="form-group">
+                {{ form_label(form.rss) }}
+                {{ form_widget(form.rss, {'attr':{'class':'form-control input-sm'}}) }}
+              </div>
+            </div>            
+          </div>
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs12 no-padding-left">
+              <div class="form-group">
+                {{ form_label(form.title) }}
+                {{ form_widget(form.title, {'attr':{'class':'form-control input-sm'}}) }}
+              </div>
+              <div class="form-group">
+                {{ form_label(form.page_title) }}
+                {{ form_widget(form.page_title, {'attr':{'class':'form-control input-sm'}}) }}
+              </div>
+              <div class="form-group">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description, {'attr':{'class':'form-control input-sm'}}) }}
+              </div>
+              <div class="form-group">
+                {{ form_label(form.keywords) }}
+                {{ form_widget(form.keywords, {'attr':{'class':'form-control input-sm'}}) }}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 no-padding-left">
+              <div class="form-group">
+                {{ form_label(form.publish_from) }}
+                {{ form_widget(form.publish_from, {'attr':{'class':'form-control input-sm publish_from'}}) }}
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+              <div class="form-group">
+                {{ form_label(form.breaking_to) }}
+                {{ form_widget(form.breaking_to, {'attr':{'class':'form-control input-sm breaking_to'}}) }}
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+              <div class="form-group">
+                {{ form_label(form.archive_from) }}
+                {{ form_widget(form.archive_from, {'attr':{'class':'form-control input-sm archive_from'}}) }}
+              </div>
+            </div>
+          </div>
+          {% if form.category_type.vars.value == 'EVENT' %}
+            <div class="row">
+              <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                {{ form_label(form.event_date_from) }}
+                {{ form_widget(form.event_date_from, {'attr':{'class':'form-control input-sm event_date_from'}}) }}
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                {{ form_label(form.event_date_to) }}
+                {{ form_widget(form.event_date_to, {'attr':{'class':'form-control input-sm event_date_to'}}) }}
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                {{ form_label(form.event_organizer) }}
+                {{ form_widget(form.event_organizer, {'attr':{'class':'form-control input-sm'}}) }}
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                {{ form_label(form.event_location) }}
+                {{ form_widget(form.event_location, {'attr':{'class':'form-control input-sm'}}) }}
+              </div>
+            </div>
+          {% endif %}
+          {% if form.category_type.vars.value == 'GLOSSARY' %}
+            <div class="row">
+              <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                {{ form_label(form.glossary_type) }}
+                {{ form_widget(form.glossary_type, {'attr':{'class':'form-control input-sm'}}) }}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+          {# image container #}
+          <div class="height-30"></div>
+          {% if form.teaser_image.vars.value|length > 0 %}
+            <img class="img-rounded img-responsive" src="{{ FRAMEWORK_URL ~ form.teaser_image.vars.value }}" />
+          {% endif %}
+          <div class="height-15"></div>
+          <input class="form-control btn btn-default" type="button" name="image" onclick="submitForm('{{ FRAMEWORK_URL }}/flexcontent/editor/edit/image/select?usage={{ usage }}');" value="{{ 'Select teaser image'|trans }}" title="{{ 'Select teaser image'|trans }}" />
+          {% if form.teaser_image.vars.value|length > 0 %}
+            &nbsp;<a class="form-control btn btn-default" href="#" name="image_remove" role="button" onclick="submitForm('{{ FRAMEWORK_URL }}/flexcontent/editor/edit/image/remove/id/{{ form.content_id.vars.value }}?usage={{ usage }}')" title="{{ 'Remove image'|trans }}"><i class="fa fa-trash-o"></i></a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="form-group">
+            {{ form_label(form.teaser) }}
+            <div class="editor editor-150">
+              {{ CKEditor(
+                    form.teaser.vars.id,
+                    form.teaser.vars.full_name,
+                    form.teaser.vars.value,
+                    '100%', '100px',
+                    MANUFAKTUR_URL ~ '/flexContent/Template/default/admin/ckeditor.config.teaser.js'
+              ) }}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="form-group">
+            <label class="{% if form.permalink.vars.required %}required{% endif %}" for="{{ form.permalink.vars.id }}">{{ 'Permalink'|trans }}&nbsp;<span class="label-info">({{ form.language.vars.value|trans }})&nbsp;{{ form.permalink_url.vars.value }}</span>&nbsp;</label>
+            {{ form_widget(form.permalink, {'attr':{'class':'form-control input-sm'}}) }}
+          </div>
+        </div>
+        <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12">
+          <div class="form-group">
+            {{ form_label(form.redirect_url) }}
+            {{ form_widget(form.redirect_url, {'attr':{'class':'form-control input-sm'}}) }}
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+          <div class="form-group">
+            {{ form_label(form.redirect_target) }}
+            {{ form_widget(form.redirect_target, {'attr':{'class':'form-control input-sm'}}) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            {{ form_label(form.primary_category) }}
+            {{ form_widget(form.primary_category, {'attr':{'class':'form-control input-sm'}}) }}
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+          <div class="form-group">
+            {{ form_label(form.secondary_categories) }}
+            {{ form_widget(form.secondary_categories, {'attr':{'class':'form-control input-sm'}}) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="tag">{{ 'Hashtags'|trans }}</label>
+            {% if tags|length > 0 %}
+              {% for tag in tags %}
+                <input type="text" name="tag[{{ tag.tag_id ~ '-a' }}]" value="{{ tag.tag_name }}" class="tag form-control input-sm"/>
+              {% endfor %}
+            {% else %}
+              <input type="text" name="tag[]" value="" class="tag form-control input-sm"/>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="submit">&nbsp;</label>
+            <input class="form-control btn btn-default" type="button" name="save_content" onclick="submitForm('{{ FRAMEWORK_URL }}/flexcontent/editor/edit/check?usage={{ usage }}');" value="{{ 'Save'|trans }}" />
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            {{ form_label(form.content) }}
+            <div class="editor editor-450">
+              {{ CKEditor(
+                    form.content.vars.id,
+                    form.content.vars.full_name,
+                    form.content.vars.value,
+                    '100%', '400px',
+                    MANUFAKTUR_URL ~ '/flexContent/Template/default/admin/ckeditor.config.content.js'
+              ) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="submit">&nbsp;</label>
+            <input class="form-control btn btn-default" type="button" name="save_content" onclick="submitForm('{{ FRAMEWORK_URL }}/flexcontent/editor/edit/check?usage={{ usage }}');" value="{{ 'Save'|trans }}" />
+          </div>
+        </div>
+      </div>
+      {#{ form_rest(form) }#}
+    </form>
+  </div>
+{% endblock content %}
+
+ {% block footer_jquery %}
+  {#{ parent() }#}
+  <script src="{{ LIBRARY_URL }}/jquery/jquery/latest/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified//i18n/jquery-ui-i18n.min.js"></script>
+  <script src="{{ LIBRARY_URL }}/bootstrap/latest/js/bootstrap.min.js"></script>  
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/timepicker/latest/jquery-ui-timepicker-addon.min.js"></script>
+  {% if app.translator.locale == 'de' %}
+    <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/timepicker/latest/i18n/jquery-ui-timepicker-de.js"></script>
+  {% endif %}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/tagedit/latest/js/jquery.autoGrowInput.js"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/tagedit/latest/js/jquery.tagedit.js"></script>
+{% endblock footer_jquery %}
+
+{% block footer %}
+  {# add the height of CKE's to the iframe_add_height (default = 30) #}
+  {% set iframe_add_height = 670 %}
+  {{ parent() }}
+  <script type="text/javascript">
+
+    if (typeof 'jQuery' !== 'undefined') {
+
+      function submitForm(action)
+      {
+        if (!$('#content_edit')[0].checkValidity()) {
+          alert('{{ 'Please fill in all requested fields before submitting the form!'|trans }}');
+        }
+        else {
+          $('#content_edit').attr('action', action);
+          $('#content_edit').submit();
+        }
+      }
+
+      $(document).ready(function() {
+
+        // on page load scroll to the top of the form
+        document.getElementById('edit').scrollIntoView(true);
+
+        $("#form_title").change(function () {
+          var permalink = $('#form_permalink').val();
+          var title = $('#form_title').val();
+
+          if (permalink.length < 1) {
+            // no permalink defined, use the page title as propose ...
+            $.ajax({
+              url:"{{ FRAMEWORK_URL }}/flexcontent/editor/permalink/create?lang={{ form.language.vars.value }}",
+              type: "POST",
+              dataType: "json",
+              data: {
+                link: title
+              },
+              complete: function (XMLHttpRequest, textStatus) {
+                var result = $.parseJSON(XMLHttpRequest.responseText);
+                $('#form_permalink').val(result);
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                alert('Error creating PermaLink:'+textStatus);
+              }
+            });
+          }
+        });
+
+        $('#content_edit').find('input.tag').tagedit({
+          autocompleteURL: '{{ FRAMEWORK_URL }}/flexcontent/editor/buzzword/autocomplete?lang={{ form.language.vars.value }}',
+          texts: {
+            removeLinkTitle: "{{ 'Remove from list'|trans }}",
+            saveEditLinkTitle: "{{ 'Save changes'|trans }}",
+            deleteLinkTitle: "{{ 'Delete this tag from database'|trans }}",
+            deleteConfirmation: "{{ 'Are you sure to delete this entry?'|trans }}",
+            deletedElementTitle: "{{ 'This Element will be deleted'|trans }}",
+            breakEditLinkTitle: "{{ 'Cancel'|trans }}",
+            forceDeleteConfirmation: "{{ 'There are more records using this tag, are you sure do you want to remove it?'|trans }}"
+          }
+        });
+
+        $.datepicker.setDefaults($.datepicker.regional['{{ app.translator.locale }}']);
+        $.timepicker.setDefaults($.timepicker.regional['{{ app.translator.locale }}']);
+        $('.publish_from').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.breaking_to').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.archive_from').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_date_from').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        $('.event_date_to').datetimepicker({
+          timeFormat: "HH:mm",
+          stepHour: 1,
+          stepMinute: 5
+        });
+        
+        
+        $('#global-zeroclipboard-html-bridge').tooltip();
+        
+        // ZeroClipboad
+        ZeroClipboard.config({ moviePath: '{{ LIBRARY_URL }}/jquery/zeroclipboard/latest/ZeroClipboard.swf' });
+        var clip = new ZeroClipboard(document.getElementById('copycommand'));
+        clip.on('complete', function(client, args){
+          alert("{{ 'Copied kitCommand to clipboard:'|trans }}"+" "+ args.text);
+        });
+        
+        clip.on('load', function(client) {
+          {% if form.check_kitcommand.vars.value == 1 %}
+            {% set kitcommand = '~~ flexContent action[view] content_id[' ~ form.content_id.vars.value ~ '] ~~' %}
+            {% set purpose = 'Show this content as single article'|trans %} 
+          {% else %}
+            {% set kitcommand = '~~ flexContent action[category] category_id[' ~ form.primary_category.vars.value ~ '] ~~' %}
+            {% set purpose = 'Show the contents of the category'|trans %}
+          {% endif %}    
+          $('#global-zeroclipboard-html-bridge').attr({
+            'data-toggle':'tooltip',
+            'data-title': '{{ 'Copy the complete kitCommand<br /><code>%command%</code><br />to clipboard. Purpose:<br />%purpose%.'|trans({'%command%':kitcommand, '%purpose%':purpose}) }}',
+            'data-placement': 'bottom',
+            'data-html': true
+          });
+          $('#global-zeroclipboard-html-bridge').tooltip('show');
+        });
+      });
+    }
+  </script>
+{% endblock footer %}

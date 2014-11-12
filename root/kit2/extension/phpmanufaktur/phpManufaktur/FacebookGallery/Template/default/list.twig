@@ -2,40 +2,41 @@
   FacebookGallery
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/FacebookGallery
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
 #}
-{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
-{% block title %}{{ 'Facebook Gallery Help'|trans }}{% endblock %}
-{% block description %}{{ 'First Steps and Helpfile for the kitFramework Facebook Gallery'|trans }}{% endblock %}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}FacebookGallery - {{ 'Available galleries'|trans }}{% endblock %}
 {% block stylesheet %}
   {{ parent() }}
-  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/FacebookGallery/Template/default/css/frontend.css" media="screen, projection" />
+  {% if fileExists(MANUFAKTUR_PATH ~ '/FacebookGallery/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/gallery.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/FacebookGallery/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/gallery.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/FacebookGallery/Template/default/css/gallery.min.css' }}" media="screen, projection" />
+  {% endif %}
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL ~ '/font-awesome/latest/css/font-awesome.min.css' }}" media="screen, projection" />
 {% endblock stylesheet %}
 {% block content %}
-  <h2>FacebookGallery: {{ 'Available galleries'|trans }}</h2>
+  <h3>FacebookGallery - {{ 'Available galleries'|trans }}</h3>
   <p>{{ 'The facebook ID <b>%facebook_id%</b> provide the following galleries'|trans({'%facebook_id%':facebook_id}) }}:</p>
   {% for gallery in galleries.data %}
-    <div class="gallery_container">
-      <div class="label">{{ 'Gallery'|trans }}</div>
-      <div class="value">{{ gallery.name }}</div>
-      <div class="clear_item"></div>
-      <div class="label">{{ 'ID'|trans }}</div>
-      <div class="value"><span class="copy_clipboard" title="{{ 'Copy to clipboard'|trans }}" onclick="javascript:copyToClipboard('{{ gallery.id }}');"></span>{{ gallery.id }}</div>
-      <div class="clear_item"></div>
-      <div class="label">{{ 'Type'|trans }}</div>
-      <div class="value">{% set type = 'GALLERY_TYPE_' ~ gallery.type|upper %}{{ type|trans }}</div>
-      <div class="clear_item"></div>
-      <div class="label">{{ 'Created at'|trans }}</div>
-      <div class="value">{{ gallery.created_time|date('d.m.Y - H:i') }}</div>
-      <div class="clear_item"></div>
-      <div class="label">{{ 'kitCommand' }}</div>
-      <div class="value"><span class="copy_clipboard" title="{{ 'Copy to clipboard'|trans }}" onclick="javascript:copyToClipboard('~~ facebookgallery id[{{ gallery.id }}] ~~');"></span><code>~~ facebookgallery id[{{ gallery.id }}] ~~</code></div>
-      <div class="clear_item"></div>
+    <h4>{{ gallery.name }}</h4>
+    <div class="row">
+      <div class="col-xs-3">{{ 'ID'|humanize|trans }}</div>
+      <div class="col-xs-9">
+        <a href="#" title="{{ 'Copy to clipboard'|trans }}" onclick="javascript:copyToClipboard('{{ gallery.id }}');"><i class="fa fa-files-o"></i></a> {{ gallery.id }}
+      </div>
+      <div class="col-xs-3">{{ 'Type'|trans }}</div>
+      <div class="col-xs-9">{% set type = 'GALLERY_TYPE_' ~ gallery.type|upper %}{{ type|trans }}</div>
+      <div class="col-xs-3">{{ 'Created at'|trans }}</div>
+      <div class="col-xs-9">{{ gallery.created_time|date('DATETIME_FORMAT'|trans) }}</div>
+      <div class="col-xs-3">{{ 'kitCommand' }}</div>
+      <div class="col-xs-9">
+        <a href="#" title="{{ 'Copy to clipboard'|trans }}" onclick="javascript:copyToClipboard('~~ FacebookGallery id[{{ gallery.id }}] ~~');"><i class="fa fa-files-o"></i></a> <code>~~ FacebookGallery id[{{ gallery.id }}] ~~</code>
+      </div>
     </div>
-    <div class="clear_container"></div>
   {% endfor %}
 {% endblock %}
 {% block footer %}

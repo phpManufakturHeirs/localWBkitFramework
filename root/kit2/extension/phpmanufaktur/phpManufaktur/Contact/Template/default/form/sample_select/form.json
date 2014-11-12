@@ -1,0 +1,44 @@
+{
+  "fields":{
+    "gender":{
+      "type":"person_gender",
+      "required":false
+    },
+    "vorname":{
+      "type":"person_first_name",
+      "required":false
+    },
+    "nachname":{
+      "type":"person_last_name"
+    },
+    "mail":{
+      "type":"communication_email"
+    },
+    "checkbox":{
+      "name":"checkbox",
+      "type":"checkbox",
+      "choices":{
+        "one":"The first one",
+        "two":"The second one",
+        "three":"The third one"
+      }
+    },
+    "radios":{
+      "name":"radio",
+      "type":"radio",
+      "choices":{
+        "red":"Select the red one",
+        "green":"Select the green one",
+        "blue":"Select the blue one"
+      },
+      "value":"green",
+      "required":true
+    },
+    "message":{
+      "type":"textarea",
+      "name":"message",
+      "label":"Message",
+      "required":true
+    }
+  }
+}

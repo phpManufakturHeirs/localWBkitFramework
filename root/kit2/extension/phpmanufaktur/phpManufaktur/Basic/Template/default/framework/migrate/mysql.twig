@@ -1,0 +1,45 @@
+{# 
+  kitFramework::Migrate
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'framework/body.twig') %}
+{% block title %}{{ 'Check MySQL settings'|trans }}{% endblock %}
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container">
+    <div class="page-header">
+      <h1>{{ 'Check MySQL settings'|trans }}</h1>
+    </div>
+    
+    {{ alert }}
+    
+    <div class="panel panel-default">
+      <div class="panel-body">
+        {% if app.translator.locale == 'de' %}
+          {# GERMAN translation #}
+          <p>Bitte überprüfen Sie die Einstellungen für den MySQL Datenbank Zugriff.</p>
+          <p>Die Einstellungen gelten für das CMS und für das kitFramework.</p>
+        {% else %}
+          {# ENGLISH translation #}
+          <p>Please check the settings for the MySQL database access.</p>
+          <p>The settings are valid for the CMS and for the kitFramework.</p>
+        {% endif %}
+      </div>
+    </div>
+    
+    {% form_theme form '@phpManufaktur/Basic/Template/default/framework/form.fields.horizontal.twig' %}
+
+    <form class="form-horizontal" action="{{ FRAMEWORK_URL ~ '/migrate.php/mysql/check' }}/" method="post" role="form">
+      {{ form_widget(form) }}
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-6">
+          <button type="submit" class="btn btn-default">{{ 'Next step'|trans }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}

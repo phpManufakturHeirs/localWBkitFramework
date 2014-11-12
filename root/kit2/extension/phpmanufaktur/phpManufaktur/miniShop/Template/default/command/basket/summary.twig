@@ -1,0 +1,98 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if order.articles is defined and order.articles|length > 0 %}
+  {% if use_as_form is not defined %}
+    {% set use_as_form = false %}
+  {% endif %}
+  {% set currency_symbol = attribute(config.currency, order.base.currency_iso).symbol %}
+  {% set decimal_separator = 'DECIMAL_SEPARATOR'|trans({},'messages', order.base.locale|lower) %}
+  {% set thousand_separator = 'THOUSAND_SEPARATOR'|trans({},'messages', order.base.locale|lower) %}
+  <div class="basket-summary">
+    <div class="table-responsive">
+      <table class="table table-condensed table-hover">
+        <thead>
+          <tr>
+            <th class="quantity">{{ 'Quantity'|trans }}</th>
+            <th class="article">{{ 'Article'|trans }}</th>
+            <th class="price">{{ 'Price'|trans }}
+            <th class="sub-total">{{ 'Subtotal'|trans }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for article in order.articles %}
+            <tr>
+              <td class="quantity">
+                {% if use_as_form %}
+                  {{ form_widget(attribute(form, article.basket_id)) }}
+                {% else %}
+                  {{ article.quantity }}
+                {% endif %}
+              </td>
+              <td class="article">
+                <div class="name"><a href="{{ permalink_base_url ~ '/article/' ~ article.permanent_link }}" target="_parent">{{ article.article_name }}</a></div>
+                <div class="description">{{ article.description_short }}</div>
+                {% if article.variant_value|length > 0 or article.variant_value_2|length > 0 %}
+                  <div class="variant">
+                    {% if article.variant_value|length > 0 %}
+                      <span class="item"><span class="name">{{ article.article_variant_name }}</span>: <span class="value">{{ article.variant_value }}</span></span>
+                      {% endif %}
+                      {% if article.variant_value_2|length > 0 %}
+                      <span class="item"><span class="name">{{ article.article_variant_name_2 }}</span>: <span class="value">{{ article.variant_value_2 }}</span></span>
+                      {% endif %}                        
+                  </div>
+                {% endif %}
+              </td>
+              <td class="price">{{ article.article_price|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+              <td class="sub-total">{{ article.subtotal|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+            </tr>
+          {% endfor %}
+          <tr>
+            {% if use_as_form %}
+              <td class="quantity">
+                <button type="submit" class="btn btn-default input-sm" title="{{ 'Refresh the shopping basket'|trans }}"><i class="fa fa-refresh"></i></button>
+              </td>
+            {% endif %}  
+            {% if order.sub_total < order.sum_total %}
+              <td colspan="{% if use_as_form %}2{% else %}3{% endif %}" class="sub-total">{{ 'Subtotal'|trans }}</td>
+              <td class="sub-total">{{ order.sub_total|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+            {% else %}
+              <td colspan="{% if use_as_form %}2{% else %}3{% endif %}" class="sum-total">{{ 'Sum total'|trans }}</td>
+              <td class="sum-total">{{ order.sum_total|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+            {% endif %}
+          </tr>
+          {% if order.base.article_value_added_tax > 0 and order.base.article_price_type == 'NET_PRICE' %}
+            <tr>
+              <td colspan="3" class="vat-total no-border">
+                {{ 'value add tax %vat%%'|trans({'%vat%':order.base.article_value_added_tax|number_format(2, decimal_separator, thousand_separator)}) }}
+              </td>
+              <td class="vat-total no-border">{{ order.vat_total|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+            </tr>
+          {% endif %}
+          {% if order.shipping_total > 0 %}
+            <tr>
+              <td colspan="3" class="shipping no-border">
+                {{ 'Shipping & handling'|trans }}
+              </td>
+              <td class="shipping no-border">{{ order.shipping_total|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+            </tr>
+          {% endif %}
+          {% if order.sum_total > order.sub_total %}
+            <tr>
+              <td colspan="3" class="sum-total no-border">{{ 'Sum total'|trans }}</td>
+              <td class="sum-total">{{ order.sum_total|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+      {% if order.base.article_value_added_tax > 0 and order.base.article_price_type == 'GROSS_PRICE' %}
+        <div class="hint vat-total">{{ 'Sum include %vat%% value add tax = %vat-total% %currency%.'|trans({'%vat%':order.base.article_value_added_tax|number_format(2, decimal_separator, thousand_separator),'%vat-total%':order.vat_total|number_format(2, decimal_separator, thousand_separator), '%currency%':currency_symbol}) }}</div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}

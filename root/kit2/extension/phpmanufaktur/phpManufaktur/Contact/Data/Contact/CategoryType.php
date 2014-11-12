@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -41,6 +41,8 @@ class CategoryType
         $SQL = <<<EOD
     CREATE TABLE IF NOT EXISTS `$table` (
         `category_type_id` INT(11) NOT NULL AUTO_INCREMENT,
+        `category_type_access` ENUM('ADMIN','PUBLIC') NOT NULL DEFAULT 'ADMIN',
+        `category_type_target_url` TEXT NOT NULL,
         `category_type_name` VARCHAR(64) NOT NULL DEFAULT '',
         `category_type_description` VARCHAR(255) NOT NULL DEFAULT '',
         PRIMARY KEY (`category_type_id`),
@@ -101,7 +103,8 @@ EOD;
                 foreach ($types as $type) {
                     $this->app['db']->insert(self::$table_name, array(
                         'category_type_name' => $type['type'],
-                        'category_type_description' => $this->app['utils']->sanitizeText($type['description'])
+                        'category_type_description' => $this->app['utils']->sanitizeText($type['description']),
+                        'category_type_target_url' => ''
                     ));
                 }
             }
@@ -116,14 +119,22 @@ EOD;
      * @throws \Exception
      * @return array
      */
-    public function getArrayForTwig()
+    public function getArrayForTwig($access=null)
     {
         try {
-            $SQL = "SELECT * FROM `".self::$table_name."` ORDER BY `category_type_name` ASC";
+            if (null === $access) {
+                $SQL = "SELECT * FROM `".self::$table_name."` ORDER BY `category_type_name` ASC";
+            }
+            elseif (in_array(strtoupper($access), array('ADMIN','PUBLIC'))) {
+                $SQL = "SELECT * FROM `".self::$table_name."` WHERE `category_type_access`='$access' ORDER BY `category_type_name` ASC";
+            }
+            else {
+                throw new \Exception('Parameter $access must be a string and can be ADMIN or PUBLIC');
+            }
             $categories = $this->app['db']->fetchAll($SQL);
             $result = array();
             foreach ($categories as $category) {
-                $result[$category['category_type_name']] = ucfirst(strtolower($category['category_type_name']));
+                $result[$category['category_type_name']] = $this->app['utils']->humanize($category['category_type_name']);
             }
             return $result;
         } catch (\Doctrine\DBAL\DBALException $e) {
@@ -275,7 +286,7 @@ EOD;
             $insert = array();
             foreach ($data as $key => $value) {
                 if ($key == 'category_type_id') continue;
-                $insert[$this->app['db']->quoteIdentifier($key)] = is_string($value) ? $this->app['utils']->unsanitizeText($value) : $value;
+                $insert[$this->app['db']->quoteIdentifier($key)] = is_string($value) ? $this->app['utils']->sanitizeText($value) : $value;
             }
             $this->app['db']->insert(self::$table_name, $insert);
             $category_type_id = $this->app['db']->lastInsertId();
@@ -302,6 +313,24 @@ EOD;
             if (!empty($update)) {
                 $this->app['db']->update(self::$table_name, $update, array('category_type_id' => $category_type_id));
             }
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Check if the access to the given $category_type_name is PUBLIC or not
+     *
+     * @param string $category_type_name
+     * @throws \Exception
+     * @return boolean
+     */
+    public function isPublic($category_type_name)
+    {
+        try {
+            $SQL = "SELECT `category_access` FROM `".self::$table_name."` WHERE `category_type_name`='$category_type_name'";
+            $access = $this->app['db']->fetchColumn($SQL);
+            return ($access === 'PUBLIC');
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }

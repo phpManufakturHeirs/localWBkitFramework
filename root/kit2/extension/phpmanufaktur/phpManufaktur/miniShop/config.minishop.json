@@ -1,0 +1,259 @@
+{
+  "nav_tabs": {
+    "order": [
+      "orders",
+      "contact_list",
+      "contact_edit",
+      "article",
+      "group",
+      "base",
+      "about"
+    ],
+    "default": "orders"
+  },
+  "locale": [
+    "EN",
+    "DE"
+  ],
+  "currency": {
+    "EUR": {
+      "name": "Euro",
+      "iso": "EUR",
+      "symbol": "\u20ac"
+    },
+    "USD": {
+      "name": "US-Dollar",
+      "iso": "USD",
+      "symbol": "$"
+    },
+    "CHF": {
+      "name": "Schweizer Franken",
+      "iso": "CHF",
+      "symbol": "SFr."
+    },
+    "GBP": {
+      "name": "Pound Sterling",
+      "iso": "GBP",
+      "symbol": "\u00a3"
+    }
+  },
+  "images": {
+    "directory": {
+      "start": "\/media\/public",
+      "select": "\/media\/public\/shop"
+    },
+    "extension": [
+      "*.jpg",
+      "*.jpeg",
+      "*.png",
+      "*.JPG",
+      "*.JPEG",
+      "*.PNG"
+    ]
+  },
+  "permanentlink": {
+    "directory": "\/shop"
+  },
+  "libraries": {
+    "enabled": true,
+    "jquery": [
+      "jquery\/jquery\/latest\/jquery.min.js",
+      "bootstrap\/latest\/js\/bootstrap.min.js",
+      "jquery\/lightbox\/latest\/js\/lightbox.min.js"
+    ],
+    "css": [
+      "bootstrap\/latest\/css\/bootstrap.min.css",
+      "font-awesome\/latest\/css\/font-awesome.min.css",
+      "jquery\/lightbox\/latest\/css\/lightbox.css"
+    ]
+  },
+  "banking_account": {
+    "owner": "ich",
+    "bank_name": "DiBa",
+    "iban": "aklsjd",
+    "bic": "alsdkj",
+    "reason": "miniShop Order #%order_id%\/%date%"
+  },
+  "paypal": {
+    "sandbox": true,
+    "email": "blackbird-facilitator@webbird.de",
+    "token": "MN9QWQFE9FLMHRYP",
+    "logo_url": ""
+  },
+  "basket": {
+    "lifetime_hours": 6
+  },
+  "order": {
+    "admin": {
+      "list": {
+        "max_days": 30
+      }
+    }
+  },
+  "contact": {
+    "field": {
+      "predefined": [
+        "contact_type"
+      ],
+      "visible": [
+        "person_gender",
+        "person_first_name",
+        "person_last_name",
+        "company_name",
+        "company_department",
+        "communication_email",
+        "communication_phone",
+        "address_street",
+        "address_zip",
+        "address_city",
+        "address_country_code",
+        "extra_fields",
+        "special_fields"
+      ],
+      "required": [
+        "person_gender",
+        "person_last_name",
+        "company_name",
+        "address_street",
+        "address_zip",
+        "address_city",
+        "address_country_code"
+      ],
+      "hidden": [
+        "contact_id",
+        "contact_type",
+        "category_id",
+        "category_type_id",
+        "person_id",
+        "company_id",
+        "address_id"
+      ],
+      "readonly": [
+        "contact_status",
+        "category_name"
+      ],
+      "tags": [
+        
+      ],
+      "default_value": {
+        "contact_type": "PERSON",
+        "person_gender": "MALE",
+        "address_country_code": "DE"
+      }
+    },
+    "admin": {
+      "person": {
+        "field": {
+          "predefined": [
+            
+          ],
+          "visible": [
+            "contact_status",
+            "category_name",
+            "category_access",
+            "tags",
+            "person_gender",
+            "person_title",
+            "person_first_name",
+            "person_last_name",
+            "person_birthday",
+            "communication_email",
+            "communication_phone",
+            "communication_cell",
+            "communication_url",
+            "address_street",
+            "address_zip",
+            "address_city",
+            "address_country_code",
+            "note",
+            "extra_fields",
+            "special_fields"
+          ],
+          "required": [
+            "communication_email"
+          ],
+          "hidden": [
+            "contact_id",
+            "contact_type",
+            "category_id",
+            "category_type_id",
+            "person_id",
+            "company_id",
+            "address_id"
+          ],
+          "readonly": [
+            "category_access"
+          ],
+          "tags": [
+            
+          ],
+          "route": {
+            "person": "\/admin\/minishop\/contact\/person\/edit",
+            "tag": "\/admin\/minishop\/contact\/tag\/list",
+            "category": "\/admin\/minishop\/contact\/category\/list",
+            "title": "\/admin\/minishop\/contact\/title\/list",
+            "list": "\/admin\/minishop\/contact\/list"
+          }
+        }
+      },
+      "company": {
+        "field": {
+          "predefined": [
+            
+          ],
+          "visible": [
+            "contact_status",
+            "category_name",
+            "category_access",
+            "tags",
+            "company_name",
+            "company_department",
+            "communication_email",
+            "communication_phone",
+            "communication_fax",
+            "communication_url",
+            "address_street",
+            "address_zip",
+            "address_city",
+            "address_country_code",
+            "address_delivery_street",
+            "address_delivery_zip",
+            "address_delivery_city",
+            "address_delivery_country_code",
+            "address_billing_street",
+            "address_billing_zip",
+            "address_billing_city",
+            "address_billing_country_code",
+            "note",
+            "extra_fields",
+            "special_fields"
+          ],
+          "required": [
+            "communication_email"
+          ],
+          "hidden": [
+            "contact_id",
+            "contact_type",
+            "category_id",
+            "category_type_id",
+            "company_id",
+            "person_id",
+            "address_id"
+          ],
+          "readonly": [
+            "category_access"
+          ],
+          "tags": [
+            
+          ],
+          "route": {
+            "company": "\/admin\/minishop\/contact\/company\/edit",
+            "tag": "\/admin\/minishop\/contact\/tag\/list",
+            "category": "\/admin\/minishop\/contact\/category\/list",
+            "list": "\/admin\/minishop\/contact\/list"
+          }
+        }
+      }
+    }
+  }
+}

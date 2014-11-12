@@ -1,0 +1,69 @@
+{# 
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Event
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/default/css/admin.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock stylesheet %}
+{% block title %}{{ 'Event Administration - About'|trans }}{% endblock %}
+  
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/Event/Template/default/admin/toolbar.twig' %}
+    
+    <div class="height-15"></div>
+    <div class="text-right">
+      <a class="btn btn-default" role="button" href="{{ FRAMEWORK_URL }}/admin/event/group/edit?usage={{ usage }}">{{ 'Add a new group'|trans }}</a>
+    </div>
+    <div class="height-15"></div>
+    
+    {% if groups|length < 1 %}
+      {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig' 
+        with {content:'The group list is empty, please define a group!'|trans} only %}
+    {% else %}
+      <div class="table-responsive">
+        <table class="table table-striped table-condensed table-hover">
+          <thead>
+            <tr>
+              <th class="group_id">{{ 'ID'|humanize|trans }}</th>
+              <th class="group_name">{{ 'Name'|trans }}</th>
+              <th class="group_name translated">{{ 'Name (translated)'|trans }}</th>
+              <th class="group_description">{{ 'Description'|trans }}</th>
+              <th class="group_status">{{ 'Status'|trans }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for field in groups %}
+              <tr>
+                <td class="group_id"><a href="{{ FRAMEWORK_URL ~ '/admin/event/group/edit/id/' ~ field.group_id ~ '?usage=' ~ usage }}">{{ '%03d'|format(field.group_id) }}</a></td>
+                <td class="group_name"><a href="{{ FRAMEWORK_URL ~ '/admin/event/group/edit/id/' ~ field.group_id ~ '?usage=' ~ usage }}">{{ field.group_name }}</a></td>
+                <td class="group_name translated">{{ field.group_name|replace({'_':' '})|capitalize|trans }}</td>
+                <td class="group_description">{{ field.group_description }}</td>
+                <td class="group_status">{{ field.group_status }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+{% endblock content %}

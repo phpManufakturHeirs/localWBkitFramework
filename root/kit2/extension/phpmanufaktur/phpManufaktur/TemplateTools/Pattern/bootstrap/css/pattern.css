@@ -1,0 +1,163 @@
+/*! TemplateTools | kit2.phpmanufaktur.de */
+/**
+ * TemplateTools
+ *
+ * @author Team phpManufaktur <team@phpmanufaktur.de>
+ * @link https://kit2.phpmanufaktur.de/TemplateTools
+ * @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ */
+
+#bootstrap-login .forgotten,
+#bootstrap-login .signup {
+  font-size: smaller;
+}
+
+#bootstrap-login .forgotten {
+  padding: 10px 0 0 0;
+}
+#bootstrap-login .welcome {
+  padding: 0 0 15px 0;
+}
+
+/**
+  Needed for the NAV functions
+**/
+.dropdown-submenu {
+    position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+}
+.dropdown-submenu>a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #cccccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+    border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+    float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+
+/**
+  Needed for the Breadcrumb
+**/
+.breadcrumb {
+  padding-left: 0;
+  padding-bottom: 0;
+  margin-left: 0;
+  font-size: 11px;
+  background-color: transparent;
+}
+
+/**
+  Needed for browser.check.twig
+**/
+.browser-update {
+  width: 100%;
+  background-color: #ffffcc;
+  background-image: url('../../classic/image/warning.gif');
+  background-position: top left;
+  background-repeat: no-repeat;
+  color: #2f2f2f;
+  padding: 3px 10px 2px 30px;
+  font-family: Tahoma, Arial, Verdana;
+  font-size: 12px;
+  border: 1px solid #ccc;
+}
+
+.sitelinks {
+  margin: 20px 0 20px 0;
+  padding: 0 20px 0 20px;
+}
+.sitelink-container {
+  font-size: 11px;
+}
+.sitelink-container a:link,
+.sitelink-container a:visited {
+  color: #999 !important;
+  text-decoration: none;
+}
+.sitelink-container a:link.active,
+.sitelink-container a:visited.active,
+.sitelink-container a:hover,
+.sitelink-container a:focus {
+  color: #da251d !important;
+  text-decoration: none;
+}
+.sitelink-container .header {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.sitelink-container nav > ul {
+  margin-left: 0;
+  padding-left: 0;
+}
+.sitelink-container nav > ul > li {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+/**
+  Locale Navigation
+**/
+
+.locale-navigation .nav>li>a {
+  padding: 0 5px;
+}
+.locale-navigation img {
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+}
+.locale-navigation img.active,
+.locale-navigation img:hover {
+  opacity: 1.0;
+  filter: alpha(opacity=100);
+}
+
+/**
+  Maintenance
+**/
+.maintenance .jumbotron {
+  margin-top: 20%;
+}
+.maintenance-hint {
+  width: 100%;
+  background-color: #ffcc66;
+  background-image: url('../../classic/image/warning.gif');
+  background-position: top left;
+  background-repeat: no-repeat;
+  color: #2f2f2f;
+  padding: 3px 10px 2px 30px;
+  font-family: Tahoma, Arial, Verdana;
+  font-size: 12px;
+  border: 1px solid #ff9966; 
+}

@@ -2,7 +2,7 @@
   Event
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/Event
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
@@ -13,6 +13,7 @@
   <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/command.css" media="screen, projection" />
 {% endblock stylesheet %}
 {% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
   <div class="search-container">
     <h2>{{ 'Search'|trans }}</h2>
     {% if basic.message|length > 0 %}

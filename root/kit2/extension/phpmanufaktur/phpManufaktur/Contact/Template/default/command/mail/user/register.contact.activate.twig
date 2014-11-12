@@ -1,0 +1,20 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% if app.translator.locale == 'de' %}
+  {# GERMAN #}
+  <p>Sie haben auf {{ FRAMEWORK_URL }} einen Kontaktdatensatz angelegt.</p>
+  <p>Bitte bestätigen Sie Ihre Angaben mit dem folgendem <a href="{{ activation_link }}">Bestätigungslink</a>.</p>
+  <p>Vielen Dank!</p>
+{% else %}
+  {# ENGLISH #}
+  <p>You have submitted a contact record at {{ FRAMEWORK_URL }}.</p>
+  <p>Please confirm your submission with the following <a href="{{ activation_link }}">Activationlink</a>.</p>
+  <p>Thank you!</p>
+{% endif %}

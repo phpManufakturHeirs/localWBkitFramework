@@ -22,44 +22,48 @@
     "about":"\/event\/about"
   },
   "release":{
-    "number":"2.0.22",
-    "date":"2013-11-10",
-    "status":"beta"
+    "number":"2.0.45",
+    "date":"2014-09-14",
+    "status":"beta",
+    "changelog":"https:\/\/github.com\/phpManufaktur\/kfEvent\/blob\/master\/CHANGELOG.md"
   },
   "description":{
     "en":{
       "title":"Event management for kitFramework",
       "short":"A complete event management suite - former known as kitEvent",
       "long":"Complete event management for use with the kitFramework",
-      "url":"https:\/\/kit2.phpmanufaktur.de"
+      "url":"https:\/\/kit2.phpmanufaktur.de\/Event"
     },
     "de": {
       "title":"Veranstaltungskalender für das kitFramework",
       "short":"Verwalten Sie Termine und Veranstaltungen und veröffentlichen Sie diese auf Ihrer Website",
-      "long":"Event ist eine vollständige Verwaltungssoftware für alle Termine, Kurse und Veranstaltungen.",
-      "url":"https:\/\/kit2.phpmanufaktur.de"
+      "long":"Event ist eine vollständige Verwaltungssoftware für alle Termine, Kurse und Veranstaltungen. Auf Grund seiner sehr flexiblen Struktur eignet sich Event sowohl für Freelancer, die einige Seminare auf Ihrer Website anbieten möchten, als auch für Portale, die mehrere tausend Veranstaltungen präsentieren und leistungsfähige Filter-, Sortier- und Suchfunktionen benötigen.",
+      "url":"https:\/\/kit2.phpmanufaktur.de\/Event"
     }
   },
   "require":{
     "framework":{
-      "release":"0.26"
+      "release":"0.27"
     },
     "extension":{
         "phpmanufaktur":{
             "Basic":{
-                "release":"0.49"
+                "release":"1.0.12"
+            },
+            "Library":{
+                "release":"0.37"
             },
             "Contact":{
-                "release":"2.0.17"
+                "release":"2.0.42"
             },
             "CKEditor":{
-                "release":"0.15"
+                "release":"0.30"
             },
             "MediaBrowser":{
-                "release":"0.19"
+                "release":"0.30"
             },
             "CommandCollection":{
-                "release":"0.21"
+                "release":"0.40"
             }
         }
     }
@@ -69,8 +73,8 @@
       "update":"\/admin\/event\/update",
       "uninstall":"\/admin\/event\/uninstall",
       "icon_path":{
-        "BlackCat":"\/extension\/phpmanufaktur\/phpManufaktur\/Event\/Data\/Setup\/icon\/icon.jpg",
-        "WebsiteBaker":"\/extension\/phpmanufaktur\/phpManufaktur\/Event\/Data\/Setup\/icon\/tool_icon.jpg"
+        "BlackCat":"\/extension\/phpmanufaktur\/phpManufaktur\/Event\/Data\/Setup\/icon\/icon.png",
+        "WebsiteBaker":"\/extension\/phpmanufaktur\/phpManufaktur\/Event\/Data\/Setup\/icon\/tool_icon.png"
       }
   },
   "license": {

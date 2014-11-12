@@ -1,0 +1,31 @@
+{
+  "header":{
+    "text":"I'm a sample header",
+    "level":3
+  },
+  "panel":{
+    "text":"This is a sample panel text whith some unnecessary content"
+  },
+  "fields":{
+    "gender":{
+      "type":"person_gender",
+      "required":false
+    },
+    "vorname":{
+      "type":"person_first_name",
+      "required":false
+    },
+    "nachname":{
+      "type":"person_last_name"
+    },
+    "mail":{
+      "type":"communication_email"
+    },
+    "message":{
+      "type":"textarea",
+      "name":"message",
+      "label":"Message",
+      "required":true
+    }
+  }
+}

@@ -4,7 +4,7 @@
  * CommandCollection
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de
+ * @link https://kit2.phpmanufaktur.de/CommandCollection
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -16,6 +16,8 @@ use Silex\Application;
 use phpManufaktur\CommandCollection\Data\Rating\Rating as RatingData;
 use phpManufaktur\CommandCollection\Data\Rating\RatingIdentifier;
 use Carbon\Carbon;
+use phpManufaktur\flexContent\Control\Command\Tools as flexContentTools;
+use phpManufaktur\flexContent\Data\Content\Content as flexContentData;
 
 
 class Rating extends Basic
@@ -115,6 +117,32 @@ class Rating extends Basic
 
         // no addition to the iFrame!
         $this->setFrameAdd(0);
+
+        // never track the rating iFrame!
+        $this->disableTracking();
+
+        // we want to grant the "fold in" if the frame url is executed outside the CMS
+        if (!isset($param['url'])) {
+            $url = $this->getCMSpageURL();
+            if (empty($url) && !is_null($this->app['session']->get('FLEXCONTENT_EDIT_CONTENT_ID')) &&
+                !is_null($this->app['session']->get('FLEXCONTENT_EDIT_CONTENT_LANGUAGE'))) {
+                    // this is a flexContent article!
+                    $fcTools = new flexContentTools($this->app);
+                    $base_url = $fcTools->getPermalinkBaseURL($this->app['session']->get('FLEXCONTENT_EDIT_CONTENT_LANGUAGE'));
+                    $fcData = new flexContentData($this->app);
+                    $data = $fcData->selectPermaLinkByContentID($this->app['session']->get('FLEXCONTENT_EDIT_CONTENT_ID'));
+                    if (isset($data['permalink'])) {
+                        $url = $base_url.'/'.$data['permalink'];
+                    }
+                    $this->setCMSpageURL($url);
+                }
+                $param['url'] = $url;
+                $this->createParameterID($param);
+        }
+        else {
+            $this->setCMSpageURL($param['url']);
+        }
+        $this->setRedirectActive(true);
 
         return $this->app['twig']->render($this->app['utils']->getTemplateFile(
             '@phpManufaktur/CommandCollection/Template/Rating',

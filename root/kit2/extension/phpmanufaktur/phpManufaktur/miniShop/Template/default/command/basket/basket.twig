@@ -1,0 +1,29 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/miniShop/Template/default/css/basket.min.css" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+    {% if basket|length > 0 %}
+      {# show the basket only if it contain an article #}
+      <div class="basket{% if basket|length < 1 %} inactive" title="{{ 'Your basket does not contain any article'|trans }}"{% else %}" title="{% if basket|length == 1 %}{{ 'Your basket contain one article'|trans }}{% else %}{{ 'Your basket contain %count% articles'|trans({'%count%':basket|length}) }}{% endif %}"{% endif %}>
+        <a href="{{ permalink_base_url ~ '/basket' }}" target="_parent" class="btn btn-default" role="button">
+          <i class="fa fa-shopping-cart"></i> {{ 'Basket'|trans }}{% if basket|length > 0 %} <span class="badge">{{ basket|length }}</span>{% endif %}
+        </a>
+      </div>
+    {% endif %}
+{% endblock content %}
+{% block footer %}
+  {% set iframe_add_height = -50 %}
+  {{ parent() }}
+{% endblock footer %}

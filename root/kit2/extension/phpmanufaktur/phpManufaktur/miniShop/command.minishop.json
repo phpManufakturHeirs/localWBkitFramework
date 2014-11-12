@@ -1,0 +1,39 @@
+{
+  "command":"miniShop",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://kit2.phpmanufaktur.de"
+    },
+  "name": {
+    "en":"miniShop for the kitFramework",
+    "de":"miniShop für das kitFramework"
+  },
+  "description": {
+    "en":"Small and easy to use shop for the kitFramework",
+    "de":"Kleiner und einfach zu bedienender Shop für das kitFramework"
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  },
+  "help": {
+    "en": {
+      "link":"https://gist.github.com/6218ac8afe8a513c6333.git",
+      "gist_id":"6218ac8afe8a513c6333",
+      "file": {
+        "help":"kitcommand_minishop_en.md"
+      }
+    }
+  },
+  "issues": {
+    "en": {
+      "link":"https://github.com/phpManufaktur/kfMiniShop/issues"
+    }
+  },
+  "support": {
+    "en": {
+      "link":"https://support.phpmanufaktur.de"
+    }
+  }
+}

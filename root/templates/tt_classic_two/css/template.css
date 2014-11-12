@@ -1,0 +1,143 @@
+/**
+ * TemplateTools
+ *
+ * @author Team phpManufaktur <team@phpmanufaktur.de>
+ * @link https://kit2.phpmanufaktur.de/TemplateTools
+ * @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ */
+
+body {
+  margin: 0;
+  padding: 0;
+  color: #333;
+  background-color: #fff;
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+}
+
+img {
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+  background-color: transparent;
+}
+a:link,
+a:visited {
+  color: #333;
+}
+a:active,
+a:hover {
+  color: #da251d;
+}
+
+.body-container {
+  position: relative;
+  margin: 0 auto 0 auto;
+  padding: 0;
+  width: 900px;
+  height: auto;
+}
+
+.footer:before,
+.footer:after,
+.navigation:before,
+.navigation:after,
+.logo-container:before,
+.logo-container:after {
+  display: table;
+  content: " ";
+  clear: both;
+}
+.logo {
+  float: left;
+  width: 200px;
+  height: 200px;
+  margin: 0;
+  padding: 0;
+}
+
+.template-name {
+  float: left;
+  width: 650px;
+  height: 100px;
+  color: #333;
+  margin: 0;
+  padding: 100px 0 0 50px;
+  background-color: rgba(0,0,0, 0.1);
+  font-family: Courier, monospace;
+}
+.template-name-header {
+  font-size: 30px;
+  font-weight: bold;
+}
+.template-name-path {
+  font-size: 11px;
+  color: #999999;
+}
+
+.navigation {
+  float: left;
+  padding: 50px 0 100px 0;
+  margin: 0;
+  color: #333;
+  background-color: rgba(0,0,0,0.1);
+  width: 200px;
+  min-height: 400px;
+}
+.navigation ul,
+.navigation li {
+  list-style: none;
+  padding: 0;
+  margin: 3px 0 3px 10px;
+  font-family: Courier, monospace;
+  font-size: 11px;
+  color: #000;
+  background-color: transparent;
+}
+.navigation a {
+  text-decoration: none;
+  display: block;
+  width: 185px;
+  padding: 0 0 3px 0;
+  color: #000;
+  overflow: hidden;
+}
+.navigation a:hover,
+.navigation a:active,
+.navigation li.menu-current a:link,
+.navigation li.menu-current a:visited {
+  color: #da251d;
+}
+.navigation a:link,
+.navigation a:visited,
+.navigation li.menu-current li a:link,
+.navigation li.menu-current li a:visited {
+  color: #000;
+}
+
+.main {
+  float: left;
+  width: 650px;
+  margin: 0;
+  padding: 50px 0 50px 50px;
+  background-color: #fff;
+  min-height: 450px;
+}
+
+.breadcrumb {
+  margin-top: 15px;
+  font-family: Courier, monospace;
+  font-size: 11px;
+}
+
+.footer {
+  font-size: 11px;
+  color: #999999;
+  text-align: right;
+  margin: 20px 0 20px 0;
+  padding: 0 0 0 250px;
+}

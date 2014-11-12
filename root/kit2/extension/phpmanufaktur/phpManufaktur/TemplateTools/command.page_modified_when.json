@@ -1,0 +1,39 @@
+{
+  "command":"page_modified_when",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://phpmanufaktur.de"
+    },
+  "name": {
+    "en":"page_modified_when",
+    "de":"page_modified_when"
+  },
+  "description": {
+    "en":"Date/time last modification of a page",
+    "de":"Datum und Zeit der letzten Änderung einer Seite"
+  },
+  "help": {
+    "en": {
+      "link":"https://gist.github.com/f14970ebd6c9f3b6bc82.git",
+      "gist_id":"f14970ebd6c9f3b6bc82",
+      "file": {
+        "help":"kitcommand_page_modified_when_en.md"
+      }
+    }
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  },
+  "issues": {
+    "en": {
+      "link":"https://github.com/phpManufaktur/kfTemplateTools/issues"
+    }
+  },
+  "support": {
+    "en": {
+      "link":"https://support.phpmanufaktur.de"
+    }
+  }
+}

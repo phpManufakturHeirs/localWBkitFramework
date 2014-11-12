@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -19,6 +19,11 @@ class TagEdit extends Backend {
 
     protected $SimpleTagEdit = null;
 
+    /**
+     * Constructor
+     *
+     * @param Application $app
+     */
     public function __construct(Application $app=null)
     {
         parent::__construct($app);
@@ -27,17 +32,22 @@ class TagEdit extends Backend {
         }
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Contact\Control\Backend\Backend::initialize()
+     */
     protected function initialize(Application $app)
     {
         parent::initialize($app);
         $this->SimpleTagEdit = new SimpleTagEdit($this->app, array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Contact/Template',
-                'message' => 'backend/message.twig',
-                'edit' => 'backend/admin/contact.tag.edit.twig'
+                'alert' => 'pattern/alert.twig',
+                'edit' => 'admin/edit.tag.twig'
             ),
             'route' => array(
-                'action' => '/admin/contact/backend/tag/edit?usage='.self::$usage
+                'action' => '/admin/contact/tag/edit?usage='.self::$usage,
+                'list' => '/admin/contact/tag/list?usage='.self::$usage
             )
         ));
     }
@@ -50,6 +60,12 @@ class TagEdit extends Backend {
         $this->SimpleTagEdit->setTagID($tag_id);
     }
 
+    /**
+     * Controller to edit a Contact tag
+     *
+     * @param Application $app
+     * @param string $tag_id
+     */
     public function controller(Application $app, $tag_id=null)
     {
         $this->initialize($app);

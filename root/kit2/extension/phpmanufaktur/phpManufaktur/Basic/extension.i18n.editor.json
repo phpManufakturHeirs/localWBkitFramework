@@ -1,0 +1,52 @@
+{
+  "name":"kitFramework i18nEditor",
+  "guid":"A3629907-16A4-4AFC-9673-F114B3CB6390",
+  "category":"extension",
+  "group":"phpManufaktur",
+  "vendor":{
+      "name":"phpManufaktur",
+      "url":"https:\/\/kit2.phpmanufaktur.de",
+      "mail":"team@phpmanufaktur.de",
+      "address":{
+          "street":"Stockholmer Straße 31",
+          "zip":"13359",
+          "city":"Berlin",
+          "country":"Germany"
+      },
+      "phone":"+49 30 68813647"
+  },
+  "type":"framework",
+  "path":"\/extension\/phpmanufaktur\/phpManufaktur\/Basic",
+  "namespace":"phpManufaktur\\Basic",
+  "release":{
+    "number":"0.11",
+    "date":"2014-08-11",
+    "status":"beta"
+  },
+  "logo": {
+    "name":"extension.i18n.editor",
+    "type":"jpg"
+  },
+  "description": {
+    "en":{
+      "title":"i18nEditor for the kitFramework",
+      "short":"Special editor to edit kitFramework locale files (Internationalization)",
+      "url":"https:\/\/kit2.phpmanufaktur.de"
+    },
+    "de":{
+      "title":"i18nEditor für das kitFramework",
+      "short":"Spezieller Editor zum Bearbeiten von kitFramework Sprachdateien (Internationalisierung)",
+      "url":"https:\/\/kit2.phpmanufaktur.de"
+    }
+  },
+  "setup": {
+      "icon_path":{
+        "BlackCat":"\/extension\/phpmanufaktur\/phpManufaktur\/Basic\/Data\/Setup\/Icon\/icon.png",
+        "WebsiteBaker":"\/extension\/phpmanufaktur\/phpManufaktur\/Basic\/Data\/Setup\/Icon\/tool_icon.png"
+      }
+  },
+  "license": {
+    "name":"MIT License",
+    "url":"https:\/\/github.com\/phpManufaktur\/kfBasic\/raw\/master\/LICENSE.md"
+  }
+}

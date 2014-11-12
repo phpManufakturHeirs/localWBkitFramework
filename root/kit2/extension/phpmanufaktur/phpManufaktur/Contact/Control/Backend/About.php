@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -27,7 +27,8 @@ class About extends Backend {
 
         $extension = $this->app['utils']->readJSON(MANUFAKTUR_PATH.'/Contact/extension.json');
 
-        return $this->app['twig']->render($this->app['utils']->getTemplateFile('@phpManufaktur/Contact/Template', 'backend/admin/about.twig'),
+        return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+            '@phpManufaktur/Contact/Template', 'admin/about.twig'),
             array(
                 'usage' => self::$usage,
                 'toolbar' => $this->getToolbar('about'),

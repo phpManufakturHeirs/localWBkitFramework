@@ -1,0 +1,20 @@
+/* 
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+*/
+
+.form-horizontal,
+.form-group,
+.container-fluid {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.user-status {
+  font-size: 11px;
+  text-align: right;
+}

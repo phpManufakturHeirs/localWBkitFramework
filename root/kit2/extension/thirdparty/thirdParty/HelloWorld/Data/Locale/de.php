@@ -4,7 +4,7 @@
  * kfHelloWorld
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de
+ * @link https://kit2.phpmanufaktur.de/HelloWorld
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -53,8 +53,8 @@ return array(
         => 'vielen Dank für die Übermittlung der folgenden Kontaktdaten:',
     'Thank you, %title% %name%, for submitting your contact data'
         => 'Vielen Dank, %title% %name%, für die Übermittlung Ihrer Kontaktdaten.',
-    '<p>The submitted form is not valid, please try again.</p>'
-        => '<p>Die übermittelten Formulardaten sind ungültig, bitte versuchen Sie es erneut.</p>',
+    'The submitted form is not valid, please try again.'
+        => 'Die übermittelten Formulardaten sind ungültig, bitte versuchen Sie es erneut.',
     'This site was last modified on %datetime%.'
         => 'Diese Website wurde zuletzt am %datetime% modifiziert.',
     'Title'

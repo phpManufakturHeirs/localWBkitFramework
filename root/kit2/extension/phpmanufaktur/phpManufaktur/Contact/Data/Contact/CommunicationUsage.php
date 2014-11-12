@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -122,7 +122,44 @@ EOD;
         try {
             $SQL = "SELECT * FROM `".self::$table_name."` WHERE `communication_usage_name`='".strtoupper($usage)."'";
             $result = $this->app['db']->fetchAssoc($SQL);
-            return (is_array($result) && isset($result['communication_usage_name'])) ? true : false;
+            return isset($result['communication_usage_name']);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Insert a new record
+     *
+     * @param array $data
+     * @param integer reference $communication_usage_id
+     * @throws \Exception
+     */
+    public function insert($data, &$communication_usage_id=-1)
+    {
+        try {
+            $insert = array();
+            foreach ($data as $key => $value) {
+                if ($key === 'communication_usage_id') continue;
+                $insert[$this->app['db']->quoteIdentifier($key)] = is_string($value) ? $this->app['utils']->sanitizeText($value) : $value;
+            }
+            $this->app['db']->insert(self::$table_name, $insert);
+            $communication_usage_id = $this->app['db']->lastInsertId();
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Delete the given $usage - this will also delete associated communication records!
+     *
+     * @param string $usage
+     * @throws \Exception
+     */
+    public function deleteUsage($usage)
+    {
+        try {
+            $this->app['db']->delete(self::$table_name, array('communication_usage_name' => $usage));
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }

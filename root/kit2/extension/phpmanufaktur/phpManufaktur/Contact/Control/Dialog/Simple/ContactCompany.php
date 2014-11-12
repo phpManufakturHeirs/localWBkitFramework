@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -32,23 +32,29 @@ class ContactCompany extends Dialog {
         parent::__construct($app);
 
         if (!is_null($app)) {
-            $this->initialize($options);
+            $this->initialize($app, $options);
         }
     }
 
-    protected function initialize($options=null)
+    /**
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Contact\Control\Alert::initialize()
+     */
+    protected function initialize(Application $app, $options=null)
     {
+        parent::initialize($app);
+
         // set the form options
         $this->setOptions(array(
             'template' => array(
                 'namespace' => isset($options['template']['namespace']) ? $options['template']['namespace'] : '@phpManufaktur/Contact/Template',
-                'message' => isset($options['template']['message']) ? $options['template']['message'] : 'backend/message.twig',
-                'contact' => isset($options['template']['contact']) ? $options['template']['contact'] : 'backend/simple/edit.company.contact.twig'
+                'contact' => isset($options['template']['contact']) ? $options['template']['contact'] : 'pattern/admin/simple/edit.contact.twig'
             ),
             'route' => array(
-                'action' => isset($options['route']['action']) ? $options['route']['action'] : '/admin/contact/simple/contact/company',
-                'category' => isset($options['route']['category']) ? $options['route']['category'] : '/admin/contact/simple/category/list',
-                'tag' => isset($options['route']['tag']) ? $options['route']['tag'] : '/admin/contact/simple/tag/list'
+                'action' => isset($options['route']['action']) ? $options['route']['action'] : '/admin/contact/company/edit',
+                'category' => isset($options['route']['category']) ? $options['route']['category'] : '/admin/contact/category/list',
+                'tag' => isset($options['route']['tag']) ? $options['route']['tag'] : '/admin/contact/tag/list',
+                'list' => isset($options['route']['list']) ? $options['route']['list'] : '/admin/contact/list'
             )
         ));
         $this->ContactControl = new ContactControl($this->app);
@@ -116,7 +122,8 @@ class ContactCompany extends Dialog {
 
         foreach ($contact['address'] as $address) {
             switch ($address['address_type']) {
-                case 'BUSINESS' :
+                case 'PRIMARY':
+                case 'BUSINESS': // no longer in use!
                     $address_business = $address;
                     break;
                 case 'DELIVERY':
@@ -125,6 +132,10 @@ class ContactCompany extends Dialog {
             }
         }
 
+        $access_type = $this->app['contact']->getAccessType($contact['contact']['contact_id']);
+        $access_type = $this->app['utils']->humanize($access_type);
+
+        $access_type = $this->app['translator']->trans($access_type);
 
         $form = $this->app['form.factory']->createBuilder('form')
         ->add('contact_id', 'hidden', array(
@@ -134,7 +145,11 @@ class ContactCompany extends Dialog {
             'data' => $contact['contact']['contact_type']
         ))
         ->add('contact_status', 'choice', array(
-            'choices' => array('ACTIVE' => 'active', 'LOCKED' => 'locked', 'PENDING' => 'pending', 'DELETED' => 'deleted'),
+            'choices' => array(
+                'ACTIVE' => $this->app['translator']->trans('Active'),
+                'LOCKED' => $this->app['translator']->trans('Locked'),
+                'PENDING' => $this->app['translator']->trans('Pending'),
+                'DELETED' => $this->app['translator']->trans('Deleted')),
             'empty_value' => false,
             'expanded' => false,
             'multiple' => false,
@@ -151,6 +166,13 @@ class ContactCompany extends Dialog {
             'label' => 'Category',
             'data' => isset($contact['category'][0]['category_type_name']) ? $contact['category'][0]['category_type_name'] : ''
         ))
+
+        ->add('category_access', 'text', array(
+            'data' => $access_type,
+            'required' => false,
+            'read_only' => true
+        ))
+
         ->add('tag', 'choice', array(
             'choices' => $this->ContactControl->getTagArrayForTwig(),
             'expanded' => true,
@@ -204,7 +226,7 @@ class ContactCompany extends Dialog {
         ->add('email_id', 'hidden', array(
             'data' => $email['communication_id']
         ))
-        ->add('email_value', 'email', array(
+        ->add('email', 'email', array(
             'required' => self::$config['email']['required'],
             'label' => 'E-Mail',
             'data' => $email['communication_value']
@@ -342,7 +364,7 @@ class ContactCompany extends Dialog {
                 $form->add($name, $form_type, array(
                     'attr' => array('class' => $name),
                     'data' => $field['extra_value'],
-                    'label' => ucfirst(str_replace('_', ' ', strtolower($field['extra_type_name']))),
+                    'label' => $this->app['utils']->humanize($field['extra_type_name']),
                     'required' => false
                 ));
 
@@ -357,6 +379,13 @@ class ContactCompany extends Dialog {
         return $form;
     }
 
+    /**
+     * Get the form data
+     *
+     * @param array $data
+     * @param array $extra_info
+     * @return array contact record
+     */
     public function getFormData($data, $extra_info=array())
     {
         $tags = array();
@@ -412,15 +441,15 @@ class ContactCompany extends Dialog {
                     'communication_id' => $data['email_id'],
                     'contact_id' => $data['contact_id'],
                     'communication_type' => 'EMAIL',
-                    'communication_usage' => 'BUSINESS',
-                    'communication_value' => $data['email_value']
+                    'communication_usage' => 'PRIMARY',
+                    'communication_value' => $data['email']
                 ),
                 array(
                     // phone
                     'communication_id' => $data['phone_id'],
                     'contact_id' => $data['contact_id'],
                     'communication_type' => 'PHONE',
-                    'communication_usage' => 'BUSINESS',
+                    'communication_usage' => 'PRIMARY',
                     'communication_value' => $data['phone']
                 ),
                 array(
@@ -428,7 +457,7 @@ class ContactCompany extends Dialog {
                     'communication_id' => $data['cell_id'],
                     'contact_id' => $data['contact_id'],
                     'communication_type' => 'CELL',
-                    'communication_usage' => 'BUSINESS',
+                    'communication_usage' => 'PRIMARY',
                     'communication_value' => $data['cell']
                 ),
                 array(
@@ -436,7 +465,7 @@ class ContactCompany extends Dialog {
                     'communication_id' => $data['fax_id'],
                     'contact_id' => $data['contact_id'],
                     'communication_type' => 'FAX',
-                    'communication_usage' => 'BUSINESS',
+                    'communication_usage' => 'PRIMARY',
                     'communication_value' => $data['fax']
                 ),
                 array(
@@ -444,7 +473,7 @@ class ContactCompany extends Dialog {
                     'communication_id' => $data['url_id'],
                     'contact_id' => $data['contact_id'],
                     'communication_type' => 'URL',
-                    'communication_usage' => 'BUSINESS',
+                    'communication_usage' => 'PRIMARY',
                     'communication_value' => $data['url']
                 )
             ),
@@ -452,7 +481,7 @@ class ContactCompany extends Dialog {
                 array(
                     'address_id' => $data['address_business_id'],
                     'contact_id' => $data['contact_id'],
-                    'address_type' => 'BUSINESS',
+                    'address_type' => 'PRIMARY',
                     'address_street' => $data['address_business_street'],
                     'address_zip' => $data['address_business_zip'],
                     'address_city' => $data['address_business_city'],
@@ -515,8 +544,8 @@ class ContactCompany extends Dialog {
 
         $contact = $this->ContactControl->select(self::$contact_id, 'COMPANY');
 
-        if ($this->ContactControl->isMessage()) {
-            self::$message = $this->ContactControl->getMessage();
+        if ($this->ContactControl->isAlert()) {
+            $this->setAlertUnformatted($this->ContactControl->getAlert());
         }
 
         // get the form fields
@@ -543,12 +572,9 @@ class ContactCompany extends Dialog {
                     $this->ContactControl->update($contact, self::$contact_id, $has_changed);
                 }
 
-                if (!$this->ContactControl->isMessage()) {
-                    $this->setMessage("The contact process has not returned a status message");
-                }
-                else {
-                    // use the return status messages
-                    self::$message = $this->ContactControl->getMessage();
+                if (!$this->ContactControl->isAlert()) {
+                    $this->setAlert("The contact process has not returned a status message",
+                        array(), self::ALERT_TYPE_WARNING);
                 }
 
                 // get the values of the new or updated record
@@ -560,17 +586,21 @@ class ContactCompany extends Dialog {
             }
             else {
                 // general error (timeout, CSFR ...)
-                $this->setMessage('The form is not valid, please check your input and try again!');
+                $this->setAlert('The form is not valid, please check your input and try again!', array(),
+                    self::ALERT_TYPE_DANGER, true, array('form_errors' => $form->getErrorsAsString(),
+                        'method' => __METHOD__, 'line' => __LINE__));
             }
         }
 
-        return $this->app['twig']->render($this->app['utils']->getTemplateFile(self::$options['template']['namespace'], self::$options['template']['contact']),
+        return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+            self::$options['template']['namespace'], self::$options['template']['contact']),
             array(
-                'message' => $this->getMessage(),
+                'alert' => $this->getAlert(),
                 'form' => $form->createView(),
                 'route' => self::$options['route'],
                 'extra' => $extra,
-                'extra_info' => $extra_info
+                'extra_info' => $extra_info,
+                'usage' => isset($extra['usage']) ? $extra['usage'] : $this->app['request']->get('usage', 'framework')
             ));
     }
 }

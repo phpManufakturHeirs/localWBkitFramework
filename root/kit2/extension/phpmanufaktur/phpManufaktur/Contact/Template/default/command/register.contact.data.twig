@@ -1,0 +1,76 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}{{ 'Register a public contact record'|trans }}{% endblock %}
+{% block description %}{{ 'Register a public contact record'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/ui/latest/themes/smoothness/jquery-ui.min.css" />
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Contact/Template/default/css/command.min.css" />
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Contact/Template/default/css/form.horizontal.min.css" />
+{% endblock %}
+{% block jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CKEditor/Source/ckeditor.js"></script>
+{% endblock jquery %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  {# need the parent to enable prompting messages #}
+  <h2>{{ 'Contact Type: %type%'|trans({'%type%':form.contact_type.vars.value|trans}) }}</h2>
+  
+  {{ parent() }}
+  
+  {# assign the bootstrap 3 theming for horizontal forms to the Symfony Form Factory output #}  
+  {% form_theme form '@phpManufaktur/Contact/Template/default/pattern/form.fields.horizontal.twig' %}
+
+  <form action="{{ FRAMEWORK_URL ~ '/contact/register/contact/check?pid=' ~ basic.pid }}" class="form-horizontal" method="post" role="form">
+    {# loop through all form fields from the form.json #}
+    {{ form_widget(form) }}     
+
+    <div class="form-group">
+      <div class="col-sm-9 col-sm-offset-3">
+        <button class="btn btn-default" type="submit">{{ 'Submit'|trans }}</button>
+      </div>
+    </div>
+  </form>    
+{% endblock %}
+{% block footer_jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/i18n/jquery-ui-i18n.min.js"></script>
+{% endblock footer_jquery %}
+{% block footer %}
+  
+  {# the CKEditor need extra space - loop through the form and search for attr.type == 'html' #}
+  {% set iframe_add_height = 0 %}
+  {% for item in form %}
+    {% if item.vars.attr.type is defined and item.vars.attr.type == 'html' %}
+      {% set iframe_add_height = iframe_add_height + 150 %}
+    {% endif %}
+  {% endfor %}  
+  
+  {{ parent() }}
+  
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      $(document).ready(function() {
+        $.datepicker.setDefaults($.datepicker.regional['{{ app.translator.locale }}']);
+        $('.datepicker').datepicker({ 
+          changeMonth: true,
+          changeYear: true,
+          minDate: '-100Y',
+          maxDate: -1,
+          yearRange: '{{ ('now'|date('Y'))-100 }}:{{ 'now'|date('Y') }}'
+        });        
+      });
+    }
+  </script>
+{% endblock footer %}

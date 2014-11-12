@@ -61,7 +61,7 @@ class Page {
      */
     public function getPageDirectory()
     {
-        $this->cms->getPageDirectory();
+        return $this->cms->getPageDirectory();
     }
 
     /**
@@ -83,7 +83,7 @@ class Page {
                 $parameter['topic_id'] = $command_parameter['cms']['special']['topic_id'];
             }
             if (isset($command_parameter['cms']['special']['post_id'])) {
-                $parameter['topic_id'] = $command_parameter['cms']['special']['post_id'];
+                $parameter['post_id'] = $command_parameter['cms']['special']['post_id'];
             }
         }
         else {
@@ -118,5 +118,89 @@ class Page {
             $parameter = $command_parameter;
         }
         return $this->cms->getTitle($page_id, $parameter);
+    }
+
+    /**
+     * Get the CMS page link list in alphabetical order for the given field and direction
+     *
+     * @param string $order_by the field to order by
+     * @param string $order_direction the order direction ASC or DESC
+     * @throws \Exception
+     * @return <array|boolean>
+     */
+    public function getPageLinkList($order_by='link', $order_direction='ASC')
+    {
+        return $this->cms->getPageLinkList($order_by, $order_direction);
+    }
+
+    /**
+     * Get the page ID by the given page link
+     *
+     * @param string $link
+     * @throws \Exception
+     * @return Ambigous <boolean, integer>
+     */
+    public function getPageIDbyPageLink($link)
+    {
+        return $this->cms->getPageIDbyPageLink($link);
+    }
+
+    /**
+     * Check if the given kitCommand exists at the page ID
+     *
+     * @param string $command
+     * @param integer $page_id
+     * @throws \Exception
+     * @return boolean
+     */
+    public function existsCommandAtPageID($command, $page_id)
+    {
+        return $this->cms->existsCommandAtPageID($command, $page_id);
+    }
+
+    /**
+     * Return the language code for the given page ID
+     *
+     * @param integer $page_id
+     * @throws \Exception
+     * @return Ambigous <boolean, string>
+     */
+    public function getPageLanguage($page_id)
+    {
+        return $this->cms->getPageLanguage($page_id);
+    }
+
+    /**
+     * Return the page link for the given page ID
+     *
+     * @param integer $page_id
+     * @throws \Exception
+     * @return Ambigous <boolean, string>
+     */
+    public function getPageLinkByPageID($page_id)
+    {
+        return $this->cms->getPageLinkByPageID($page_id);
+    }
+
+    /**
+     * Get the TOPICS directory if this addon is installed
+     *
+     * @return string|boolean
+     */
+    public function getTopicsDirectory()
+    {
+        return $this->cms->getTopicsDirectory();
+    }
+
+    /**
+     * Get the visibility of the given CMS page ID
+     *
+     * @param integer $page_id
+     * @throws \Exception
+     * @return Ambigous <boolean, string> FALSE if page not exists, otherwise 'public','hidden','registered','private' or 'none'
+     */
+    public function getPageVisibilityByPageID($page_id)
+    {
+        return $this->cms->getPageVisibilityByPageID($page_id);
     }
 }

@@ -8,32 +8,65 @@
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
 #}
 <!DOCTYPE html>
-<html>
+{% spaceless %}
+<html lang="en">
   <head>
     {% block head %}
-      <title>{% block title %}{% endblock %}</title>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-      <meta name="robots" content="noindex,nofollow" />
-      <meta name="description" content="{% block description %}{% endblock %}" />
-      <meta name="keywords" content="{% block keywords %}{% endblock %}" />
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <title>{% block title %}{% endblock title %}</title>
+      <meta http-equiv="Content-Type" content="{% block content_type %}text/html; charset=UTF-8{% endblock content_type %}"/>
+      <meta name="robots" content="{% block robots %}noindex,nofollow{% endblock robots %}" />
+      <meta name="description" content="{% block description %}{% endblock description %}" />
+      <meta name="keywords" content="{% block keywords %}{% endblock keywords %}" />
+      <meta name=”content-language” content=”{% block content_language %}de{% endblock content_language %}” />
+      <meta name="viewport" content="{% block viewport %}width=device-width, initial-scale=1.0{% endblock viewport %}">
+      <meta name="generator" content="kitFramework (https://kit2.phpmanufaktur.de)" />
+      {% block stylesheet %}
+        {# Bootstrap #}
+        <link href="{{ LIBRARY_URL }}/bootstrap/latest/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ LIBRARY_URL }}/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/css/framework.min.css" media="screen, projection" />
+      {% endblock stylesheet %}
+      {% block jquery %}
+        {# 
+          jQuery will be loaded at the footer in block footer_jquery! 
+          HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+          WARNING: Respond.js doesn't work if you view the page via file:// 
+        #}
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+          <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+      {% endblock jquery %}
     {% endblock head %}
   </head>
   <body>
     <div id="content">
       {% block content %}
+        {# Place the extension or application content here ... #}
       {% endblock content %}
     </div>
+
+    {% block footer_jquery %}
+      <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/jquery/latest/jquery.min.js"></script>
+      <script type="text/javascript" src="{{ LIBRARY_URL }}/bootstrap/latest/js/bootstrap.min.js"></script>
+    {% endblock footer_jquery %}
+
     {% block footer %}
       <script type="text/javascript">
         if (typeof 'jQuery' !== 'undefined') {
           $(document).ready(function() {
             {# setting the iFrame height dynamically by the height of the inbounded document #}
-            var content_height = $('#content').height() + {{ iframe_add_height|default(30) }} + "px";
-            parent.document.getElementById("kitframework_iframe").style.height = content_height;
+            var frame_id = window.frameElement.getAttribute('id');
+            var content_height = $('#content').height() + {{ iframe_add_height|default(30) }} + "px";             
+            parent.document.getElementById(frame_id).style.height = content_height;
+            if ($('.container').hasClass('alert')) {
+              {# enable the bootstrap close button for alerts #}
+              $('.alert').alert();
+            }
           });
         }
       </script>
     {% endblock footer %}
   </body>
-</html>      
+</html>     
+{% endspaceless %}

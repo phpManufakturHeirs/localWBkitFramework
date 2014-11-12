@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -14,6 +14,7 @@ namespace phpManufaktur\Contact\Control\Dialog\Simple;
 use Silex\Application;
 use phpManufaktur\Contact\Control\Contact as ContactControl;
 use phpManufaktur\Contact\Control\Configuration;
+use Carbon\Carbon;
 
 class ContactPerson extends Dialog {
 
@@ -31,23 +32,29 @@ class ContactPerson extends Dialog {
         parent::__construct($app);
 
         if (!is_null($app)) {
-            $this->initialize($options);
+            $this->initialize($app, $options);
         }
     }
 
-    protected function initialize($options=null)
+    /**
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Contact\Control\Alert::initialize()
+     */
+    protected function initialize(Application $app, $options=null)
     {
+        parent::initialize($app);
+
         $this->setOptions(array(
             'template' => array(
                 'namespace' => isset($options['template']['namespace']) ? $options['template']['namespace'] : '@phpManufaktur/Contact/Template',
-                'message' => isset($options['template']['message']) ? $options['template']['message'] : 'backend/message.twig',
-                'contact' => isset($options['template']['contact']) ? $options['template']['contact'] : 'backend/simple/edit.person.contact.twig'
+                'contact' => isset($options['template']['contact']) ? $options['template']['contact'] : 'pattern/admin/simple/edit.contact.twig'
             ),
             'route' => array(
-                'action' => isset($options['route']['action']) ? $options['route']['action'] : '/admin/contact/simple/contact/person',
-                'category' => isset($options['route']['category']) ? $options['route']['category'] : '/admin/contact/simple/category/list',
-                'title' => isset($options['route']['title']) ? $options['route']['title'] : '/admin/contact/simple/title/list',
-                'tag' => isset($options['route']['tag']) ? $options['route']['tag'] : '/admin/contact/simple/tag/list'
+                'action' => isset($options['route']['action']) ? $options['route']['action'] : '/admin/contact/person',
+                'category' => isset($options['route']['category']) ? $options['route']['category'] : '/admin/contact/category/list',
+                'title' => isset($options['route']['title']) ? $options['route']['title'] : '/admin/contact/title/list',
+                'tag' => isset($options['route']['tag']) ? $options['route']['tag'] : '/admin/contact/tag/list',
+                'list' => isset($options['route']['list']) ? $options['route']['list'] : '/admin/contact/list'
             )
         ));
         $this->ContactControl = new ContactControl($this->app);
@@ -82,7 +89,7 @@ class ContactPerson extends Dialog {
 
         // create array for the birthday years
         $years = array();
-        for ($i = date('Y')-18; $i > (date('Y')-100); $i--) {
+        for ($i = date('Y'); $i > (date('Y')-100); $i--) {
             $years[] = $i;
         }
         $birthday_array = array(
@@ -122,15 +129,19 @@ class ContactPerson extends Dialog {
 
         foreach ($contact['address'] as $address) {
             switch ($address['address_type']) {
-                case 'PRIVATE':
+                case 'PRIVATE': // no longer in use!
+                case 'PRIMARY':
                     $address_private = $address;
                     break;
             }
         }
 
+        $access_type = $this->app['contact']->getAccessType($contact['contact']['contact_id']);
+        $access_type = $this->app['translator']->trans($access_type);
+
         $form = $this->app['form.factory']->createBuilder('form')
         // contact - hidden fields
-        ->add('contact_type', 'hidden', array(
+        ->add("contact_type", 'hidden', array(
             'data' => $contact['contact']['contact_type']
         ))
         ->add('contact_id', 'hidden', array(
@@ -138,22 +149,23 @@ class ContactPerson extends Dialog {
         ))
         ->add('contact_name', 'text', array(
             'required' => false,
-            'label' => 'Contact name',
             'data' => $contact['contact']['contact_name']
         ))
         ->add('contact_login', 'text', array(
             'required' => !self::$config['email']['required'],
-            'label' => 'Contact login',
             'data' => $contact['contact']['contact_login']
         ))
         // contact visible form fields
         ->add('contact_status', 'choice', array(
-            'choices' => array('ACTIVE' => 'active', 'LOCKED' => 'locked', 'PENDING' => 'pending', 'DELETED' => 'deleted'),
+            'choices' => array(
+                'ACTIVE' => $this->app['translator']->trans('Active'),
+                'LOCKED' => $this->app['translator']->trans('Locked'),
+                'PENDING' => $this->app['translator']->trans('Pending'),
+                'DELETED' => $this->app['translator']->trans('Deleted')),
             'empty_value' => false,
             'expanded' => false,
             'multiple' => false,
             'required' => false,
-            'label' => 'Status',
             'data' => $contact['contact']['contact_status']
         ))
 
@@ -164,8 +176,13 @@ class ContactPerson extends Dialog {
             'expanded' => false,
             'multiple' => false,
             'required' => false,
-            'label' => 'Category',
             'data' => isset($contact['category'][0]['category_type_name']) ? $contact['category'][0]['category_type_name'] : ''
+        ))
+
+        ->add('category_access', 'text', array(
+            'data' => $access_type,
+            'required' => false,
+            'read_only' => true
         ))
 
         ->add('tag', 'choice', array(
@@ -185,9 +202,8 @@ class ContactPerson extends Dialog {
         // person - visible form fields
         ->add('person_gender', 'choice', array(
             'required' => false,
-            'choices' => array('MALE' => 'male', 'FEMALE' => 'female'),
+            'choices' => array('MALE' => 'Male', 'FEMALE' => 'Female'),
             'expanded' => true,
-            'label' => 'Gender',
             'data' => $contact['person'][0]['person_gender']
         ))
         ->add('person_title', 'choice', array(
@@ -196,20 +212,21 @@ class ContactPerson extends Dialog {
             'expanded' => false,
             'multiple' => false,
             'required' => false,
-            'label' => 'Person title',
             'data' => $contact['person'][0]['person_title']
         ))
         ->add('person_first_name', 'text', array(
             'required' => false,
-            'label' => 'First name',
             'data' => $contact['person'][0]['person_first_name']
         ))
         ->add('person_last_name', 'text', array(
             'required' => false,
-            'label' => 'Last name',
             'data' => $contact['person'][0]['person_last_name']
         ))
-        ->add('person_birthday', 'date', $birthday_array)
+        //->add('person_birthday', 'date', $birthday_array)
+        ->add('person_birthday', 'text', array(
+            'required' => false,
+            'data' => (!empty($contact['person'][0]['person_birthday']) && ($contact['person'][0]['person_birthday'] != '0000-00-00')) ? date($this->app['translator']->trans('DATE_FORMAT'), strtotime($contact['person'][0]['person_birthday'])) : '',
+        ))
 
         // communication
         ->add('email_id', 'hidden', array(
@@ -217,7 +234,6 @@ class ContactPerson extends Dialog {
         ))
         ->add('email', 'email', array(
             'required' => self::$config['email']['required'],
-            'label' => 'E-Mail',
             'data' => $email['communication_value']
         ))
         ->add('phone_id', 'hidden', array(
@@ -225,7 +241,6 @@ class ContactPerson extends Dialog {
         ))
         ->add('phone', 'text', array(
             'required' => false,
-            'label' => 'Phone',
             'data' => $phone['communication_value']
         ))
         ->add('cell_id', 'hidden', array(
@@ -233,7 +248,6 @@ class ContactPerson extends Dialog {
         ))
         ->add('cell', 'text', array(
             'required' => false,
-            'label' => 'Cell',
             'data' => $cell['communication_value']
         ))
         ->add('fax_id', 'hidden', array(
@@ -241,37 +255,31 @@ class ContactPerson extends Dialog {
         ))
         ->add('fax', 'text', array(
             'required' => false,
-            'label' => 'Fax',
             'data' => $fax['communication_value']
         ))
 
-        // business address
+        // private address
         ->add('address_id', 'hidden', array(
             'data' => $address_private['address_id']
         ))
         ->add('address_street', 'text', array(
             'required' => false,
-            'label' => 'Street',
             'data' => $address_private['address_street']
         ))
         ->add('address_zip', 'text', array(
             'required' => false,
-            'label' => 'Zip',
             'data' => $address_private['address_zip']
         ))
         ->add('address_city', 'text', array(
             'required' => false,
-            'label' => 'City',
             'data' => $address_private['address_city']
         ))
         ->add('address_area', 'text', array(
             'required' => false,
-            'label' => 'Area',
             'data' => $address_private['address_area']
         ))
         ->add('address_state', 'text', array(
             'required' => false,
-            'label' => 'State',
             'data' => $address_private['address_state']
         ))
         ->add('address_country', 'choice', array(
@@ -280,7 +288,6 @@ class ContactPerson extends Dialog {
             'expanded' => false,
             'multiple' => false,
             'required' => false,
-            'label' => 'Country',
             'data' => $address_private['address_country_code'],
             'preferred_choices' => self::$config['countries']['preferred']
         ))
@@ -290,7 +297,6 @@ class ContactPerson extends Dialog {
         ))
         ->add('note', 'textarea', array(
             'required' => false,
-            'label' => 'Note',
             'data' => isset($contact['note'][0]['note_content']) ? $contact['note'][0]['note_content'] : ''
         ));
 
@@ -315,7 +321,7 @@ class ContactPerson extends Dialog {
                 $form->add($name, $form_type, array(
                     'attr' => array('class' => $name),
                     'data' => $field['extra_value'],
-                    'label' => ucfirst(str_replace('_', ' ', strtolower($field['extra_type_name']))),
+                    'label' => $this->app['utils']->humanize($field['extra_type_name']),
                     'required' => false
                 ));
 
@@ -329,6 +335,13 @@ class ContactPerson extends Dialog {
         return $form;
     }
 
+    /**
+     * Get the data from the person contact form
+     *
+     * @param array $data
+     * @param array $extra_info
+     * @return array
+     */
     public function getFormData($data, $extra_info=array())
     {
         $tags = array();
@@ -347,6 +360,16 @@ class ContactPerson extends Dialog {
             $dummy['extra_value'] = isset($data[$field['name']]) ? $data[$field['name']] : '';
             $extra_fields[] = $dummy;
         }
+
+
+        if (isset($data['person_birthday']) && !empty($data['person_birthday'])) {
+            $dt = Carbon::createFromFormat($this->app['translator']->trans('DATE_FORMAT'), $data['person_birthday']);
+            $birthday = $dt->toDateTimeString();
+        }
+        else {
+            $birthday = '0000-00-00';
+        }
+
 
         return array(
             'contact' => array(
@@ -371,7 +394,7 @@ class ContactPerson extends Dialog {
                     'person_title' => isset($data['person_title']) && !empty($data['person_title']) ? $data['person_title'] : 'NO_TITLE',
                     'person_first_name' => $data['person_first_name'],
                     'person_last_name' => $data['person_last_name'],
-                    'person_birthday' => (isset($data['person_birthday']) && is_object($data['person_birthday'])) ? date('Y-m-d', $data['person_birthday']->getTimestamp()) : '0000-00-00',
+                    'person_birthday' => $birthday
                 )
             ),
             'communication' => array(
@@ -396,7 +419,7 @@ class ContactPerson extends Dialog {
                     'communication_id' => $data['cell_id'],
                     'contact_id' => $data['contact_id'],
                     'communication_type' => 'CELL',
-                    'communication_usage' => 'PRIVATE',
+                    'communication_usage' => 'PRIMARY', //'PRIVATE',
                     'communication_value' => $data['cell']
                 ),
                 array(
@@ -404,7 +427,7 @@ class ContactPerson extends Dialog {
                     'communication_id' => $data['fax_id'],
                     'contact_id' => $data['contact_id'],
                     'communication_type' => 'FAX',
-                    'communication_usage' => 'PRIVATE',
+                    'communication_usage' => 'PRIMARY', //'PRIVATE',
                     'communication_value' => $data['fax']
                 ),
             ),
@@ -412,7 +435,7 @@ class ContactPerson extends Dialog {
                 array(
                     'address_id' => $data['address_id'],
                     'contact_id' => $data['contact_id'],
-                    'address_type' => 'PRIVATE',
+                    'address_type' => 'PRIMARY', //'PRIVATE',
                     'address_street' => $data['address_street'],
                     'address_zip' => $data['address_zip'],
                     'address_city' => $data['address_city'],
@@ -466,8 +489,8 @@ class ContactPerson extends Dialog {
         // get the contact array
         $contact = $this->ContactControl->select(self::$contact_id, 'PERSON');
 
-        if ($this->ContactControl->isMessage()) {
-            self::$message = $this->ContactControl->getMessage();
+        if ($this->ContactControl->isAlert()) {
+            $this->setAlertUnformatted($this->ContactControl->getAlert());
         }
 
         // get the form fields
@@ -494,14 +517,6 @@ class ContactPerson extends Dialog {
                     $this->ContactControl->update($contact, self::$contact_id, $has_changed);
                 }
 
-                if (!$this->ContactControl->isMessage()) {
-                    $this->setMessage("The contact process has not returned a status message");
-                }
-                else {
-                    // use the return status messages
-                    self::$message = $this->ContactControl->getMessage();
-                }
-
                 // get the values of the new or updated record
                 $contact = $this->ContactControl->select(self::$contact_id);
                 // get the form fields
@@ -511,16 +526,20 @@ class ContactPerson extends Dialog {
             }
             else {
                 // general error (timeout, CSFR ...)
-                $this->setMessage('The form is not valid, please check your input and try again!');
+                $this->setAlert('The form is not valid, please check your input and try again!', array(),
+                    self::ALERT_TYPE_DANGER, true, array('form_errors' => $form->getErrorsAsString(),
+                        'method' => __METHOD__, 'line' => __LINE__));
             }
         }
-        return $this->app['twig']->render($this->app['utils']->getTemplateFile(self::$options['template']['namespace'], self::$options['template']['contact']),
+        return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+            self::$options['template']['namespace'], self::$options['template']['contact']),
             array(
-                'message' => $this->getMessage(),
+                'alert' => $this->getAlert(),
                 'form' => $form->createView(),
                 'route' => self::$options['route'],
                 'extra' => $extra,
-                'extra_info' => $extra_info
+                'extra_info' => $extra_info,
+                'usage' => isset($extra['usage']) ? $extra['usage'] : $this->app['request']->get('usage', 'framework')
             ));
     }
 }

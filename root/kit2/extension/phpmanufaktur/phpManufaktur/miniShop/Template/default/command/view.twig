@@ -1,0 +1,96 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% spaceless %}
+<!-- {{ _self.getTemplateName() }} -->
+<div id="minishop">
+  <div class="container-fluid">    
+    {# show the shopping basket at the top #}
+    {#% include '@phpManufaktur/miniShop/Template/default/command/include/basket.twig' %#}
+    <div class="basket-container basket">
+      {{ kitCommand('miniShop_basket', {'action':'basket'}) }}
+    </div>
+    <h1>{{ article.article_name|default('Error'|trans) }}</h1>  
+    
+    {{ basic.alert }}
+    
+    {% if parameter.rating %}
+      <div class="rating-container">
+        {{ kitCommand('rating', {'type':'MINISHOP','id':article.id}) }}
+      </div>
+    {% endif %}
+    
+    {% if article|length > 0 %}
+      <div class="article-container">
+        {% if article.article_image|length > 0 and parameter.image_max_width > 0 %}
+          {% set img = image(article.article_image, parameter.image_max_width, parameter.image_max_height) %}
+          <a href="{{ FRAMEWORK_URL ~ article.article_image }}" data-title="{{ article.article_name }}" data-lightbox="{{ article.permanent_link }}">
+            <img class="img-responsive img-rounded article-image-left" src="{{ img.src }}" alt="{{ article.article_name }}" title="{{ article.article_name }}" />
+          </a>
+          {% if article.article_image_folder_gallery == 1 and article.folder_images|length > 0 %}
+            {% for image in article.folder_images %}
+              <a href="{{ image }}" data-title="{{ article.article_name }}" data-lightbox="{{ article.permanent_link }}"></a>
+            {% endfor %}
+          {% endif %}  
+        {% endif %}
+        <div class="content">
+          {# by default parsing kitCommands in the article text is enabled #}
+          {{ kitCommandParser(article.description_long|default('')) }}
+        </div>
+      </div>
+        
+      <div class="clearfix"></div>  
+      
+      {% set currency_symbol = attribute(config.currency, base.currency_iso).symbol %}
+      {% set decimal_separator = 'DECIMAL_SEPARATOR'|trans({},'messages', base.locale|lower) %}
+      {% set thousand_separator = 'THOUSAND_SEPARATOR'|trans({},'messages', base.locale|lower) %}
+
+      <div class="order-container">
+        <div class="info">
+          <div class="price">
+            <strong>{{ article.article_price|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}</strong>{% if base.article_price_type == 'NET_PRICE' %} {{ 'net price without tax'|trans }}{% endif %}
+          </div>
+          <div class="status{% if article.status == 'AVAILABLE_SOON' or article.status == 'NOT_AVAILABLE' %} locked{% endif %}">
+            {{ article.status|lower|humanize|trans }}{% if article.status == 'AVAILABLE_DATE' or article.status == 'AVAILABLE_DATE_ORDER' %} {{ article.available_date|date('DATE_FORMAT'|trans({},'messages',base.locale|lower)) }}{% endif %}
+          </div>
+          <div class="shipping">
+            {% if base.shipping_type == 'NONE' %}
+              {{ 'Pickup by the customer'|trans }}
+            {% elseif base.shipping_type == 'FLATRATE' and base.shipping_flatrate <= 0 %}
+              {{ 'Free of shipping costs'|trans }}
+            {% elseif base.shipping_type == 'FLATRATE' and base.shipping_flatrate > 0 %}
+              {% set shipping_costs = base.shipping_flatrate|number_format(2, 'DECIMAL_SEPARATOR'|trans({},'messages',base.locale|lower), 'THOUSAND_SEPARAROR'|trans({},'messages',base.locale|lower)) %}
+              {{ 'Shipping costs %costs% %currency%'|trans({'%costs%':shipping_costs, '%currency%':currency_symbol }) }}
+            {% elseif base.shipping_type == 'ARTICLE' and article.shipping_cost <= 0 %}
+              {{ 'Free of shipping costs'|trans }}
+            {% else %}
+              {% set shipping_costs = article.shipping_cost|number_format(2, 'DECIMAL_SEPARATOR'|trans({},'messages',base.locale|lower), 'THOUSAND_SEPARAROR'|trans({},'messages',base.locale|lower)) %}
+              {{ 'Shipping costs %costs% %currency%'|trans({'%costs%':shipping_costs, '%currency%':currency_symbol }) }}
+            {% endif %}  
+          </div>
+        </div>
+        <div class="basket-container control">     
+          {{ kitCommand('minishop_basket', {'action':'control','article_id':article.id}) }}
+        </div>
+      </div>
+      
+      
+    {% endif %}
+  </div>
+  
+  {# show a link to the article list of the shop #}
+  <div class="switch-to-list">
+    <a href="{{ shop_url }}" class="btn btn-default" role="button"><i class="fa fa-arrow-circle-left"></i> {{ 'Switch to the article list'|trans }}</a>
+  </div>
+  
+  {% if parameter.comments %}
+    {{ kitCommand('comments', {'type':'MINISHOP', 'id':article.id}) }}
+  {% endif %}
+  
+</div>
+{% endspaceless %}

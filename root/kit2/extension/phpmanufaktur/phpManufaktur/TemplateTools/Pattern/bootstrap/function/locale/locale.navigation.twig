@@ -1,0 +1,28 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<!-- {{ _self.getTemplateName() }} -->
+
+<div class="locale-navigation">
+  <nav>
+    <ul class="nav nav-pills locale">
+      {% for locale in locales %}
+        {% if file_exists(MANUFAKTUR_PATH ~ '/TemplateTools/Pattern/classic/image/flags/shiny/48/' ~ locale.locale|upper ~ '.png') %}
+          {% set flag = MANUFAKTUR_URL ~ '/TemplateTools/Pattern/classic/image/flags/shiny/48/' ~ locale.locale|upper ~ '.png' %}
+        {% else %}
+          {% set flag = MANUFAKTUR_URL ~ '/TemplateTools/Pattern/classic/image/flags/shiny/48/_unknown.png' %}
+        {% endif %}    
+        <li>
+          <a href="{{ locale.url }}" title="{{ locale.native_name }}" {% if locale.active %}class="active"{% else %}rel="alternate" hreflang="{{ locale.locale }}"{% endif %}>
+            <img {% if locale.active %}class="active" {% endif %}src="{{ flag }}" alt="{{ locale.native_name }}" width="48" height="48" />
+          </a>
+        </li>
+      {% endfor %}  
+    </ul>
+  </nav>
+</div>

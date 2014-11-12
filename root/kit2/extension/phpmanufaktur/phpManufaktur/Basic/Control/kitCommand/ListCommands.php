@@ -23,6 +23,11 @@ use Silex\Application;
 class ListCommands extends Basic
 {
 
+    /**
+     * Get a list with all available kitCommands and additional information
+     *
+     * @param Application $app
+     */
     public function getList(Application $app)
     {
         // init BASIC
@@ -40,7 +45,6 @@ class ListCommands extends Basic
             // we are searching for all matching kitCommands, starting with '/command/'
             if (((strpos($match, '/command/') !== false) && (strpos($match, '/command/') == 0)) ||
                 ((strpos($match, '/filter/') !== false) && (strpos($match, '/filter/') == 0))) {
-
                 if ((strpos($match, '/filter/') !== false) && (strpos($match, '/filter/') == 0)) {
                     // kitFilter
                     $command = substr($match, strlen('/filter/'));
@@ -52,7 +56,8 @@ class ListCommands extends Basic
                         // remove additional parameter enclosures
                         $command = substr($command, 0, strpos($command, '/{'));
                     }
-                    if ($command == 'help') {
+                    if (in_array($command, array('help','exists'))) {
+                        // special cases: ignore the listed commands
                         continue;
                     }
                     $command_name = 'filter:'.$command;
@@ -67,6 +72,14 @@ class ListCommands extends Basic
                     if (strpos($command, '/{')) {
                         // remove additional parameter enclosures
                         $command = substr($command, 0, strpos($command, '/{'));
+                    }
+                    if (strpos($command, '/')) {
+                        // ignore commands with subroutines like flexcontent/getheader/id
+                        continue;
+                    }
+                    if (in_array($command, array('exists'))) {
+                        // special cases: ignore the listed commands
+                        continue;
                     }
                     $command_name = $command;
                 }
@@ -111,40 +124,13 @@ class ListCommands extends Basic
                                             ((isset($config['description']['en'])) ? $config['description']['en'] : null)
                     );
                 }
-                $kitCommands[$command] = array(
+                $kitCommands[$command_name] = array(
                     'command' => $command_name,
                     'route' => $match,
                     'info' => $info,
                     'search' => false
                 );
             }
-            /*
-            elseif ((strpos($match, '/filter/') !== false) && (strpos($match, '/filter/') == 0)) {
-                $filter = substr($match, strlen('/filter/'));
-                if (!isset($filter[0]) || ($filter[0] == '{')) {
-                    // add no subroutings to the list!
-                    continue;
-                }
-                if (strpos($filter, '/{')) {
-                    // remove additional parameter enclosures
-                    $filter = substr($filter, 0, strpos($filter, '/{'));
-                }
-                if ($filter == 'help') {
-
-                    continue;
-                }
-
-                $filter_name = 'filter:'.$filter;
-
-                $kitCommands[$filter] = array(
-                    'command' => $filter_name,
-                    'route' => $match,
-                    'info' => array(),
-                    'search' => false
-                );
-
-            }
-            */
             elseif ((strpos($match, '/search/command/') !== false) && (strpos($match, '/search/command/') == 0)) {
                 // this kitCommand support the CMS search function!
                 $command = substr($match, strlen('/search/command/'));
@@ -170,6 +156,11 @@ class ListCommands extends Basic
         ));
     }
 
+    /**
+     * Create the iFrame for the ~~ list ~~ command
+     *
+     * @param Application $app
+     */
     public function createListFrame(Application $app)
     {
         $this->initParameters($app);

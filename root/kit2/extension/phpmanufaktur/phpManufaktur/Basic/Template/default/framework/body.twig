@@ -8,40 +8,105 @@
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
 #}
 <!DOCTYPE html>
-<html>
+{% spaceless %}
+<html lang="{{ app.translator.locale }}">
   <head>
     {% block head %}
       <title>{% block title %}{% endblock %}</title>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-      <meta name="robots" content="noindex,nofollow" />
+      <meta http-equiv="Content-Type" content="{% block content_type %}text/html; charset=UTF-8{% endblock content_type %}"/>
+      <meta charset="utf-8" />
+      <meta name="robots" content="{% block robots %}noindex,nofollow{% endblock robots %}" />
       <meta name="description" content="{% block description %}{% endblock %}" />
       <meta name="keywords" content="{% block keywords %}{% endblock %}" />
-      <meta name=”content-language” content=”de” />
+      <meta name="language" content="{% block content_language %}{% if app.translator.locale == 'de' %}de{% else %}en{% endif %}{% endblock content_language %}" />
+      <meta name="viewport" content="{% block viewport %}width=device-width, initial-scale=1.0{% endblock viewport %}" />
+      <meta name="generator" content="kitFramework (https://kit2.phpmanufaktur.de)" />
       {% block stylesheet %}
-      <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/css/body.css" media="screen, projection" />
+        {# Bootstrap #}
+        <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/bootstrap/latest/css/bootstrap.min.css" />
+        <link  rel="stylesheet" type="text/css"href="{{ LIBRARY_URL }}/font-awesome/latest/css/font-awesome.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/css/framework.min.css" media="screen, projection" />
       {% endblock stylesheet %}
       {% block jquery %}
-      {% endblock %}
+        {# 
+          jQuery will be loaded at the footer in block footer_jquery! 
+          HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries
+          WARNING: Respond.js doesn't work if you view the page via file:// 
+        #}
+        <!--[if lt IE 9]>
+          <script type="text/javascript" src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+          <script type="text/javascript" src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+      {% endblock jquery %}
       <link rel="shortcut icon" type="image/x-icon" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/image/favicon.ico" />
     {% endblock head %}
   </head>
   <body>
-    <div id="framework_body">
-      {% block user_navigation %}
-        {% if isAuthenticated() %}
-          <div id="user_navigation">
-            {{ getUserDisplayName() }} | <a href="{{ FRAMEWORK_URL }}/admin/account">{{ 'Account'|trans }}</a> | <a href="{{ FRAMEWORK_URL ~ '/logout' }}">{{ 'Logout'|trans }}</a>
+    {% block user_navigation %}  
+      <nav class="navbar navbar-default" role="navigation"> 
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand manufaktur" href="https://kit2.phpmanufaktur.de" target="_blank" title="kitFramework - &copy {{ 'now'|date('Y') }} by phpManufaktur"><i class="fa fa-puzzle-piece"></i></a>
           </div>
-        {% endif %}
-      {% endblock user_navigation %}
-      <div id="framework_content">
-        {% block content %}{% endblock %}
-      </div>
-      <div id="framework_footer">
-        {% block footer %}
-          <a href="https://kit2.phpmanufaktur.de" target="_blank" class="framework_img"></a>
-        {% endblock footer %}
-      </div>
-    </div>
+          {% if isAuthenticated() %}
+            <div class="collapse navbar-collapse" id="bs-navbar-collapse-1">
+              <ul class="nav navbar-nav navbar-right">
+                <li class="navbar-text">{{ getUserDisplayName() }}</li>
+                {% set entrypoints = getUserRolesEntryPoints() %}
+                {% if entrypoints|length > 0 %}
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle manufaktur" data-toggle="dropdown" title="{{ 'Entry-points'|trans }}"><span class="glyphicon glyphicon-road"></span> <b class="caret"></b></a>
+                    <ul class="dropdown-menu" role="menu">   
+                      {# set a link to the overview at the top #}
+                      <li class="navbar-link">
+                        <a href="{{ FRAMEWORK_URL ~ '/admin' }}" title="{{ 'Switch to the kitFramework Entry-points'|trans }}">
+                          <img class="img-responsive img-thumbnail" src="{{ FRAMEWORK_URL ~ '/framework.jpg' }}" alt="kitFramework" />
+                        </a>
+                        <div class="height-5 clearfix"></div>
+                      </li>
+                      {% for roles in entrypoints %}
+                        {% for point in roles %}
+                          {% set img = image(point.icon.path, 20, 20) %}
+                          <li class="navbar-link">
+                            <span class="pull-left">
+                              <img class="img-responsive" src="{{ img.src }}" alt="{{ point.name|trans }}" height="20" />
+                            </span>&nbsp;&nbsp;
+                            <span>
+                              <a href="{{ FRAMEWORK_URL ~ point.route }}" title="{{ point.info|trans }}">{{ point.name|trans }}</a>
+                            </span>
+                            <div class="height-5 clearfix"></div>
+                          </li>
+                        {% endfor %}
+                      {% endfor %}
+                    </ul>
+                  </li>
+                {% endif %}
+                <li class="navbar-link"><a class="manufaktur" href="{{ FRAMEWORK_URL ~ '/user/account' }}" title="{{ 'Account'|trans }}"><span class="glyphicon glyphicon-user"></span></a></li>
+                <li class="navbar-link"><a class="manufaktur" href="{{ FRAMEWORK_URL ~ '/logout' }}" title="{{ 'Logout'|trans }}"><span class="glyphicon glyphicon-log-out"></span></a></li>
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+      </nav>      
+    {% endblock user_navigation %}
+    
+    {% block content %}
+      {# main content #}
+    {% endblock %}    
+    
+    {% block footer_jquery %}
+      <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/jquery/latest/jquery.min.js"></script>
+      <script type="text/javascript" src="{{ LIBRARY_URL }}/bootstrap/latest/js/bootstrap.min.js"></script>
+    {% endblock footer_jquery %}
+    {% block footer %}
+      {# files for the footer #}       
+    {% endblock footer %}
   </body>
 </html>
+{% endspaceless %}

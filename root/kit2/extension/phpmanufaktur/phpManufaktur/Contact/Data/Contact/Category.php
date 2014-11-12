@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -177,6 +177,12 @@ EOD;
         }
     }
 
+    /**
+     * Physically delete the given Category ID
+     *
+     * @param integer $category_id
+     * @throws \Exception
+     */
     public function delete($category_id)
     {
         try {
@@ -186,11 +192,40 @@ EOD;
         }
     }
 
+    /**
+     * Select the Category Type ID by the given Category ID
+     *
+     * @param integer $category_id
+     * @throws \Exception
+     * @return integer
+     */
     public function selectCategoryTypeID($category_id)
     {
         try {
             $SQL = "SELECT `category_type_id` FROM `".self::$table_name."` WHERE `category_id`='$category_id'";
             return $this->app['db']->fetchColumn($SQL);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Select the Category Target URL for the given contact ID
+     *
+     * @param integer $contact_id
+     * @throws \Exception
+     * @return Ambigous <string, boolean>
+     */
+    public function selectTargetURL($contact_id)
+    {
+        try {
+            $category_table = self::$table_name;
+            $category_type_table = FRAMEWORK_TABLE_PREFIX.'contact_category_type';
+            $SQL = "SELECT `category_type_target_url` FROM `$category_table` ".
+                "LEFT JOIN `$category_type_table` ON `$category_type_table`.`category_type_id`=`$category_table`.`category_type_id` ".
+                "WHERE `$category_table`.`contact_id`=$contact_id";
+            $url = $this->app['db']->fetchColumn($SQL);
+            return (is_string($url) && (strlen($url) > 1)) ? CMS_URL.$url : false;
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }

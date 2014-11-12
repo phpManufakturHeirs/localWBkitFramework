@@ -1,0 +1,82 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/miniShop/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'miniShop - About'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/miniShop/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/miniShop/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/miniShop/Template/default/css/admin.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/miniShop/Template/default/admin/toolbar.twig' %}
+
+    {% include '@phpManufaktur/miniShop/Template/default/admin/base.toolbar.twig' %}
+
+    
+    <h1>{{ 'Paypal Settings'|trans }}</h1>
+    
+    {{ alert }}
+    
+    {# assign the bootstrap 3 theming for horizontal forms to the Symfony Form Factory output #}  
+    {% form_theme form '@phpManufaktur/Contact/Template/default/pattern/form.fields.horizontal.twig' %}
+    
+    <div class="row">
+      <div class="col-sm-6">
+        <form id="sample_contact" action="{{ FRAMEWORK_URL ~ '/admin/minishop/payment/paypal/config/check' ~ usage_param }}" class="form-horizontal" method="post" role="form" {{ form_enctype(form) }}>
+
+          {# loop through all form fields from the form.json #}
+          {{ form_widget(form) }}     
+
+          <div class="form-group">
+            <label class="col-sm-3">&nbsp;</label>
+            <div class="col-sm-9">
+              <button class="btn btn-default" type="submit">{{ 'Submit'|trans }}</button>
+            </div>
+          </div>
+        </form>   
+      </div>
+      <div class="col-sm-6">
+        {# missing hint for the PayPal account settings #}
+        {% if app.translator.locale == 'de' %}
+          {# GERMAN TRANSLATION #}
+          <p><strong>Geschäftskonto konfigurieren</strong></p>
+          <p>Wechseln Sie in Ihrem PayPal Geschäftskonto zu <var>Profil</var> --> <var>Verkäufer/Händler</var> --> <var>Website Einstellungen</var> --> <var>Aktualisieren</var>.</p>
+          <p>Setzen Sie <var>Automatische Rückleitung</var> auf <var>Aktiviert</var>.</p>
+          <p>Geben Sie bei <var>Rückleitungs-URL</var> bitte <var>{{ CMS_URL }}</var> ein.</p>
+          <p>Setzen Sie <var>Übertragung der Zahlungsdaten</var> auf <var>Aktiviert</var>.</p>
+          <p>Klicken Sie auf Speichern.</p>
+          <p>Tragen Sie den <var>Identitäts-Token</var> der Ihnen angezeigt wird im Dialog unter <var>Token</var> ein.</p>
+          <p>Wechseln Sie in Ihrem PayPal Geschäftskonto zu <var>Profil</var> --> <var>Verkäufer/Händler</var> --> <var>Benachrichtigungen über Sofortzahlungen</var> --> <var>Aktualisieren</var>.</p>
+          <p>Wählen Sie <var>Einstellungen bearbeiten</var>.</p>
+          <p>Tragen Sie unter <var>Benachrichtigungs-URL</var> bitte <strong>{{ FRAMEWORK_URL ~ '/minishop/paypal/ipn' }}</strong> ein.</p>
+          <p>Wählen Sie <var>Sofortige Zahlungsbestätigungen erhalten (aktiviert)</var>.</p>
+          <p>Speichern Sie die Einstellungen.</p>
+          <p>Tragen Sie links im Dialog unter <var>E-Mail</var> die E-Mail Adresse Ihres PayPal Kontos ein.</p>
+          <p>Speichern Sie die PayPal Einstellungen.</p>
+        {% else %}
+          {# ENGLISH TRANSLATION #}
+          <p>- not available -</p>
+        {% endif %}
+      </div>
+    </div>    
+  </div>
+{% endblock content %}

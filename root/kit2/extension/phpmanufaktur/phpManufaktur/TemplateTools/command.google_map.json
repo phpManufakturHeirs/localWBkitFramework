@@ -1,0 +1,39 @@
+{
+  "command":"google_map",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://phpmanufaktur.de"
+    },
+  "name": {
+    "en":"Google Map",
+    "de":"Google Map"
+  },
+  "description": {
+    "en":"Show a Google Map for the desired location with the defined width and height",
+    "de":"Zeigt eine Google Map für den angegebenen Ort in der definierten Breite und Höhe"
+  },
+  "help": {
+    "en": {
+      "link":"https://gist.github.com/71b944a12e47954d3db9.git",
+      "gist_id":"71b944a12e47954d3db9",
+      "file": {
+        "help":"kitcommand_google_map_en.md"
+      }
+    }
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  },
+  "issues": {
+    "en": {
+      "link":"https://github.com/phpManufaktur/kfTemplateTools/issues"
+    }
+  },
+  "support": {
+    "en": {
+      "link":"https://support.phpmanufaktur.de"
+    }
+  }
+}

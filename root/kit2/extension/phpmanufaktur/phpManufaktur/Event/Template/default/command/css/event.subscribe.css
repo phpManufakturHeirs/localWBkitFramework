@@ -86,11 +86,13 @@ input#form_city {
   margin: 0 10px 0 0;
 }
 
+#form_terms_conditions,
 #form_subscribe,
 #form_person_gender {
   float: left;
   width: 300px;
 }
+#form_terms_conditions input,
 #form_subscribe input,
 #form_person_gender input {
   clear: left;
@@ -99,6 +101,7 @@ input#form_city {
   margin: 5px 10px 0 0;
   padding: 0;
 }
+#form_terms_conditions label,
 #form_subscribe label,
 #form_person_gender label {
   clear: none;
@@ -106,6 +109,7 @@ input#form_city {
   width: 250px;
   text-align: left;
 }
+#form_terms_conditions label.required:after,
 #form_subscribe label.required:after,
 #form_person_gender label.required:after {
   content: none;

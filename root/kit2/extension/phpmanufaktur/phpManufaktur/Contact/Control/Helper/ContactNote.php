@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -55,8 +55,8 @@ class ContactNote extends ContactParent
     {
         // the note_id must be always set!
         if (!isset($note_data['note_id'])) {
-            $this->setMessage("Missing the %identifier%! The ID should be set to -1 if you insert a new record.",
-                array('%identifier%' => 'note_id'));
+            $this->setAlert("Missing the %identifier%! The ID should be set to -1 if you insert a new record.",
+                array('%identifier%' => 'note_id'), self::ALERT_TYPE_WARNING);
             return false;
         }
 
@@ -135,13 +135,14 @@ class ContactNote extends ContactParent
         if (empty($new_data['note_content'])) {
             // check if the entry can be deleted
             if ($this->ContactData->getPrimaryNoteID($old_data['contact_id']) == $note_id) {
-                $this->setMessage("Can't delete the Note with the ID %note_id% because it is used as primary note for this contact.",
-                    array('%note_id%' => $note_id));
+                $this->setAlert("Can't delete the Note with the ID %note_id% because it is used as primary note for this contact.",
+                    array('%note_id%' => $note_id), self::ALERT_TYPE_WARNING);
                 return false;
             }
             // delet the note
             $this->Note->delete($note_id);
-            $this->setMessage('The record with the ID %id% was successfull deleted.', array('%id%' => $note_id));
+            $this->setAlert('The record with the ID %id% was successfull deleted.',
+                array('%id%' => $note_id), self::ALERT_TYPE_SUCCESS);
             $has_changed = true;
             return true;
         }

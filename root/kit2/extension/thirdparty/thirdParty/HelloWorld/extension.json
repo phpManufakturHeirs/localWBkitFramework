@@ -19,26 +19,33 @@
   "path":"\/extension\/thirdparty\/thirdParty\/HelloWorld",
   "namespace":"thirdParty\\HelloWorld",
   "release": {
-    "number":"0.27",
-    "date":"2013-11-09",
-    "status":"beta"
+    "number":"0.30",
+    "date":"2014-09-14",
+    "status":"beta",
+    "changelog":"https:\/\/github.com\/phpManufaktur\/kfHelloWorld\/blob\/master\/CHANGELOG.md"
   },
   "description": {
     "en": {
       "title":"Hello World for the kitFramework",
       "short":"Hello World application for the kitFramework",
       "long":"This Hello World application show how to use the kitFramework to create an application for WebsiteBaker or LEPTON CMS",
-      "url":"https:\/\/kit2.phpmanufaktur.de"
+      "url":"https:\/\/kit2.phpmanufaktur.de\/HelloWorld"
+    },
+    "de": {
+      "title":"Hello World for the kitFramework",
+      "short":"Hello World application for the kitFramework",
+      "long":"Diese 'Hello World' Erweiterung führt Sie Schritt für Schritt an das kitFramework und die Erstellung von eigenen kitCommands und Anwendungen heran. Das kitFramework ist die moderne Art, Add-ons für unterschiedliche Content Management Systeme zu erstellen - konzentrieren Sie sich auf Ihre Anwendung, das kitFramework kümmert sich um den Rest.",
+      "url":"https:\/\/kit2.phpmanufaktur.de\/HelloWorld"
     }
   },
   "require": {
     "framework": {
-      "release":"0.26"
+      "release":"0.27"
     },
     "extension":{
         "phpManufaktur":{
             "Basic":{
-                "release":"0.35"
+                "release":"1.0.12"
             }
         }
     }

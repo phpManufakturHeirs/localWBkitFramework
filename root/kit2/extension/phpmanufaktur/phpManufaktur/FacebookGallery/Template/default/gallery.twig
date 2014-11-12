@@ -2,66 +2,109 @@
   FacebookGallery
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/FacebookGallery
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+
+  This FacebookGallery example depends on the Full Page Image Gallery as
+  described at http://tympanus.net/codrops/2010/09/08/full-page-image-gallery/
+  please visit this page to get further informations to this gallery!
 #}
-{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
-{% block title %}{{ 'Facebook Gallery Help'|trans }}{% endblock %}
-{% block description %}{{ 'First Steps and Helpfile for the kitFramework Facebook Gallery'|trans }}{% endblock %}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}{{ 'FacebookGallery - Full Page Image Gallery Example'|trans }}{% endblock %}
+{% block description %}{{ 'kitFramework FacebookGallery is using the Full Page Image Gallery'|trans }}{% endblock %}
 {% block stylesheet %}
   {{ parent() }}
-  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/FacebookGallery/Template/default/css/frontend.css" media="screen, projection" />
-  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/FacebookGallery/Template/default/jquery/fancybox/source/jquery.fancybox.css" media="screen, projection" />
+  <link rel="stylesheet" href="{{ MANUFAKTUR_URL }}/FacebookGallery/Template/default/css/fullpage.min.css" type="text/css" media="screen"/>
 {% endblock stylesheet %}
-{% block jquery %}
-  {{ parent() }}
-  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/FacebookGallery/Template/default/jquery/fancybox/source/jquery.fancybox.pack.js"></script>
-{% endblock jquery %}
 {% block content %}
-  {% for photo in gallery.data %}
-    <div class="photo_container">
-      {% if photo.name is defined %}
-        {% set title = photo.name %}
-      {% else %}
-        {% set title = '' %}
-      {% endif %}
-      {% if photo.images[parameter.size] is defined %}
-        {# select the image size spezified by the parameter size and set width and height #}
-        <a class="fancybox" rel="group" href="{{ photo.images.0.source }}"><img src="{{ photo.images[parameter.size].source }}" width="{{ photo.images[parameter.size].width }}" height="{{ photo.images[parameter.size].height }}" alt="{{ title }}" title="{{ title }}" /></a>
-        {% if (parameter.description and (title|length > 0)) %}
-          <div class="photo_description" style="width:{{ photo.images[parameter.size].width }}px;">
-            {{ title }}
-          </div>
-        {% endif %}
-      {% else %}
-        <div class="photo_error">
-          {{ 'This photo is not available in size <b>%size%</b>!'|trans({'%size%':parameter.size}) }}
+  <div id="fp_gallery" class="fp_gallery">
+    {# preload the first picture from the facebook gallery #}
+    <img src="{{ gallery.data.0.images.0.source }}" alt="" class="fp_preview" />
+    <div class="fp_overlay"></div>
+    <div id="fp_loading" class="fp_loading"></div>
+    <div id="fp_next" class="fp_next"></div>
+    <div id="fp_prev" class="fp_prev"></div>
+    <div id="outer_container">
+      <div id="thumbScroller">
+        <div class="container">
+          {# loop through the facebook gallery and load for each a thumb in size 7 and the full resolution in size 0 #}
+          {% for photo in gallery.data %}
+            <div class="content">
+              <div><a href="#"><img src="{{ photo.images.4.source }}" alt="{{ photo.images.0.source }}" class="thumb" /></a></div>
+            </div>
+          {% endfor %}
         </div>
-      {% endif %}
+      </div>
     </div>
-  {% endfor %}
-  <div class="clear"></div>
-  {% if gallery.paging is defined %}
-    <div class="paging_container">
-      {% if gallery.paging.previous is defined %}
-        <div class="paging_item"><a href="{{ FRAMEWORK_URL }}/facebookgallery/exec?pid={{ basic.pid }}&limit={{ parameter.limit }}&before={{ gallery.paging.cursors.before|url_encode }}">{{ 'Previous page'|trans }}</a></div>
-      {% endif %}
-      {% if gallery.paging.next is defined %}
-        <div class="paging_item"><a href="{{ FRAMEWORK_URL }}/facebookgallery/exec?pid={{ basic.pid }}&limit={{ parameter.limit }}&after={{ gallery.paging.cursors.after|url_encode }}">{{ 'Next page'|trans }}</a></div>
-      {% endif %}
-    </div>
-    <div class="clear"></div>
-  {% endif %}
-{% endblock %}
-{% block footer %}
+    <div id="fp_thumbtoggle" class="fp_thumbtoggle">{{ 'View Thumbs'|trans }}</div>
+  </div>
+{% endblock content %}
+{% block footer_jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/migrate/latest/jquery-migrate.min.js"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/easing/latest/jquery.easing.min.js"></script>
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/FacebookGallery/Template/default/jquery/fullpage.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
-      $(".fancybox").fancybox({
-
+      $(window).load(function() {
+        sliderLeft=$('#thumbScroller .container').position().left;
+        padding=$('#outer_container').css('paddingRight').replace("px", "");
+        sliderWidth=$(window).width()-padding;
+        $('#thumbScroller').css('width',sliderWidth);
+        var totalContent=0;
+        $('#thumbScroller .content').each(function () {
+          totalContent+=$(this).innerWidth();
+          $('#thumbScroller .container').css('width',totalContent);
+        });
+        $('#thumbScroller').mousemove(function(e){
+          if ($('#thumbScroller  .container').width()>sliderWidth){
+            var mouseCoords=(e.pageX - this.offsetLeft);
+            var mousePercentX=mouseCoords/sliderWidth;
+            var destX=-(((totalContent-(sliderWidth))-sliderWidth)*(mousePercentX));
+            var thePosA=mouseCoords-destX;
+            var thePosB=destX-mouseCoords;
+            var animSpeed=3000; //ease amount
+            var easeType='easeOutCirc';
+            if (mouseCoords==destX){
+                $('#thumbScroller .container').stop();
+            }
+            else if(mouseCoords>destX){
+                //$('#thumbScroller .container').css('left',-thePosA); //without easing
+                $('#thumbScroller .container').stop().animate({left: -thePosA}, animSpeed,easeType); //with easing
+            }
+            else if(mouseCoords<destX){
+                //$('#thumbScroller .container').css('left',thePosB); //without easing
+                $('#thumbScroller .container').stop().animate({left: thePosB}, animSpeed,easeType); //with easing
+            }
+          }
+        });
+        var fadeSpeed=200;
+        $('#thumbScroller  .thumb').each(function () {
+            $(this).fadeTo(fadeSpeed, 0.7);
+        });
+        $('#thumbScroller .thumb').hover(
+          function(){ //mouse over
+            $(this).fadeTo(fadeSpeed, 1);
+          },
+          function(){ //mouse out
+            $(this).fadeTo(fadeSpeed, 0.7);
+          }
+        );
       });
-    });
+      $(window).resize(function() {
+        //$('#thumbScroller .container').css('left',sliderLeft); //without easing
+        $('#thumbScroller .container').stop().animate({left: sliderLeft}, 400,'easeOutCirc'); //with easing
+        $('#thumbScroller').css('width',$(window).width()-padding);
+        sliderWidth=$(window).width()-padding;
+      });
+  });
   </script>
-  {{ parent() }}
-{% endblock %}
+{% endblock footer_jquery %}
+{% block footer %}
+  {# this template uses the default height of the template and need no autoresize,
+     so we dont load the parent here ...
+    {{ parent() }}
+  #}
+{% endblock footer %}

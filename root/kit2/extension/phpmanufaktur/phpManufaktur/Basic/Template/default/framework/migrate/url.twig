@@ -1,0 +1,45 @@
+{# 
+  kitFramework::Migrate
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'framework/body.twig') %}
+{% block title %}{{ 'Check the CMS URL'|trans }}{% endblock %}
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container">
+    <div class="page-header">
+      <h1>{{ 'Check the CMS URL'|trans }}</h1>
+    </div>
+    
+    {{ alert }}
+    
+    <div class="panel panel-default">
+      <div class="panel-body">
+        {% if app.translator.locale == 'de' %}
+          {# GERMAN translation #}
+          <p>Überprüfen Sie die URL, die für das Content Management System verwendet werden soll.</p>
+          <p>Die URL für das kitFramework wird automatisch aus der CMS URL generiert.</p>
+        {% else %}
+          {# ENGLISH translation #}
+          <p>Please check the URL to use with the Content Management System.</p>
+          <p>The URL for the kitFramework will be generated automatically from the CMS URL.</p>
+        {% endif %}
+      </div>
+    </div>
+    
+    {% form_theme form '@phpManufaktur/Basic/Template/default/framework/form.fields.horizontal.twig' %}
+
+    <form class="form-horizontal" action="{{ FRAMEWORK_URL ~ '/migrate.php/url/check' }}/" method="post" role="form">
+      {{ form_widget(form) }}
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-6">
+          <button type="submit" class="btn btn-default">{{ 'Next step'|trans }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}

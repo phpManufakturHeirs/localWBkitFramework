@@ -1,0 +1,78 @@
+{#
+  TemplateTools
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% spaceless %}
+<head>
+  {% block meta %}
+    {# declare the content type #}
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    {# declare the charset #}
+    <meta charset="utf-8" />
+    {# IE support #}
+    <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+    {# define the initial viewport #}
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {# get the page title from CMS #}
+    <title>{{ page_title() }}</title>
+    {# get the page description from CMS #}
+    <meta name="description" content="{{ page_description() }}" />
+    {# get the page keywords from CMS #}
+    <meta name="keywords" content="{{ page_keywords() }}" />
+
+    {# robots: index this page and follow all links #}
+    <meta name="robots" content="{% block robots %}index,follow,noodp{% endblock %}" />
+
+    {# Facebook Open Graph Meta Tags #}
+    {% include '@pattern/bootstrap/head.open.graph.twig' %}
+  {% endblock meta %}
+
+  {% block css %}
+    {# load the needed CSS files #}
+    <link href="{{ LIBRARY_URL }}/bootstrap/latest/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    {# load CSS for the TemplateTools Pattern #}
+    <link href="{{ MANUFAKTUR_URL }}/TemplateTools/Pattern/bootstrap/css/pattern.min.css" type="text/css" rel="stylesheet" />
+    {# load the css for the Ridiculously Responsive Social Sharing Buttons (rrssb) #}
+    <link href="{{ LIBRARY_URL }}/rrssb/latest/css/rrssb.min.css" rel="stylesheet" />
+
+    {# load the screen CSS for the template #}
+    {% if file_exists(TEMPLATE_PATH ~ '/css/template.css') %}
+      <link href="{{ TEMPLATE_URL }}/css/template.css" rel="stylesheet" />
+    {% elseif file_exists(TEMPLATE_PATH ~ '/template.css') %}
+      <link href="{{ TEMPLATE_URL }}/template.css" rel="stylesheet" />
+    {% endif %}
+
+    {# load the print CSS for the template #}
+    {% if file_exists(TEMPLATE_PATH ~ '/css/print.css') %}
+      <link href="{{ TEMPLATE_URL }}/css/print.css" rel="stylesheet" />
+    {% elseif file_exists(TEMPLATE_PATH ~ '/print.css') %}
+      <link href="{{ TEMPLATE_URL }}/print.css" rel="stylesheet" />
+    {% endif %}
+
+    {# register the frontend.css files for the CMS add-ons #}
+    {{ register_frontend_modfiles('css') }}
+  {% endblock css %}
+
+  {# HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+     WARNING: Respond.js doesn't work if you view the page via file:// #}
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  {% block jquery %}
+    {# jQuery (necessary for Bootstrap's JavaScript plugins) #}
+    <script src="{{ LIBRARY_URL }}/jquery/jquery/latest/jquery.min.js" type="text/javascript"></script>
+    {# Include all compiled plugins (below), or include individual files as needed #}
+    <script src="{{ LIBRARY_URL }}/bootstrap/latest/js/bootstrap.min.js" type="text/javascript"></script>
+    {# register the frontend.js files for the CMS add-ons #}
+    {{ register_frontend_modfiles('js') }}
+  {% endblock jquery %}
+
+</head>
+{% endspaceless %}

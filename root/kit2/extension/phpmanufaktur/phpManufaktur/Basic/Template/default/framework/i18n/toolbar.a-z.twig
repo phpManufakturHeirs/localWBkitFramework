@@ -1,0 +1,9 @@
+{% block toolbar %}
+  <ul class="toolbar nav nav-tabs">
+    {% for item in toolbar %}
+      <li{% if item.active %} class="active"{% endif %}>
+        <a href="{{ item.link }}">{{ item.text }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock toolbar %}

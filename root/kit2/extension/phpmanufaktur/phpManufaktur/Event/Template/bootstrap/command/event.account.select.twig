@@ -1,0 +1,51 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Event
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+
+{% block stylesheet %}
+  {# load all stylesheets defined in the parent template #}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/event.min.css') %}
+    {# load the CSS for this template from the PRIMARY template defined in framework.json #}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/event.min.css' }}" media="screen, projection" />
+  {% else %}
+    {# ... otherwise load the CSS from the /bootstrap directory for this template #}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/bootstrap/css/event.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock %}
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
+  <div class="event">
+    <h2>{{ 'Select account type'|trans }}</h2>
+
+    {{ parent() }}
+
+    {# assign the bootstrap 3 theming for horizontal forms to the Symfony Form Factory output #}  
+    {% form_theme form '@phpManufaktur/Event/Template/bootstrap/command/form.fields.horizontal.twig' %}
+
+    <div class="row">
+      <div class="col-xs-9">
+        <form id="sample_contact" action="{{ FRAMEWORK_URL ~ '/event/frontend/account/select/check?pid=' ~ basic.pid }}" class="form-horizontal" method="post" role="form" {{ form_enctype(form) }}>
+
+          {# loop through all form fields from the form.json #}
+          {{ form_widget(form) }}     
+
+          <div class="form-group">
+            <div class="col-xs-offset-3 col-xs-6">
+              <button type="submit" class="btn btn-default form-control">{{ 'Submit'|trans }}</button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

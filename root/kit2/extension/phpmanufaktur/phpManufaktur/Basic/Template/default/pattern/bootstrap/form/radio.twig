@@ -1,0 +1,24 @@
+{# parse the radio fields from form.FIELD_NAME.vars.form.children as childrens #}
+{% set cols = columns|default(1) %}
+{% set i = 1 %}
+{% for children in childrens %}
+  {% if i == 1 %}<div class="row">{% endif %}
+    <div class="col-lg-{{ 12/cols }} col-md-{{ 12/cols }}">
+      <div class="radio {{ class|default('') }}">
+        <label>
+          <input type="radio" name="{{ children.vars.full_name }}" id="{{ children.vars.id }}" value="{{ children.vars.value }}"{% if children.vars.data %} checked="checked"{% endif %} />
+          {% if children.vars.label is defined %}
+            {{ children.vars.label|trans }}
+          {% else %}
+            {{ children.vars.value|capitalize|trans }}
+          {% endif %}
+        </label>
+      </div>
+    </div>
+    {% set i = i+1 %}
+    {% if i > cols %}
+      </div>
+    {% set i = 1 %}
+  {% endif %}
+{% endfor %}
+{% if i != 1 %}</div>{% endif %}

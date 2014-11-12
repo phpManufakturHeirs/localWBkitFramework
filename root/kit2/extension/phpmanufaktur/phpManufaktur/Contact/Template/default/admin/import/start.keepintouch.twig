@@ -1,0 +1,61 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}  
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Contact/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Contact/Template/default/css/admin.min.css" />
+{% endblock %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    <div class="panel panel-primary">
+      <div class="panel-heading">{{ 'Import contacts from KeepInTouch (KIT)'|trans }}</div>
+      <div class="panel-body">
+        
+        {{ alert }}
+        
+        {% if app.translator.locale == 'de' %}
+          {# german translation #}
+          <p><b>Achtung!</b></p>
+          <p><i></i>kitFramework Contact verfügt über eine andere Datenstruktur als KeepInTouch (KIT).</p>
+          <ul>
+            <li>Nur die <i>erste</i> markierte KIT Kategorie <i>Intern</i> wird in kitFramework Contact übernommen und als <i>Kategorie</i> gesetzt (Contact akzeptiert nur eine Kategorie)</li>
+            <li>Die KIT Kategorien für <i>Newsletter</i> erhalten den Prefix <b>NL</b> und werden als Contact <i>Markierung (Tag)</i> übernommen</li>
+            <li>Die KIT Kategorien für <i>Verteiler</i> werden als Contact <i>Markierung (Tag)</i> übernommen</li>
+            <li>Wenn ein KIT Datensatz die Adressen für eine Firma und eine Person (Ansprechpartner) enthält, wird dieser Datensatz in zwei Contact Datensätze aufgeteilt: einen für die Person und einen für die Firma. Die beiden Datensätze referenzieren sich gegenseitig</li>
+            <li>Es werden nur KIT Datensätze importiert, die als <i>Aktiv</i> oder <i>Gesperrt</i> gekennzeichnet sind. Als <i>gelöscht</i> gekennzeichnete Datensätze werden nicht übernommen.</li>
+          </ul>
+        {% else %}
+          {# english translation #}
+          <p><b>ATTENTION</b></p>
+          <p>kitFramework Contact has another data structure than KeepInTouch (KIT).</p>
+          <ul>
+            <li>Only the <i>first checked</i> KIT category <i>intern</i> will be used as Contact <i>category</i> (Contact accepts only one category)</li>
+            <li>The KIT categories for <i>newsletters</i> will get the prefix <b>NL</b> and added as Contact <i>Tag</i></li>
+            <li>The KIT categories for <i>distribution</i> will be added as Contact <i>Tag</i></li>
+            <li>If a KIT record contains the addresses of a company and a person, this record will be split into two Contact records: one for the person and one for the company, the both records reference each other.</li>
+            <li>Imported will be only <i>active</i> or <i>locked</i> KIT records but no records which are marked as deleted.</li>
+          </ul>
+        {% endif %}
+
+        {% if import_is_possible %}
+          <p><a class="btn btn-primary btn-lg" role="button" href="{{ FRAMEWORK_URL }}/admin/contact/import/keepintouch/execute">{{ 'Start import from KeepInTouch'|trans }}</a></p>
+        {% endif %}
+      </div>
+    </div>
+  </div>  
+{% endblock content %}

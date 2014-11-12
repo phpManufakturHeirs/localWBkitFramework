@@ -1,0 +1,55 @@
+{#
+  i18nEditor
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/i18n/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework i18nEditor' }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/default/framework/css/framework.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/Basic/Template/default/framework/i18n/toolbar.twig' %}
+    {% include '@phpManufaktur/Basic/Template/default/framework/i18n/toolbar.locale.twig' with {'toolbar': toolbar_locale} %}
+
+    <h1>{{ 'Create a unassigned translation'|trans }} <small>i18nEditor</small></h1>
+
+    <div class="well">
+      <p>{{ '<em>Unassigned translations</em> can be used to translate <em>sources</em>, which are representend by a variable and does not physically exists in a program file or a template.'|trans }}</p>
+      <p>{{ 'If you have added a source to program file or a template execute a <em>search run</em> instead, the i18nEditor will find it.'|trans }}</p>
+    </div>
+
+    {{ alert }}
+
+    {% form_theme form '@phpManufaktur/Basic/Template/default/framework/form.fields.horizontal.twig' %}
+    <form class="form-horizontal" action="{{ FRAMEWORK_URL ~ '/admin/i18n/editor/locale/custom/new/check' ~ usage_param }}" method="post" role="form">
+      {{ form_widget(form) }}
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-6">
+          <button type="submit" class="btn btn-default">{{ 'Submit'|trans }}</button>&nbsp;
+          <a href="{{ FRAMEWORK_URL ~ '/admin/i18n/editor/locale/' ~ locale_locale ~ '/custom' ~ usage_param }}" class="btn btn-default" role="button">{{ 'Abort'|trans }}</a>
+        </div>
+      </div>
+    </form>
+
+
+  </div>
+{% endblock content %}

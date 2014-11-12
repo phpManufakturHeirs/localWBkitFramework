@@ -1,0 +1,19 @@
+{
+  "panel":{
+    "text":"Stay in touch, read our newsletter!"
+  },
+  "fields":{
+    "mail":{
+      "type":"communication_email"
+    },
+    "tags":{
+			"type":"tags",
+			"value":[
+        "Newsletter"
+      ]
+		}
+  },
+  "recaptcha":{
+		"enabled":false
+	}
+}

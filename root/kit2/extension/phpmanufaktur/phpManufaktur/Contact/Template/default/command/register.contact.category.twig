@@ -1,0 +1,53 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}{{ 'Register a public contact record'|trans }}{% endblock %}
+{% block description %}{{ 'Register a public contact record'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Contact/Template/default/css/form.horizontal.min.css' }}" />
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Contact/Template/default/css/command.min.css" />
+{% endblock %}  
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  
+  <h2>{{ 'Select category'|trans }}</h2>
+  
+  {# need the parent to enable prompting messages #}
+  {{ parent() }}
+  
+  <div class="panel panel-default">
+    <div class="panel-body">
+      {% if app.translator.locale == 'de' %}
+        {# GERMAN #}
+        <p>Bitte wählen Sie die zutreffende Kategorie aus.</p>
+        <p>Über die Kategorie werden die Informationen festgelegt, die dem Kontakt zugeordnet werden.</p>
+      {% else %}
+        {# ENGLISH #}
+        <p>Please select the category, to which your contact will be assigned.</p>
+        <p>The category determine the information assigned to your contact record.</p>
+      {% endif %}
+    </div>
+  </div>
+  
+  {# assign the bootstrap 3 theming for horizontal forms to the Symfony Form Factory output #}  
+  {% form_theme form '@phpManufaktur/Contact/Template/default/pattern/form.fields.horizontal.twig' %}
+
+  <form action="{{ FRAMEWORK_URL ~ '/contact/register/category/check?pid=' ~ basic.pid }}" class="form-horizontal" method="post" role="form">
+    {# loop through all form fields from the form.json #}
+    {{ form_widget(form) }}     
+
+    <div class="form-group">
+      <div class="col-sm-9 col-sm-offset-3">
+        <button class="btn btn-default" type="submit">{{ 'Select category'|trans }}</button>
+      </div>
+    </div>
+  </form>    
+{% endblock %}

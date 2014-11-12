@@ -4,7 +4,7 @@
  * CommandCollection
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de
+ * @link https://kit2.phpmanufaktur.de/CommandCollection
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -49,7 +49,7 @@ class Comments
         `comment_parent` INT(11) NOT NULL DEFAULT '0',
         `comment_url` TEXT NOT NULL,
         `comment_headline` VARCHAR(64) NOT NULL DEFAULT '',
-        `comment_content` TEXT NOT NULL DEFAULT '',
+        `comment_content` TEXT NOT NULL,
         `comment_status` ENUM ('CONFIRMED', 'PENDING', 'REJECTED') NOT NULL DEFAULT 'PENDING',
         `comment_guid` VARCHAR(128) NOT NULL DEFAULT '',
         `comment_guid_2` VARCHAR(128) NOT NULL DEFAULT '',
@@ -246,6 +246,39 @@ EOD;
     }
 
     /**
+     * Check if the given Comment ID exists
+     *
+     * @param integer $comment_id
+     * @throws \Exception
+     * @return boolean
+     */
+    public function existsCommentID($comment_id)
+    {
+        try {
+            $SQL = "SELECT `comment_id` FROM `".self::$table_name."` WHERE `comment_id`=$comment_id";
+            $result = $this->app['db']->fetchColumn($SQL);
+            return ($result === $comment_id);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Remove, physically delete the given Comment ID
+     *
+     * @param integer $comment_id
+     * @throws \Exception
+     */
+    public function removeCommentID($comment_id)
+    {
+        try {
+            $this->app['db']->delete(self::$table_name, array('comment_id' => $comment_id));
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
      * Select a comment by the given GUID
      *
      * @param string $guid
@@ -366,6 +399,29 @@ EOD;
                 "AND `contact_id`='$contact_id' AND `comment_confirmation`='$comment_confirmation'";
             $result = $this->app['db']->fetchColumn($SQL);
             return ($result == $contact_id);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Count the CONFIRMED comments for the given identifier type_name and type_id
+     *
+     * @param string $type_name
+     * @param integer $type_id
+     * @throws \Exception
+     * @return integer
+     */
+    public function countComments($type_name, $type_id)
+    {
+        try {
+            $comments_tbl = self::$table_name;
+            $comments_idf = FRAMEWORK_TABLE_PREFIX.'collection_comments_identifier';
+            $SQL = "SELECT COUNT(comment_id) FROM `$comments_tbl` ".
+                "LEFT JOIN `$comments_idf` ON `$comments_idf`.`identifier_id`=`$comments_tbl`.`identifier_id` ".
+                "WHERE `identifier_type_name`='$type_name' AND `identifier_type_id`='$type_id' AND ".
+                "`comment_status`='CONFIRMED'";
+            return $this->app['db']->fetchColumn($SQL);
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }

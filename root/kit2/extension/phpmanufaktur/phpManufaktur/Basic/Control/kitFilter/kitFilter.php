@@ -46,6 +46,10 @@ class kitFilter
             }
 
         } catch (\Exception $e) {
+
+            // always report problems!
+            $app['monolog']->addError($e, array($e->getFile(), $e->getLine()));
+
             if (isset($cms_parameter['cms']['locale'])) {
                 // set the locale given by the CMS
                 $app['locale'] = $cms_parameter['cms']['locale'];

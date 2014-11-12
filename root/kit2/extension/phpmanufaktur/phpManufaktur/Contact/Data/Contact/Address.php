@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -51,7 +51,7 @@ class Address
     CREATE TABLE IF NOT EXISTS `$table` (
         `address_id` INT(11) NOT NULL AUTO_INCREMENT,
         `contact_id` INT(11) NOT NULL DEFAULT '-1',
-        `address_type` VARCHAR(32) NOT NULL DEFAULT 'OTHER',
+        `address_type` VARCHAR(32) NOT NULL DEFAULT 'PRIMARY',
         `address_identifier` VARCHAR(64) NOT NULL DEFAULT '',
         `address_description` TEXT NOT NULL,
         `address_street` VARCHAR(128) NOT NULL DEFAULT '',

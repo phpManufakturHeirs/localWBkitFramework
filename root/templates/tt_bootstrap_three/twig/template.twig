@@ -1,0 +1,169 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#} 
+
+{% extends "@pattern/bootstrap/html.simple.twig" %}
+
+{% block body %}
+  <div class="container">
+      
+    <div class="logo-container row">
+      {# clickable logo and the name and path of the current template #}
+      <div class="logo col-sm-3 hidden-xs">
+        <a href="{{ CMS_URL }}" title="{{ CMS_TITLE }}">
+          <img src="{{ MANUFAKTUR_URL }}/TemplateTools/extension.jpg" class="img-responsive" alt="TemplateTools" />
+        </a>
+      </div>
+      <div class="template-name col-sm-9 col-xs-12">
+        <div class="template-name-header">
+          {{ TEMPLATE_NAME }}
+        </div>
+        <div class="template-name-path">
+          {{ '../templates/' ~ TEMPLATE_DIRECTORY }}
+        </div>
+      </div>
+    </div>
+      
+    <div class="content row">
+      <div class="main col-sm-9 col-sm-push-3">
+        {# show a search dialog at the top right #}
+        {% include('@pattern/bootstrap/search.div.twig') %}
+          
+        {# show a breadcrumb #}
+        {{ bootstrap_breadcrumb() }}
+
+        {% if PAGE_ID == PAGE_ID_HOME %}
+		      {# 
+			      If the PAGE_ID is identical with the PAGE_ID_HOME you are at the first page, the "Home" of your Website.
+			      You can use the comparison to prompt an alert or add a slider or ... 
+			    #}
+			    {{ bootstrap_alert('Welcome to the start page of %CMS_TITLE%!', {'parameter':{'%CMS_TITLE%':CMS_TITLE}}) }}
+		    {% endif %}
+			
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ 'Information about the Browser.'|trans }}</div>
+          <div class="panel-body">
+            {% if browser_is_mobile() %}
+              {% set device = 'Mobile Device'|trans %}
+            {% elseif browser_is_tablet() %}
+              {% set device = 'Tablet'|trans %}
+            {% else %}
+              {% set device = 'Desktop'|trans %}
+            {% endif %}
+            <p>{{ 'You are using the Browser <em>%name%</em> in Version <em>%version%</em> at Platform <em>%platform%</em> and you are viewing this page at a <em>%device%</em>.'|trans({
+                  '%name%':browser_name(), '%version%':browser_version(), '%platform%':browser_platform(), '%device%':device}) }}</p>
+          </div>
+        </div>
+                
+  		  {% set Sidebar = page_content('Sidebar') %}
+        {% set MainContent = page_content('Main Content') %}  
+		    {% if Sidebar|length > 0 %}
+          <div class="row">
+            <div class="col-md-8 col-sm-12 col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">{{ 'This is the <em>%block_type%</em> of this page.'|trans({'%block_type%':'Main Content'}) }}</div>
+                <div class="panel-body">
+                  {# This is the Main Content Block which will be shown if no Sidebar is defined #}
+                  <p>{{ 'This template is for demonstration purposes and does not show the content of the block <em>%block_type%</em>.'|trans({'%block_type%':'Main Content'}) }}</p>
+                  <p>{{ 'Use <code>{{ page_content(\'%block_type%\') }}</code> in your template to prompt the content of the block <em>%block_type%</em>.'|trans({'%block_type%':'Main Content'}) }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 hidden-sm hidden-xs">
+              <div class="panel panel-default">
+                <div class="panel-heading">{{ 'This is the <em>%block_type%</em> of this page.'|trans({'%block_type%':'Sidebar'}) }}</div>
+                <div class="panel-body">
+                  {# This is the Main Content Block which will be shown if no Sidebar is defined #}
+                  <p>{{ 'This template is for demonstration purposes and does not show the content of the block <em>%block_type%</em>.'|trans({'%block_type%':'Sidebar'}) }}</p>
+                  <p>{{ 'Use <code>{{ page_content(\'%block_type%\') }}</code> in your template to prompt the content of the block <em>%block_type%</em>.'|trans({'%block_type%':'Sidebar'}) }}</p>
+                  <p>{{ 'This <em>Sidebar</em> will be only shown if you have added a block of type <em>Sidebar</em> to the page and if the size of the media device is <em>medium</em> or <em>large</em>.'|trans }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="panel panel-default">
+            <div class="panel-heading">{{ 'This is the <em>%block_type%</em> of this page.'|trans({'%block_type%':'Main Content'}) }}</div>
+            <div class="panel-body">
+              {# This is the Main Content Block which will be shown if no Sidebar is defined #}
+              <p>{{ 'This template is for demonstration purposes and does not show the content of the block <em>%block_type%</em>.'|trans({'%block_type%':'Main Content'}) }}</p>
+              <p>{{ 'Use <code>{{ page_content(\'%block_type%\') }}</code> in your template to prompt the content of the block <em>%block_type%</em>.'|trans({'%block_type%':'Main Content'}) }}</p>
+              <p class="hidden-sm hidden-xs">{{ 'If you add a block of type <em>Sidebar</em> to the page with the <code>PAGE_ID %page_id%</code>, this template will show two columns at <em>large</em> and <em>medium</em> media devices: the <em>Main Content</em> to the left and the <em>Sidebar</em> to the right, try it!'|trans({'%page_id%':PAGE_ID}) }}</p>
+            </div>
+          </div>		
+	      {% endif %}
+		  
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ 'The <em>%pattern_type% Pager</em> enable you to step forward and backward through the whole Website.'|trans({'%pattern_type%':'Bootstrap'}) }}</div>
+          <div class="panel-body">
+            {{ bootstrap_pager() }}
+          </div>
+        </div>		
+    
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ '<em>Ridiculously Responsive Social Sharing Buttons</em>, using about <strong>%percent%%</strong> width of the <em>Panel Container</em>.'|trans({'%percent%': 75}) }}</div>
+          <div class="panel-body">
+      		  <div class="row">
+              <div class="col-sm-9">
+                {% include '@pattern/bootstrap/social.sharing.buttons.twig' with { 'buttons': { 'facebook': {},	'twitter': {}, 'google': {}, 'github': {'url':'https://github.com/phpManufaktur/kfTemplateTools/wiki'} }} %}
+              </div>			
+            </div>
+          </div>
+        </div>
+		
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ '<em>Ridiculously Responsive Social Sharing Buttons</em>, using about <strong>%percent%%</strong> width of the <em>Panel Container</em>.'|trans({'%percent%': 50}) }}</div>
+          <div class="panel-body">
+      		  <div class="row">
+              <div class="col-sm-6">
+                {% include '@pattern/bootstrap/social.sharing.buttons.twig' with { 'buttons': { 'facebook': {},	'twitter': {}, 'google': {}, 'github': {'url':'https://github.com/phpManufaktur/kfTemplateTools/wiki'} }} %}
+              </div>			
+            </div>
+          </div>
+        </div>
+		
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ '<em>Ridiculously Responsive Social Sharing Buttons</em>, using about <strong>%percent%%</strong> width of the <em>Panel Container</em>.'|trans({'%percent%': 33}) }}</div>
+          <div class="panel-body">
+      		  <div class="row">
+              <div class="col-sm-4">
+                {% include '@pattern/bootstrap/social.sharing.buttons.twig' with { 'buttons': { 'facebook': {},	'twitter': {}, 'google': {}, 'github': {'url':'https://github.com/phpManufaktur/kfTemplateTools/wiki'} }} %}
+              </div>			
+            </div>
+          </div>
+        </div>
+              
+      </div>
+        
+      <div class="navigation col-sm-3 col-sm-pull-9">
+        {# show a standard navigation with show_menu2() #}
+        {{ show_menu2('Main Navigation') }}
+      </div>
+        
+    </div>
+      
+    <div class="row">
+      <div class="col-sm-9 col-sm-offset-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ 'Footer'|trans }}</div>
+          <div class="panel-body">
+            {% set footer_navigation = show_menu2('Footer Navigation', SM2_ROOT, SM2_START, SM2_ALL, '<span> [a][menu_title]</a>', ' </span>', '', '') %}
+            {% if footer_navigation|length > 0 %}
+              <p>{{ 'You are using the additional navigation <em>Footer Navigation</em>, you can access it with <code>{{ show_menu2(\'Footer Navigation\') }}</code>. If you remove the <em>Footer Navigation</em> a <em>Copyright Notice</em> will be shown instead.'|trans }}</p>
+              <small>{{ footer_navigation }}</small>
+            {% else %}
+              <p>{{ 'If you add a <em>Footer Navigation</em> to the page tree, the Navigation will be shown instead of this <em>Copyright Notice</em>.'|trans }}</p>
+              <small>Copyright &copy; 2014 by <a href="https://phpmanufaktur.de">phpManufaktur</a></small>
+            {% endif %}            
+          </div>
+        </div>       
+      </div>
+    </div>
+      
+  </div>
+{% endblock body %}  

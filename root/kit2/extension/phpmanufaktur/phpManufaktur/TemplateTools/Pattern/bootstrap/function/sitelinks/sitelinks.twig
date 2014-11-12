@@ -1,0 +1,49 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if sitelinks is defined and sitelinks|length > 0 %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="sitelinks">
+    <div class="row">
+      {% if sitelinks.columns|length < 4 %}
+        {% set col_classes = 'col-md-4 col-sm-4 col-xs-6' %}
+      {% elseif sitelinks.columns|length < 5 %}
+        {% set col_classes = 'col-md-3 col-sm-4 col-xs-6' %}
+      {% else %}
+        {% set col_classes = 'col-md-2 col-sm-4 col-xs-6' %}
+      {% endif %}
+      {% set count = 1 %}
+      {% for column in sitelinks.columns %}
+        {% if count < 7 %}
+          <div class="{{ col_classes }}">
+            <div class="sitelink-container">
+              <div class="header">
+                <a href="{{ column.url }}" title="{{ column.page_title }}"{% if column.active %} class="active"{% endif %}>{{ column.menu_title }}</a>
+              </div>
+              {% if column.items is defined and (column.items|length > 0) %}
+                <nav>
+                  <ul>
+                    {% for item in column.items %}
+                      <li><a href="{{ item.url }}" title="{{ item.page_title }}"{% if item.active %} class="active"{% endif %}>{{ item.menu_title }}</a></li>                    
+                      {% endfor %}
+                  </ul>
+                </nav>
+              {% endif %}
+            </div>
+          </div>
+          {% if count in [2,4,6,8,10] %}
+            <div class="clearfix visible-xs"></div>
+          {% elseif count in [3,6] %}
+            <div class="clearfix visible-sm"></div>
+          {% endif %}
+        {% endif %}        
+        {% set count = count +1 %}
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

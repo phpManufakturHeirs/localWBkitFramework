@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -26,18 +26,18 @@ class TitleEdit extends Backend {
             $this->initialize($app);
         }
     }
-    
+
     protected function initialize(Application $app)
     {
         parent::initialize($app);
         $this->SimpleTitleEdit = new SimpleTitleEdit($this->app, array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Event/Template',
-                'message' => 'backend/message.twig',
-                'edit' => 'backend/contact.title.edit.twig'
+                'edit' => 'admin/contact/edit.title.twig'
             ),
             'route' => array(
-                'action' => '/admin/event/contact/title/edit?usage='.self::$usage
+                'action' => '/admin/event/contact/title/edit?usage='.self::$usage,
+                'list' => '/admin/event/contact/title/list?usage='.self::$usage
             )
         ));
     }

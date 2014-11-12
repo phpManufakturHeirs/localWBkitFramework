@@ -1,0 +1,39 @@
+{
+  "command":"Contact",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://phpmanufaktur.de"
+    },
+  "name": {
+    "en":"kitFramework Contact CRM",
+    "de":"kitFramework Contact CRM"
+  },
+  "description": {
+    "en":"Access contact addresses, use contact forms and many more ...",
+    "de":"Zugriff auf Contact Adressen, Listen sowie Kontakt Formulare"
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  },
+  "help": {
+    "en": {
+      "link":"https://gist.github.com/hertsch/9000508",
+      "gist_id":"9000508",
+      "file": {
+        "help":"kitcommand_contact_en.md"
+      }
+    }
+  },
+  "issues": {
+    "en": {
+      "link":"https://github.com/phpManufaktur/kfContact/issues"
+    }
+  },
+  "support": {
+    "en": {
+      "link":"https://support.phpmanufaktur.de"
+    }
+  }
+}

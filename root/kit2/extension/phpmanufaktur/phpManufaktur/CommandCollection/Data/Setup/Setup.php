@@ -4,7 +4,7 @@
  * CommandCollection
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de
+ * @link https://kit2.phpmanufaktur.de/CommandCollection
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -17,6 +17,7 @@ use phpManufaktur\CommandCollection\Data\Rating\RatingIdentifier;
 use phpManufaktur\CommandCollection\Data\Comments\Comments;
 use phpManufaktur\CommandCollection\Data\Comments\CommentsIdentifier;
 use phpManufaktur\CommandCollection\Data\RAL\RAL;
+use phpManufaktur\CommandCollection\Data\Comments\CommentsPassed;
 
 class Setup
 {
@@ -38,6 +39,9 @@ class Setup
             $Comments = new Comments($app);
             $Comments->createTable();
 
+            $CommentsPassed = new CommentsPassed($app);
+            $CommentsPassed->createTable();
+
             $RAL = new RAL($app);
             $RAL->createTable();
             $RAL->importCSV(MANUFAKTUR_PATH.'/CommandCollection/Data/RAL/csv/ral_standard.csv');
@@ -49,7 +53,7 @@ class Setup
             $app['db']->rollback();
             throw $e;
         }
-        return $app['translator']->trans('Successfull installed the extension %extension%.',
+        return $app['translator']->trans('Successfully installed the extension %extension%.',
             array('%extension%' => 'CommandCollection'));
     }
 }

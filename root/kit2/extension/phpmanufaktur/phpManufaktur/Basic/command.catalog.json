@@ -1,0 +1,20 @@
+{
+  "command":"Catalog",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://phpmanufaktur.de"
+    },
+  "name": {
+    "en":"Extensions for the kitFramework",
+    "de":"Erweiterungen für das kitFramework"
+  },
+  "description": {
+    "en":"Catalog of available extensions for the kitFramework with a brief description and links for further information.",
+    "de":"Katalog mit allen verfügbaren Erweiterungen für das kitFramework mit einer kurzen Beschreibung und Links zu weiterführenden Informationen."
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  }
+}

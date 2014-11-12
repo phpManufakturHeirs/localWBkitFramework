@@ -1,0 +1,175 @@
+<div class="event item container">
+
+  {% for item in recurring_events %}
+    {% include '@phpManufaktur/Event/Template/default/command/item/event.schema.org.twig' with {'event': item, 'config': config} only %}
+  {% endfor %}
+
+  {% if config.event.edit.frontend and parameter.link.edit.active %}
+    <div class="edit">
+      <a href="{{ parameter.link.edit.url }}" target="{{ parameter.link.edit.target }}" title="{{ 'Edit event'|trans }}"><i class="icon-edit"></i></a>
+    </div>
+  {% endif %}
+
+  <h2>{{ event.description_title }}</h2>
+
+  <div class="event view description long">{{ event.description_long }}</div>
+
+  <div class="table">
+
+    <div class="row">
+      <div class="cell width-150 right">{{ 'Organizer'|trans }}</div>
+      <div class="cell width-150">
+        {% if event.contact.organizer.contact.contact_type == 'COMPANY' %}
+          {{ event.contact.organizer.company.0.company_name }}
+        {% else %}
+          {% set person = event.contact.organizer.person.0 %}
+          {{ person.person_gender|humanize|trans }}
+          {% if person.person_first_name|length > 0 %}{{ person.person_first_name }} {% endif %}
+          {{ person.person_last_name }}
+        {% endif %}
+      </div>
+      {% if parameter.qrcode.active %}
+        <div class="cell width-300">
+          <img src="{{ parameter.qrcode.url }}" width="{{ parameter.qrcode.width }}" height="{{ parameter.qrcode.height }}" />
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="row">
+      <div class="cell width-150 right">{{ 'Location'|trans }}</div>
+      <div class="cell width-150">
+        {% if event.contact.location.contact.contact_type == 'COMPANY' %}
+          {% set phone_id = event.contact.location.company.0.company_primary_phone_id %}
+          {% set email_id = event.contact.location.company.0.company_primary_email_id %}
+          {{ event.contact.location.company.0.company_name }}<br />
+        {% else %}
+          {% set phone_id = event.contact.location.person.0.person_primary_phone_id %}
+          {% set email_id = event.contact.location.person.0.person_primary_email_id %}
+          {{ event.contact.location.person.0.person_last_name }}<br />
+        {% endif %}
+
+        {% set address = event.contact.location.address.0 %}
+        {% if address.address_street|length > 0 %}{{ address.address_street }}<br />{% endif %}
+        {% if address.address_zip|length > 0 %}{{ address.address_zip }} {% endif %}
+        {% if address.address_city|length > 0 %}{{ address.address_city }}<br />{% endif %}
+
+        {# get the primary phone #}
+        {% if phone_id > 0 %}
+          {% for phone in event.contact.location.communication %}
+            {% if phone.communication_id == phone_id %}
+              <i class="icon-phone"></i> {{ phone.communication_value }}<br />
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {# get the primary email #}
+        {% if email_id > 0 %}
+          {% for email in event.contact.location.communication %}
+            {% if email.communication_id == email_id %}
+              {% if '@testdomain.tld' not in email.communication_value %}
+                <i class="icon-envelope"></i>&nbsp;<a href="mailto:{{ email.communication_value }}">{{ email.communication_value }}</a><br />
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {# loop for a URL #}
+        {% set isset_url = 0 %}
+        {% for url in event.contact.location.communication %}
+          {% if ((url.communication_type == 'URL') and (isset_url == 0)) %}
+            {% set isset_url = 1 %}
+              <i class="icon-globe"></i> <a href="{{ url.communication_value }}" target="_blank">{{ url.communication_value|replace({'http://':'','https://':''}) }}</a><br />
+          {% endif %}
+        {% endfor %}
+
+        {# link to Google Map #}
+        {% if parameter.link.map.active and ((address.address_city|length > 0) or (address.address_zip|length > 0)) %}
+            {% set location = address.address_street ~ ',' ~ address.address_zip ~ ',' ~ address.address_city %}
+            <i class="icon-map-marker"></i>&nbsp;<a href="https://maps.google.de/maps?hl=de&q={{ location }}" target="_blank">{{ 'Google Map'|trans }}</a><br />
+        {% endif %}
+
+        {# link to iCal file #}
+        {% if parameter.link.ical.active %}
+            <i class="icon-calendar"></i> <a href="{{ parameter.link.ical.url }}" target="{{ parameter.link.ical.target }}">{{ 'Add to calendar' }}</a><br />
+        {% endif %}
+
+        {# permalink #}
+        {% if parameter.link.permanent.active %}
+            <i class="icon-link"></i> <a href="{{ parameter.link.permanent.url }}" target="{{ parameter.link.permanent.target }}">{{ 'Permanent link' }}</a><br />
+        {% endif %}
+      </div>
+
+      {# show Google Map #}
+      {% if parameter.map and ((address.address_city|length > 0) or (address.address_zip|length > 0)) %}
+        {% set location = address.address_street ~ ',' ~ address.address_zip ~ ',' ~ address.address_city %}
+        <div class="cell width-300">
+          <iframe width="300" height="180" src="https://maps.google.de/maps?hl=de&q={{ location }}&ie=UTF8&t=&z=14&iwloc=B&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe>
+        </div>
+      {% endif  %}
+
+    </div>
+    {# close table here, because colspan is not possible for table-cell! (the map need two cells) #}
+  </div>
+
+  <div class="table">
+
+    {# loop through user defined event fields #}
+    {% for extra in event.extra_fields %}
+      {# if you want to show only a specific extra field place a condition here: #}
+      {#% if extra.extra_type_name == 'VERANSTALTER_URL' %#}
+      <div class="row">
+        <div class="cell width-150 right">{{ extra.extra_type_name|trans }}</div>
+        <div class="cell width-150">
+          {% if (extra.extra_type_type == 'TEXT') or (extra.extra_type_type == 'HTML') or (extra.extra_type_type == 'VARCHAR') %}
+            {{ extra.extra_value }}
+          {% elseif extra.extra_type_type == 'DATE' %}
+            {{ extra.extra_value|date('DATE_FORMAT'|trans) }}
+          {% elseif extra.extra_type_type == 'DATETIME' %}
+            {{ extra.extra_value|date('DATETIME_FORMAT'|trans) }}
+          {% elseif extra.extra_type_type == 'TIME' %}
+            {{ extra.extra_value|date('TIME_FORMAT'|trans) }}
+          {% elseif extra.extra_type_type == 'INT' %}
+            {{ extra.extra_value|number_format(0, 'DECIMAL_SEPARATOR'|trans, 'THOUSAND_SEPARATOR'|trans) }}
+          {% elseif extra.extra_type_type == 'FLOAT' %}
+            {{ extra.extra_value|number_format(2, 'DECIMAL_SEPARATOR'|trans, 'THOUSAND_SEPARATOR'|trans) }}
+          {% endif %}
+        </div>
+      </div>
+      {#% endif %#}
+    {% endfor %}
+
+    <div class="row">
+      <div class="cell width-150 right">{{ 'Event date from'|trans }}</div>
+      <div class="cell width-150">{{ event.event_date_from|date('H:i') }}</div>
+      <div class="cell width-150 right">{{ 'Event date to'|trans }}</div>
+      <div class="cell width-150">{{ event.event_date_to|date('H:i') }}</div>
+    </div>
+
+    <div class="row">
+      <div class="cell width-150 right" >{{ 'Costs'|trans }}</div>
+      <div class="cell width-150" >{%if event.event_costs > 0 %}{{ event.event_costs|number_format(2,',','.') }} &euro;{% else %}{{ 'free of charge'|trans }}{% endif %}</div>
+    </div>
+  </div>
+    {{ parameter.limit }}
+  <div class="recurring-dates">
+    <h3>{{ 'Next event dates'|trans }}</h3>
+    {% set limit = parameter.limit|default(0) %}
+    {% set count = 0 %}
+    {% for item in recurring_events %}
+      {% if limit > count %}
+        <p><a href="{{ item.link.subscribe }}" title="{{ 'Click to subscribe'|trans }}">{{ item.event_date_from|date('DATE_FORMAT'|trans) }}</a></p>
+        {% set count = count + 1 %}
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {% if parameter.rating and config.rating.active %}
+    <div class="rating-container">
+      <div class="rating-stars rating_{{ event.rating.identifier_id }}"
+           data-average="{{ event.rating.average }}"
+           data-id="{{ event.rating.identifier_id }}"
+           title="{{ 'Votes: %count% - Average: %average%'|trans({'%count%':event.rating.count,'%average%':event.rating.average|number_format(2,'DECIMAL_SEPARATOR'|trans,'THOUSAND_SEPARATOR'|trans)}) }}"></div>
+    </div>
+  {% endif %}
+
+</div>

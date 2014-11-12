@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -19,6 +19,11 @@ class ContactSearch extends Backend {
 
     protected $SimpleSearch = null;
 
+    /**
+     * Constructor
+     *
+     * @param Application $app
+     */
     public function __construct(Application $app=null)
     {
         parent::__construct($app);
@@ -27,27 +32,36 @@ class ContactSearch extends Backend {
         }
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Contact\Control\Backend\Backend::initialize()
+     */
     protected function initialize(Application $app)
     {
         parent::initialize($app);
         $options = array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Contact/Template',
-                'settings' => 'backend/admin/contact.list.json',
-                'message' => 'backend/message.twig',
-                'search' => 'backend/admin/contact.search.twig'
+                'settings' => 'admin/list.contact.json',
+                'alert' => 'pattern/alert.twig',
+                'search' => 'admin/list.search.twig'
             ),
             'route' => array(
                 'contact' => array(
-                    'person' => '/admin/contact/backend/person/edit/id/{contact_id}?usage='.self::$usage,
-                    'company' => '/admin/contact/backend/company/edit/id/{contact_id}?usage='.self::$usage,
-                    'search' => '/admin/contact/backend/search?usage='.self::$usage
+                    'person' => '/admin/contact/person/edit/id/{contact_id}?usage='.self::$usage,
+                    'company' => '/admin/contact/company/edit/id/{contact_id}?usage='.self::$usage,
+                    'search' => '/admin/contact/search?usage='.self::$usage
                 )
             )
         );
         $this->SimpleSearch = new SimpleSearch($this->app, $options);
     }
 
+    /**
+     * Controller for the Search
+     *
+     * @param Application $app
+     */
     public function controller(Application $app)
     {
         $this->initialize($app);

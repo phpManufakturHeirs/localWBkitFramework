@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -27,21 +27,26 @@ class ExtraFieldList extends Dialog {
     {
         parent::__construct($app);
         if (!is_null($app)) {
-            $this->initialize($options);
+            $this->initialize($app, $options);
         }
     }
 
-    protected function initialize($options=null)
+    /**
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Contact\Control\Alert::initialize()
+     */
+    protected function initialize(Application $app, $options=null)
     {
+        parent::initialize($app);
+
         $this->setOptions(array(
             'template' => array(
                 'namespace' => isset($options['template']['namespace']) ? $options['template']['namespace'] : '@phpManufaktur/Contact/Template',
-                'message' => isset($options['template']['message']) ? $options['template']['message'] : 'backend/message.twig',
-                'list' => isset($options['template']['list']) ? $options['template']['list'] : 'backend/simple/list.extra.twig'
+                'list' => isset($options['template']['list']) ? $options['template']['list'] : 'pattern/simple/list.extra.twig'
             ),
             'route' => array(
-                'edit' => isset($options['route']['edit']) ? $options['route']['edit'] : '/admin/contact/simple/extra/edit/id/{type_id}',
-                'create' => isset($options['route']['create']) ? $options['route']['create'] : '/admin/contact/simple/extra/edit'
+                'edit' => isset($options['route']['edit']) ? $options['route']['edit'] : '/admin/contact/extra/edit/id/{type_id}',
+                'create' => isset($options['route']['create']) ? $options['route']['create'] : '/admin/contact/extra/edit'
             )
         ));
         $this->ExtraTypeData = new ExtraType($this->app);
@@ -70,10 +75,11 @@ class ExtraFieldList extends Dialog {
 
         return $this->app['twig']->render($this->app['utils']->getTemplateFile(self::$options['template']['namespace'], self::$options['template']['list']),
             array(
-                'message' => $this->getMessage(),
+                'alert' => $this->getAlert(),
                 'route' => self::$options['route'],
                 'fields' => $fields,
-                'extra' => $extra
+                'extra' => $extra,
+                'usage' => isset($extra['usage']) ? $extra['usage'] : $this->app['request']->get('usage', 'framework')
             ));
     }
 }

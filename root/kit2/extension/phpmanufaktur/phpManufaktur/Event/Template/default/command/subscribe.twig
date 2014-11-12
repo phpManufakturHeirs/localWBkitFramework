@@ -2,7 +2,7 @@
   Event
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/Event
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
@@ -11,16 +11,24 @@
 {% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
 {% block stylesheet %}
   {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/ui/latest/themes/smoothness/jquery-ui.min.css" media="screen, projection" />
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/ui/latest/themes/smoothness/jquery.ui.theme.css" media="screen, projection" />  
   <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.subscribe.css" media="screen, projection" />
-  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  <link href="{{ LIBRARY_URL ~ '/font-awesome/latest/css/font-awesome.min.css' }}" rel="stylesheet">    
 {% endblock stylesheet %}
+{% block jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/i18n/jquery-ui-i18n.min.js"></script>
+{% endblock jquery %}  
 {% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
   {{ parent() }}
   <div class="contact_form">
     <form action="{{ FRAMEWORK_URL }}/event/subscribe/check?pid={{ basic.pid }}" method="post" {{ form_enctype(form) }}>
       {{ form_widget(form) }}
 
-      {% if reCaptchaIsActive() %}
+      {% if parameter.captcha and reCaptchaIsActive() %}
         <div>
           <label>&nbsp;</label>
           <div id="recaptcha">
@@ -36,3 +44,20 @@
     </form>
   </div>
 {% endblock %}
+{% block footer %}
+  {{ parent() }}
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      $(document).ready(function() {
+        $.datepicker.setDefaults($.datepicker.regional['{{ app.translator.locale }}']);
+        $('#form_birthday').datepicker({ 
+          changeMonth: true,
+          changeYear: true,
+          minDate: '-100Y',
+          maxDate: -1,
+          yearRange: '{{ ('now'|date('Y'))-100 }}:{{ 'now'|date('Y') }}'
+        });        
+      });
+    }
+  </script>
+{% endblock footer %}  

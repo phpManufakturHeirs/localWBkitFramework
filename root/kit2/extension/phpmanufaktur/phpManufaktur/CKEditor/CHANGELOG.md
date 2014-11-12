@@ -6,6 +6,55 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.30** - 2014-09-14
+
+* updated `@link` references
+* added URL for the changelog in CMS Tool
+
+**0.29** - 2014-09-08
+
+* updated CKEditor to 4.4.4 (full)
+
+**0.28** - 2014-06-30
+
+* fixed release status in `extension.json`
+
+**0.27** - 2014-06-30
+
+* extend CKEditor function call for Twig to enable setting of the /MEDIA directory. The function now also check if the user is authenticated and show the MediaBrowser only in this case - otherwise enable URL Dialog for images
+
+**0.26** - 2014-06-04
+
+* updated CKEditor to 4.4.1 (full)
+* changed user roles and check for authentication
+
+**0.25** - 2014-05-27
+
+* flexContent Hash-tags use now /content/buzzword as target 
+
+**0.24** - 2014-04-29
+
+* fixed #4 (flexContent issue) - CMS page link
+
+**0.23** - 2014-02-12
+
+* fixed a problem with CMS page link and flexContent Article link
+
+**0.22** - 2014-01-16
+
+* changed handling for CMS Page Link and flexContent Article Link
+
+**0.21** - 2014-01-13
+
+* updated CKEditor to 4.3.1 (full)
+* added plugin `cmspagelink` (link to CMS pages)
+* added plugin `flexcontentlink` (link to flexContent articles)
+* added plugin `hashtaglink` (link to flexContent hashtags) 
+
+**0.20** - 2013-12-01
+
+* changed descriptions
+
 **0.19** - 2013-11-09
 
 * changed license information and handling in `extension.json`

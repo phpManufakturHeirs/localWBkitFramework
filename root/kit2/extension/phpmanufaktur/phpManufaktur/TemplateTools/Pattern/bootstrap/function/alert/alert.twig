@@ -1,0 +1,15 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<!-- {{ _self.getTemplateName() }} -->
+<div class="alert {{ options.type }}{% if options.dismissable %} alert-dismissable{% endif %}">
+  {% if options.dismissable %}
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  {% endif %}
+  {{ message }}
+</div>

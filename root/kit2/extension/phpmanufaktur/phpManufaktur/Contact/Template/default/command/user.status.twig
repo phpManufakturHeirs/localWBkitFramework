@@ -1,0 +1,16 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% if isAuthenticated() %}
+  <div class="user-status">
+    {{ getUserDisplayName() }}&nbsp;
+    <a href="{{ FRAMEWORK_URL ~ '/user/account' }}" title="{{ 'Account'|trans }}" target="_blank"><span class="glyphicon glyphicon-user"></span></a>&nbsp;
+    <a href="{{ FRAMEWORK_URL ~ '/logout?pid=' ~ basic.pid }}{% if redirect is defined %}{{ '&redirect=' ~ redirect }}{% endif %}" target="_parent" title="{{ 'Logout'|trans }}"><span class="glyphicon glyphicon-log-out"></span></a>
+  </div>
+{% endif %}  

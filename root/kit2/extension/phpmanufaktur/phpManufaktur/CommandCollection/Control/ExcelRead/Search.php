@@ -4,7 +4,7 @@
  * CommandCollection
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de
+ * @link https://kit2.phpmanufaktur.de/CommandCollection
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -185,6 +185,7 @@ class Search
             $search['text'] = $search_result;
             $search['success'] = true;
         }
-        return base64_encode(json_encode(array('search' => $search)));
+        //return base64_encode(json_encode(array('search' => $search)));
+        return $app->json(array('search' => $search));
     }
 }

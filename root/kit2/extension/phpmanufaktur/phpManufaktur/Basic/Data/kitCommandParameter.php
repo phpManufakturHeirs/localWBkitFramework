@@ -12,6 +12,7 @@
 namespace phpManufaktur\Basic\Data;
 
 use Silex\Application;
+use Carbon\Carbon;
 
 /**
  * Data table to save Base64 encoded kitCommand parameters
@@ -123,10 +124,27 @@ EOD;
             foreach ($items as $key => $value)
                 $insert[$key] = (is_string($value)) ? $this->app['utils']->sanitizeVariable($value) : $value;
             $this->app['db']->insert(self::$table_name, $insert);
-            $id = $this->app['db']->lastInsertId();
+            return $this->app['db']->lastInsertId();
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e->getMessage());
         }
-        return $id;
+    }
+
+    /**
+     * Delete all entries from the table which are older than 48 hours
+     *
+     * @throws \Exception
+     */
+    public function cleanup()
+    {
+        try {
+            $dt = Carbon::create();
+            $dt->subHours(48);
+            $oldest = $dt->toDateTimeString();
+            $SQL = "DELETE FROM `".self::$table_name."` WHERE `timestamp` <= '$oldest'";
+            $this->app['db']->query($SQL);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 }

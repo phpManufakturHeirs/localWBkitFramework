@@ -11,19 +11,20 @@
 
 namespace phpManufaktur\Basic\Control\CMS;
 
-use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use phpManufaktur\Basic\Control\Pattern\Alert;
 
-class EmbeddedAdministration
+class EmbeddedAdministration extends Alert
 {
+    /*
     protected $app = null;
 
     public function __construct(Application $app)
     {
         $this->app = $app;
     }
-
+*/
     /**
      * Called by the iframe embedded in the CMS. The encoded CMS information
      * will be read, provided as session (CMS_TYPE, CMS_VERSION, CMS_LOCALE and
@@ -32,10 +33,11 @@ class EmbeddedAdministration
      *
      * @param string $route_to
      * @param string $encoded_cms_information
+     * @param $string $granted_role default = 'ROLE_ADMIN', the role which is needed at minimum
      * @return Request
      * @link https://github.com/phpManufaktur/kitFramework/wiki/Extensions-%23-Embedded-Administration Embedded Administration
      */
-    public function route($route_to, $encoded_cms_information)
+    public function route($route_to, $encoded_cms_information, $granted_role='ROLE_ADMIN')
     {
         if (false === ($decoded_information = base64_decode($encoded_cms_information))) {
             throw new \Exception("Can't decode the CMS Base64 information parameter!");
@@ -54,13 +56,19 @@ class EmbeddedAdministration
 
         $usage = ($cms['target'] == 'cms') ? CMS_TYPE : 'framework';
 
-        if (!$this->app['account']->checkUserIsCMSAdministrator($cms['username'])) {
+        // is the user a CMS Admin?
+        $is_admin = $this->app['account']->checkUserIsCMSAdministrator($cms['username']);
+
+        if (($granted_role == 'ROLE_ADMIN') && !$is_admin) {
             // the user is no CMS Administrator, deny access!
+            $this->setAlert('Sorry, but only Administrators are allowed to access this kitFramework extension.',
+                array(), self::ALERT_TYPE_WARNING);
             return $this->app['twig']->render($this->app['utils']->getTemplateFile(
-                '@phpManufaktur/Basic/Template',
-                'framework/admins.only.twig'),
+                '@phpManufaktur/Basic/Template', 'framework/alert.twig'),
                 array(
-                    'usage' => $usage
+                    'usage' => $usage,
+                    'title' => 'Access denied',
+                    'alert' => $this->getAlert()
             ));
         }
 
@@ -69,7 +77,7 @@ class EmbeddedAdministration
             $subRequest = Request::create('/login/first/cms', 'POST', array(
                 'usage' => $usage,
                 'username' => $cms['username'],
-                'roles' => array('ROLE_ADMIN'),
+                'roles' => $is_admin ? array('ROLE_ADMIN') : array($granted_role),
                 'auto_login' => true,
                 'secured_area' => 'general',
                 'redirect' => $route_to
@@ -77,10 +85,25 @@ class EmbeddedAdministration
             return $this->app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
         }
 
-        // auto login the CMS user into the secured area with admin privileges
-        $this->app['account']->loginUserToSecureArea($cms['username'], array('ROLE_ADMIN'));
+        // get the userdata
+        $user = $this->app['account']->getUserData($cms['username']);
+        $user_roles = (strpos($user['roles'], ',')) ? explode(',', $user['roles']) : array(trim($user['roles']));
+        $this->app['account']->loginUserToSecureArea($cms['username'], $user_roles);
 
-        // sub request to the starting point of Event
+        if (!$this->app['account']->isGranted($granted_role)) {
+            // user is not granted for the given role
+            $this->setAlert('You are not allowed to access this resource!', array(), self::ALERT_TYPE_WARNING);
+            return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+                '@phpManufaktur/Basic/Template',
+                'framework/alert.twig'),
+                array(
+                    'usage' => $usage,
+                    'title' => 'Insufficient user role',
+                    'alert' => $this->getAlert()
+                ));
+        }
+
+        // sub request to the starting point
         $subRequest = Request::create($route_to, 'GET', array('usage' => $usage));
         return $this->app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }

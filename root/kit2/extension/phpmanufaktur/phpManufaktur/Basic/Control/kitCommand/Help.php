@@ -117,7 +117,7 @@ class Help extends Basic {
         $this->initParameters($app);
 
         if (false === ($info_path = $this->getInfoPath($command))) {
-            $this->setMessage('There is no help available for the kitCommand <b>%command%</b>.', array('%command%' => $command));
+            $this->setAlert('There is no help available for the kitCommand <b>%command%</b>.', array('%command%' => $command));
             $help = '';
         }
         else {

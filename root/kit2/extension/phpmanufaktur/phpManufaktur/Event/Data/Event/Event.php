@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/FacebookGallery
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -82,6 +82,7 @@ class Event
         `event_deadline` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
         `event_url` TEXT NOT NULL,
         `event_status` ENUM('ACTIVE', 'LOCKED', 'DELETED') NOT NULL DEFAULT 'ACTIVE',
+        `event_recurring_id` INT(11) NOT NULL DEFAULT -1,
         `event_timestamp` TIMESTAMP,
         PRIMARY KEY (`event_id`),
         FOREIGN KEY (`group_id`) REFERENCES $group_table(`group_id`) ON DELETE CASCADE
@@ -143,6 +144,7 @@ EOD;
             'event_participants_max' => -1,
             'event_deadline' => '0000-00-00 00:00:00',
             'event_status' => 'ACTIVE',
+            'event_recurring_id' => -1,
             'event_timestamp' => '0000-00-00 00:00:00'
         );
     }
@@ -171,15 +173,25 @@ EOD;
      * Count the records in the table
      *
      * @param array $status flags, i.e. array('ACTIVE','LOCKED')
+     * @param boolean $pack_recurring if true don't count recurring events
      * @throws \Exception
      * @return integer number of records
      */
-    public function count($status=null)
+    public function count($status=null, $pack_recurring=false)
     {
         try {
-            $SQL = "SELECT COUNT(*) FROM `".self::$table_name."`";
+            if ($pack_recurring) {
+                $recurring_table = FRAMEWORK_TABLE_PREFIX.'event_recurring_event';
+                $SQL = "SELECT COUNT(DISTINCT `event_id`) FROM `".self::$table_name."`, `$recurring_table` WHERE (`event_recurring_id` = -1 OR ".
+                    "(`event_recurring_id`=`recurring_id` AND `parent_event_id`=`event_id`)) AND ";
+            }
+            else {
+                $SQL = "SELECT COUNT(DISTINCT `event_id`) FROM `".self::$table_name."`";
+            }
             if (is_array($status) && !empty($status)) {
-                $SQL .= " WHERE ";
+                if (!$pack_recurring) {
+                    $SQL .= " WHERE ";
+                }
                 $use_status = false;
                 if (is_array($status) && !empty($status)) {
                     $use_status = true;
@@ -211,6 +223,7 @@ EOD;
      * @param array $select_status tags, i.e. array('ACTIVE','LOCKED')
      * @param array $order_by fields to order by
      * @param string $order_direction 'ASC' (default) or 'DESC'
+     * @param array $columns the columns to add to the list
      * @throws \Exception
      * @return array selected records
      */
@@ -219,7 +232,15 @@ EOD;
         try {
             $event = self::$table_name;
             $desc = FRAMEWORK_TABLE_PREFIX.'event_description';
-            $SQL = "SELECT * FROM `$event`, `$desc` WHERE $event.event_id=$desc.event_id";
+            $recurring = FRAMEWORK_TABLE_PREFIX.'event_recurring_event';
+            if (in_array('pack_recurring', $columns)) {
+                $SQL = "SELECT * FROM `$event`, `$desc`, `$recurring` WHERE $event.event_id=$desc.event_id AND ".
+                    "(`event_recurring_id` = -1 OR ".
+                    "(`event_recurring_id`=`recurring_id` AND `parent_event_id`=$event.`event_id`)) ";
+            }
+            else {
+                $SQL = "SELECT * FROM `$event`, `$desc` WHERE $event.event_id=$desc.event_id";
+            }
             if (is_array($select_status) && !empty($select_status)) {
                 $SQL .= " AND ";
                 $use_status = false;
@@ -239,6 +260,7 @@ EOD;
                     $SQL .= ')';
                 }
             }
+            $SQL .= " GROUP BY $event.event_id";
             if (is_array($order_by) && !empty($order_by)) {
                 $SQL .= " ORDER BY ";
                 $start = true;
@@ -258,8 +280,14 @@ EOD;
             }
             $SQL .= " LIMIT $limit_from, $rows_per_page";
             $result = $this->app['db']->fetchAll($SQL);
+
             $events = array();
             $participants_array = array('event_participants_confirmed', 'event_participants_pending', 'event_participants_canceled');
+
+            if (in_array('pack_recurring', $columns)) {
+                $RecurringEvent = new RecurringEvent($this->app);
+            }
+
             foreach ($result as $evt) {
                 $event = array();
                 foreach ($columns as $column) {
@@ -269,11 +297,28 @@ EOD;
                                 $event[$column] = $this->Subscription->countParticipants($evt['event_id']);
                                 break;
                             case 'event_participants_pending':
-                                $evt[$column] = $this->Subscription->countParticipants($evt['event_id'], 'PENDING');
+                                $event[$column] = $this->Subscription->countParticipants($evt['event_id'], 'PENDING');
                                 break;
                             case 'event_participants_canceled':
-                                $evt[$column] = $this->Subscription->countParticipants($evt['event_id'], 'CANCELED');
+                                $event[$column] = $this->Subscription->countParticipants($evt['event_id'], 'CANCELED');
                                 break;
+                        }
+                    }
+                    elseif ($column == 'pack_recurring') {
+                        // pack recurring events
+                        if ($evt['event_recurring_id'] > 0) {
+                            if (false !== ($recurring = $RecurringEvent->select($evt['event_recurring_id']))) {
+                                if ($recurring['parent_event_id'] == $evt['event_id']) {
+                                    // gather the recurring dates ...
+                                    $event[$column] = $RecurringEvent->getReadableCurringEvent($evt['event_recurring_id']);
+                                }
+                                else {
+                                    continue 2;
+                                }
+                            }
+                        }
+                        else {
+                            $event[$column] = '';
                         }
                     }
                     else {
@@ -620,4 +665,90 @@ EOD;
         }
     }
 
+    /**
+     * Set the status of all recurring events of parent event ID to DELETED and
+     * remove the recurring ID from the parent event ID record
+     *
+     * @param integer $parent_event_id
+     * @param integer $recurring_id
+     * @throws \Exception
+     */
+    public function deleteRecurringEventsOfParent($parent_event_id, $recurring_id)
+    {
+        try {
+            $SQL = "UPDATE `".self::$table_name."` SET `event_status`='DELETED' WHERE `event_recurring_id`=$recurring_id AND `event_id` != $parent_event_id";
+            $this->app['db']->query($SQL);
+            $SQL = "UPDATE `".self::$table_name."` SET `event_recurring_id`=-1 WHERE `event_id`=$parent_event_id";
+            $this->app['db']->query($SQL);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Select all future event record which belong to the given Recurring ID and
+     * which are within the publishing period (only actual events)
+     *
+     * @param integer $recurring_id
+     * @throws \Exception
+     * @return Ambigous <boolean, array >
+     */
+    public function selectRecurringEvents($recurring_id)
+    {
+        try {
+            $SQL = "SELECT `event_id` FROM `".self::$table_name."` WHERE `event_recurring_id`=$recurring_id AND ".
+                "`event_status`='ACTIVE' AND `event_publish_from` <= NOW() AND `event_publish_to` >= NOW() AND ".
+                "`event_date_from` >= NOW() ORDER BY `event_date_from` ASC";
+            $results = $this->app['db']->fetchAll($SQL);
+            $events = array();
+            if (is_array($results)) {
+                foreach ($results as $result) {
+                    if (false !== ($event = $this->selectEvent($result['event_id']))) {
+                        $events[] = $event;
+                    }
+                }
+            }
+            return (!empty($events)) ? $events : false;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Select all future recurring events by the given Recurring ID. Does not look
+     * for the publishing period and return event_id adn event_date_from fields
+     *
+     * @param integer $recurring_id
+     * @throws \Exception
+     * @return Ambigous <boolean, unknown>
+     */
+    public function selectRecurringDates($recurring_id)
+    {
+        try {
+            $SQL = "SELECT `event_date_from`, `event_id` FROM `".self::$table_name."` WHERE `event_recurring_id`=$recurring_id AND ".
+                "`event_status`='ACTIVE' AND `event_date_from` >= NOW() ORDER BY `event_date_from` ASC";
+            $results = $this->app['db']->fetchAll($SQL);
+            return (!empty($results)) ? $results : false;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Count the ACTIVE recurring events for the given $recurring_id
+     *
+     * @param integer $recurring_id
+     * @throws \Exception
+     * @return integer
+     */
+    public function countRecurringEvents($recurring_id)
+    {
+        try {
+            $SQL = "SELECT COUNT(`event_date_from`) as 'count_recurring' FROM `".self::$table_name."` WHERE ".
+                "`event_recurring_id`=$recurring_id AND `event_status`='ACTIVE'";
+            return $this->app['db']->fetchColumn($SQL);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
 }

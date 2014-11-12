@@ -1,0 +1,28 @@
+{# 
+  kitFramework
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if app.translator.locale == 'de' %}
+  {# GERMAN Version #}
+  <p>Hallo {{ account.displayname }},</p>
+  <p>für Sie wurde auf der Website <a href="{{ CMS_URL }}">{{ CMS_URL }}</a> ein Benutzerkonto eingerichtet oder aktualisiert.</p>
+  <p>Ihr Benutzername lautet: {{ account.username }}</p>
+  <p>Ihr Passwort lautet: {{ password }}</p>
+  {% if 'ROLE_USER' in account.roles|keys %}
+    <p>Um auf Ihr Benutzerkonto zuzugreifen, melden Sie sich bitte über <a href="{{ FRAMEWORK_URL }}">{{ FRAMEWORK_URL }}</a> an.</p>
+  {% endif %}
+{% else %}
+  {# ENGLISH Version #}
+  <p>Hello {{ account.displayname }},</p>
+  <p>at the website <a href="{{ CMS_URL }}">{{ CMS_URL }}</a> has been created or updated a user account for you.</p>  
+  <p>Your username: {{ account.username }}</p>
+  <p>Your password: {{ password }}</p>
+  {% if 'ROLE_USER' in account.roles|keys %}
+    <p>To access your user account, please login at <a href="{{ FRAMEWORK_URL }}">{{ FRAMEWORK_URL }}</a>.</p>
+  {% endif %}
+{% endif %}

@@ -2,13 +2,14 @@
   MediaBrowser
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/MediaBrowser
   @link https://github.com/phpManufaktur/kitFramework/wiki  
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
 #}
 <!DOCTYPE html>
-<html>
+{% spaceless %}
+<html lang="{{ app.translator.locale }}">
   <head>
     {% block head %}
       <title>{% block title %}{% endblock %}</title>
@@ -16,23 +17,42 @@
       <meta name="robots" content="noindex,nofollow" />
       <meta name="description" content="{% block description %}{% endblock %}" />
       <meta name="keywords" content="{% block keywords %}{% endblock %}" />
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-      {% if usage == 'CKEditor' %}
-        <script type="text/javascript">
-          function returnCKEFile(fileUrl, funcNum)
-          {
-              window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
-              window.top.close();
-              window.top.opener.focus();
-          }
-          function returnCKEMessage(message, funcNum)
-          {
-              window.top.opener.CKEDITOR.tools.callFunction(funcNum, '', message);
-              window.top.close();
-              window.top.opener.focus();
-          }
-        </script>
-      {% endif %}
+      <meta name=”content-language” content=”{% block content_language %}{% if app.translator.locale == 'de' %}de{% else %}en{% endif %}{% endblock content_language %}” />
+      <meta name="viewport" content="{% block viewport %}width=device-width, initial-scale=1.0{% endblock viewport %}">
+      <link rel="shortcut icon" type="image/x-icon" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/image/favicon.ico" />
+      {% block stylesheet %}
+        {# Bootstrap #}
+        <link href="{{ LIBRARY_URL }}/bootstrap/latest/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ LIBRARY_URL }}/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+      {% endblock stylesheet %}
+      {% block jquery %}
+        {# 
+          jQuery will be loaded at the footer in block footer_jquery! 
+          HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries
+          WARNING: Respond.js doesn't work if you view the page via file:// 
+        #}
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+          <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+        {% if usage == 'CKEditor' %}
+          <script type="text/javascript">
+            function returnCKEFile(fileUrl, funcNum)
+            {
+                window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+                window.top.close();
+                window.top.opener.focus();
+            }
+            function returnCKEMessage(message, funcNum)
+            {
+                window.top.opener.CKEDITOR.tools.callFunction(funcNum, '', message);
+                window.top.close();
+                window.top.opener.focus();
+            }
+          </script>
+        {% endif %}
+      {% endblock jquery %}
+      
     {% endblock head %}
   </head>
   <body>
@@ -41,15 +61,24 @@
       {% endblock content %}
     </div>
     {% block footer %}
+      {% block footer_jquery %}
+        {# load needed jQuery files at the end of file to speed up loading ... #}
+        <script src="{{ LIBRARY_URL }}/jquery/jquery/latest/jquery.min.js"></script>
+      {% endblock footer_jquery %}  
       <script type="text/javascript">
         if (typeof 'jQuery' != 'undefined') {
           $(document).ready(function() {
             {# setting the iFrame height dynamically by the height of the inbounded document #}
             var content_height = $('#content').height() + {{ iframe_add_height|default(30) }} + "px";
             parent.document.getElementById("kitframework_iframe").style.height = content_height;
+            if ($('.container').hasClass('alert')) {
+              {# enable the bootstrap close button for alerts #}
+              $('.alert').alert();
+            }
           });
         }
       </script>
     {% endblock footer %}
   </body>
-</html>      
+</html>  
+{% endspaceless %}

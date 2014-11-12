@@ -1,0 +1,42 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{{ alert }}
+
+{% if fields|length < 1 %}
+  <div class="alert alert-warning">
+    <a class="close" data-dismiss="alert" href="#" aria-hidden="true">&times;</a>
+    {{ 'The field list is empty, please define a extra field!'|trans }}
+  </div>
+{% else %}
+  <div class="table-responsive">
+    <table class="table table-striped table-condensed table-hover">
+      <thead>
+        <tr>
+          <th class="extra_type_id">{{ 'ID'|humanize|trans }}</th>
+          <th class="extra_type_name">{{ 'Name'|trans }}</th>
+          <th class="extra_type_name translated">{{ 'Name (translated)'|trans }}</th>
+          <th class="extra_type_type">{{ 'Type'|trans }}</th>
+          <th class="extra_type_description">{{ 'Description'|trans }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for field in fields %}
+          <tr>
+            <td class="extra_type_id"><a href="{{ FRAMEWORK_URL ~ route.edit|replace({'{type_id}':field.extra_type_id}) }}">{{ '%03d'|format(field.extra_type_id) }}</a></td>
+            <td class="extra_type_name"><a href="{{ FRAMEWORK_URL ~ route.edit|replace({'{type_id}':field.extra_type_id}) }}">{{ field.extra_type_name }}</a></td>
+            <td class="extra_type_name translated">{{ field.extra_type_name|replace({'_':' '})|capitalize|trans }}</td>
+            <td class="extra_type_type">{{ field.extra_type_type|capitalize|trans }}</td>
+            <td class="extra_type_description">{{ field.extra_type_description }}</td>
+          </tr>
+        {% endfor %}  
+      </tbody>
+    </table>
+  </div>
+{% endif %}     

@@ -1,0 +1,10 @@
+<div class="thumbnail">
+  <a href="{{ FRAMEWORK_URL ~ entry.route ~ '?usage=' ~ usage }}"><img class="img-rounded img-responsive" src="{{ entry.icon.url }}" alt="{{ entry.name }}" /></a>
+  <div class="caption">
+    <p><strong>{{ entry.name|trans }}</strong></p>
+    {% if entry.info|length > 0 %}
+      <p class="small text-muted">{{ entry.info|trans }}</p>
+    {% endif %}
+    <p><a href="{{ FRAMEWORK_URL ~ entry.route ~ '?usage=' ~ usage }}" class="btn btn-primary" role="button">{{ 'Execute'|trans }}</a></p>
+  </div>
+</div>

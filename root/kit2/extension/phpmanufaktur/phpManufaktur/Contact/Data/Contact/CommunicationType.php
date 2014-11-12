@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -123,6 +123,22 @@ EOD;
             $SQL = "SELECT * FROM `".self::$table_name."` WHERE `communication_type_name`='".strtoupper($type)."'";
             $result = $this->app['db']->fetchAssoc($SQL);
             return (is_array($result) && isset($result['communication_type_name'])) ? true : false;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Return all communication types
+     *
+     * @throws \Exception
+     * @return array
+     */
+    public function selectAll()
+    {
+        try {
+            $SQL = "SELECT * FROM `".self::$table_name."`";
+            return $this->app['db']->fetchAll($SQL);
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }

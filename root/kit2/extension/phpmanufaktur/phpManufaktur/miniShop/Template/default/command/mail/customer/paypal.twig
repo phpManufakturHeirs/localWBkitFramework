@@ -1,0 +1,73 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{{ 'Your miniShop order'|trans }}</title>
+  </head>
+  <body>
+    {% spaceless %}
+
+      {% set currency_symbol = attribute(config.currency, order_data.base.currency_iso).symbol %}
+      {% set decimal_separator = 'DECIMAL_SEPARATOR'|trans({},'messages', order_data.base.locale|lower) %}
+      {% set thousand_separator = 'THOUSAND_SEPARATOR'|trans({},'messages', order_data.base.locale|lower) %}
+
+      {% if app.translator.locale == 'de' %}
+        {# GERMAN translation #}
+        {% if contact.contact_type == 'COMPANY' %}
+          <p>Sehr geehrte Damen und Herren,</p>
+        {% elseif contact.person_gender == 'FEMALE' %}
+          <p>Sehr geehrte Frau {{ contact.person_last_name }},</p>
+        {% else %}
+          <p>Sehr geehter Herr {{ contact.person_last_name }},</p>
+        {% endif %}
+        <p>Vielen Dank für Ihre Bestellung im miniShop am {{ order.order_timestamp|date('DATE_FORMAT'|trans) }}.</p>
+        <p>Sie haben die folgenden Artikel bestellt:</p>
+      {% else %}
+        {# ENGLISH translation #}
+        {% if contact.contact_type == 'COMPANY' %}
+          <p>Dear ladies and gentlemen,</p>
+        {% else %}
+          <p>Dear {{ contact.person_last_name }},</p>
+        {% endif %}
+        <p>Thank your for your order in the miniShop at {{ order.order_timestamp|date('DATE_FORMAT'|trans) }}.</p>
+        <p>You have ordered the following articles:</p>
+      {% endif %}
+
+      {% include '@phpManufaktur/miniShop/Template/default/command/mail/summary.order.twig' with {'order':order_data} %}
+
+      {% if app.translator.locale == 'de' %}
+        {# GERMAN translation #}
+        <p>Wir senden Ihre Bestellung an:</p>        
+      {% else %}
+        {# ENGLISH translation #}
+        <p>We will send the articles to:</p>
+      {% endif %}
+
+      {% if contact.contact_type == 'COMPANY' %}
+        <p>{{ contact.company_name }}
+          {% if contact.company_department|length > 0 %}<br />{{ contact.company_deparment }}{% endif %}</p>
+        {% else %}
+        <p>{{ contact.person_gender|humanize|trans }}<br />
+          {% if contact.person_first_name|length > 0 %}{{ contact.person_first_name }} {% endif %}{{ contact.person_last_name }}</p>
+        {% endif %}
+      <p>{{ contact.address_street }}<br />
+        {{ contact.address_zip }} {{ contact.address_city }}</p>
+
+      {% if app.translator.locale == 'de' %}
+        {# GERMAN translation #}
+        <p>Wir senden Ihnen die Ware in den nächsten Tagen zu. Den Rechnungsbetrag haben Sie bereits über PayPal bezahlt.</p>        
+      {% else %}
+        {# ENGLISH translation #}
+        <p>We will send you the articles within the next days. The invoice amount is already payed by PayPal.</p>
+      {% endif %}
+
+    {% endspaceless %}
+  </body>
+</html>

@@ -1,0 +1,27 @@
+{#
+  kitFramework
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'framework/body.twig') %}
+{% block title %}{{ 'kitFramework E-Mail Test'|trans }}{% endblock %}
+{% block content %}
+  <div class="container">
+    <h1>{{ 'kitFramework E-Mail Test'|trans }}</h1>
+    
+    {{ alert }}
+    
+    <p><strong>{{ 'Actual SMTP Settings'|trans }}:</strong></p>
+    
+    <div class="row">
+      {% for key, value in settings %}
+        <div class="col-sm-4 text-right">{{ key }}</div>
+        <div class="col-sm-8">{{ value|default('&nbsp;') }}</div>
+      {% endfor %}
+    </div>   
+  </div>
+{% endblock %}

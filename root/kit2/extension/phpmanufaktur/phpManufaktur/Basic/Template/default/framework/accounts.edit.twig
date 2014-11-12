@@ -1,0 +1,51 @@
+{#
+  kitFramework
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'framework/body.twig') %}
+{% block title %}{{ 'kitFramework - Account'|trans }}{% endblock %}
+{% block content %}
+  <div class="container">
+    <!-- {{ _self.getTemplateName() }} -->
+    <div class="page-header">
+      <h1>{{ 'Account'|trans }} <small>kitFramework</small></h1>
+    </div>
+    
+    {{ alert }}
+    
+    {% if alert|length < 1 %}
+      {% if form.id.vars.value > 0 %}
+        {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig'
+          with {type:'alert-danger',content:'Be aware: Changing the email address or username may influence kitFramework extensions which are using the account data to identify users.'|trans} only %}
+        {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig'
+          with {type:'alert-info',content:'User roles may depend from others and can be set or extended dynamically by the kitFramework extensions. To see the roles really associated to this account if the user is authenticated use the "switch to" button.'|trans} only %}  
+      {% endif %}
+      {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig'
+        with {type:'alert-info',content:'The ROLE_USER is needed if you want enable the user to access and change his own account. The ROLE_ADMIN is the highest available role and grant access to really everything.'|trans} only %}
+    {% endif %}
+    
+    <div>
+      <a class="btn btn-default" role="button" href="{{ FRAMEWORK_URL ~ '/admin/accounts/list?usage=' ~ usage }}">{{ 'Accounts'|trans }}</a>&nbsp;
+      {% if form.id.vars.value > 0 %}
+        <a class="btn btn-default" role="button" href="{{ FRAMEWORK_URL ~ '/switched/user/roles/id/' ~ form.id.vars.value ~ '?usage=' ~ usage ~  '&_switch_user=' ~ form.username.vars.value }}">{{ 'Switch to this user to see the real active roles'|trans }}</a>
+      {% endif %}
+    </div>
+    <div class="height-15"></div>
+    
+    {% form_theme form '@phpManufaktur/Basic/Template/default/framework/form.fields.horizontal.twig' %}
+    
+    <form class="form-horizontal" action="{{ FRAMEWORK_URL ~ action ~ '?usage=' ~ usage }}" method="post" role="form">
+      {{ form_widget(form) }}
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-6">
+          <button type="submit" class="btn btn-default">{{ 'Submit'|trans }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}

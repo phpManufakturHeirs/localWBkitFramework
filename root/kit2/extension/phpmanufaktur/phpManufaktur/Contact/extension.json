@@ -22,32 +22,36 @@
     "about":"\/contact\/about"
   },
   "release":{
-    "number":"2.0.27",
-    "date":"2013-11-27",
-    "status":"beta"
+    "number":"2.0.42",
+    "date":"2014-09-14",
+    "status":"beta",
+    "changelog":"https:\/\/github.com\/phpManufaktur\/kfContact\/blob\/master\/CHANGELOG.md"
   },
   "description":{
     "en":{
       "title":"Contact management for kitFramework",
       "short":"Contact management for kitFramework",
       "long":"Contact management database for general use in kitFramework",
-      "url":"https:\/\/kit2.phpmanufaktur.de"
+      "url":"https:\/\/kit2.phpmanufaktur.de\/Contact"
     },
     "de":{
         "title":"Kontaktverwaltung für das kitFramework",
         "short":"Umfassende Kontakt- und Adressverwaltung für das kitFramework",
         "long":"Umfangreiche und leistungsfähige Kontakt- sowie Adressverwaltung (CRM) für das kitFramework. Schnittstellen (API sowie direkt verwendbare Dialoge) ermöglichen eine leichte Einbindung und Anpassung in anderen kitFramework Anwendungen.",
-        "url":"https:\/\/kit2.phpmanufaktur.de"
+        "url":"https:\/\/kit2.phpmanufaktur.de\/Contact"
     }
   },
   "require":{
     "framework":{
-      "release":"0.26"
+      "release":"0.27"
     },
     "extension":{
         "phpmanufaktur":{
             "Basic":{
-                "release":"0.49"
+                "release":"1.0.12"
+            },
+            "Library":{
+                "release":"0.37"
             }
         }
     }

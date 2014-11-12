@@ -1,0 +1,123 @@
+{#
+  i18nEditor
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/i18n/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework i18nEditor' }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/default/framework/css/framework.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/Basic/Template/default/framework/i18n/toolbar.twig' %}
+    {% include '@phpManufaktur/Basic/Template/default/framework/i18n/toolbar.locale.twig' with {'toolbar': toolbar_locale} %}
+
+    <h1>{{ 'Locale file'|trans }} <small>i18nEditor</small></h1>
+
+    <div class="well">
+      <p>{{ 'Please select a specific locale file or select <em>- all files -</em> to see all available translations.'|trans }}</p>
+    </div>
+
+    {% if locale_locale|upper == 'EN' %}
+      {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig'
+        with {type:'alert-info',content:'Please be aware that <em>translations</em> for the locale <strong>EN</strong> (english) are more often than not identical with the <em>source</em> - for this reason they will be only added to a language file if the <em>translation</em> differ from <em>source</em>.'|trans } %}
+    {% endif %}
+
+    {{ alert }}
+
+    {% form_theme form '@phpManufaktur/Basic/Template/default/framework/form.fields.horizontal.twig' %}
+    <form class="form-inline" action="{{ FRAMEWORK_URL ~ '/admin/i18n/editor/locale/' ~ locale_locale ~ '/file/select' ~ usage_param }}" method="post" role="form">
+      <div class="row">
+        <div class="col-sm-6">
+          {{ form_widget(form.locale_file) }}&nbsp;<button type="submit" class="btn btn-default">{{ 'Select'|trans }}</button>
+        </div>
+      </div>
+      {{ form_rest(form) }}
+    </form>
+
+    {% if locales|length > 0 %}
+      <div class="table-responsive locales">
+        <table class="table table-striped table-condensed table-hover">
+          <thead>
+            <tr>
+              <th>{{ 'ID'|humanize|trans }}</th>
+              <th>{{ 'Translation'|trans }}</th>
+              <th>{{ 'Extension'|trans }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for locale in locales %}
+              <tr>
+                <td>
+                  {% if locale.locale_id > 0 %}
+                    <a href="{{ FRAMEWORK_URL ~ '/admin/i18n/editor/sources/detail/' ~ locale.locale_id ~ usage_param }}">{{ '%05d'|format(locale.locale_id) }}</a>
+                  {% else %}
+                    - {{ 'UNASSIGNED'|humanize|trans|lower }} -
+                  {% endif %}
+                </td>
+                <td class="source"><a href="{{ FRAMEWORK_URL ~ '/admin/i18n/editor/translation/edit/id/' ~ locale.translation_id ~ usage_param }}"><i class="fa fa-pencil-square-o"></i></a>&nbsp;{{ locale.translation_text|escape('html') }}</td>
+                <td>{{ locale.extension }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+  </div>
+{% endblock content %}
+{% block footer_jquery %}
+  {{ parent() }}
+  {# tablesorter #}
+  <script src="{{ LIBRARY_URL ~ '/jquery/tablesorter/latest/js/jquery.tablesorter.js' }}"></script>
+  <script src="{{ LIBRARY_URL ~ '/jquery/tablesorter/latest/js/jquery.tablesorter.widgets.js' }}"></script>
+  <script type="text/javascript">
+    $(function() {
+      $.extend($.tablesorter.themes.bootstrap, {
+        table      : 'table table-bordered',
+        caption    : 'caption',
+        header     : 'bootstrap-header',
+        footerRow  : '',
+        footerCells: '',
+        icons      : '',
+        sortNone   : 'bootstrap-icon-unsorted',
+        sortAsc    : 'icon-chevron-up glyphicon glyphicon-chevron-up',
+        sortDesc   : 'icon-chevron-down glyphicon glyphicon-chevron-down',
+        active     : '',
+        hover      : '',
+        filterRow  : '',
+        even       : '',
+        odd        : ''
+      });
+
+      $("table").tablesorter({
+        theme : "bootstrap",
+        widthFixed: true,
+        headerTemplate : '{content} {icon}',
+        widgets : [ "uitheme", "filter", "zebra" ],
+        widgetOptions : {
+          zebra : ["even", "odd"],
+          filter_reset : ".reset"
+        }
+      })
+    });
+  </script>
+{% endblock %}

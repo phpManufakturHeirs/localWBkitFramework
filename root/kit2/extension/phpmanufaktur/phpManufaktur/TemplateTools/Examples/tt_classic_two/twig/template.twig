@@ -1,0 +1,59 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends "@pattern/classic/html.simple.twig" %}
+
+{% block body %}
+  <div class="body-container">
+
+    <div class="logo-container">
+      {# clickable logo and the name and path of the current template #}
+      <div class="logo">
+        <a href="{{ CMS_URL }}" title="{{ CMS_TITLE }}">
+          <img src="{{ MANUFAKTUR_URL ~ '/TemplateTools/extension.jpg' }}" width="200" height="200" alt="TemplateTools" />
+        </a>
+      </div>
+      <div class="template-name">
+        <div class="template-name-header">
+          {{ TEMPLATE_NAME }}
+        </div>
+        <div class="template-name-path">
+          {{ TEMPLATE_PATH }}
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="navigation">
+        {# show a standard navigation with show_menu2() #}
+        {{ show_menu2() }}
+      </div>
+
+      <div class="main">          
+        {# show a small search dialog #}
+        {% include '@pattern/classic/search.div.twig' %}
+
+        <div class="breadcrumb">
+          {# show a breadcrumb #}
+          {{ classic_breadcrumb() }}
+        </div>
+
+        {# show the page content #}
+        {{ page_content() }}
+
+      </div>
+    </div>
+
+    <div class="footer">
+      {# show a page footer defined in CMS Settings -> Website Footer #}
+      {{ PAGE_FOOTER }}
+    </div>
+  </div>
+{% endblock body %}

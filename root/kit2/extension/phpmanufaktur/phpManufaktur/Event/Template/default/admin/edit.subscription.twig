@@ -1,0 +1,69 @@
+{# 
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Event
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/default/css/admin.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock stylesheet %}
+{% block title %}{{ 'Event Administration - About'|trans }}{% endblock %}
+  
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/Event/Template/default/admin/toolbar.twig' %}
+    <div class="height-15"></div>
+    
+    {{ alert }}   
+    
+    <div class="row">
+      <div class="col-sm-3">{{ 'Subscriber'|trans }}</div>
+      <div class="col-sm-6">
+        <p>{{ data.contact.person_gender|humanize|trans }}<br />
+          <a href="{{ FRAMEWORK_URL ~ '/admin/event/contact/edit/id/' ~ data.contact.contact_id ~ '?usage=' ~ usage }}">{{ data.contact.person_first_name }} {{ data.contact.person_last_name }}</a></br>
+          {{ data.contact.address_street }}<br />
+          {{ data.contact.address_zip }} {{ data.contact.address_city }}<br />
+          {{ data.contact.communication_phone }}<br />
+          <a href="mailto:{{ data.contact.communication_email }}">{{ data.contact.communication_email }}</a>
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">{{ 'Event'|trans }}</div>
+      <div class="col-sm-9">
+        <p>{{ data.event.description_title }}<br />
+          {{ data.event.event_date_from|date('DATETIME_FORMAT'|trans) }} - {{ data.event.event_date_to|date('DATETIME_FORMAT'|trans) }}          
+        </p>
+      </div>
+    </div>    
+    
+    {% form_theme form '@phpManufaktur/Event/Template/default/admin/form.fields.horizontal.twig' %}
+    <form action="{{ FRAMEWORK_URL ~ '/admin/event/subscription/edit/check?usage=' ~ usage }}" role="form" method="post">
+      {{ form_widget(form) }}
+      <div class="height-15"></div>
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-6">
+          <input type="submit" class="btn btn-default form-control" value="{{ 'Submit'|trans }}" />
+        </div>
+      </div>
+    </form>
+
+  </div>
+{% endblock content %}

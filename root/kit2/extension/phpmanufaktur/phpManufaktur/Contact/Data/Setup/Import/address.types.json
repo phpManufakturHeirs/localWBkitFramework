@@ -1,22 +1,26 @@
 [
   {
-    "type":"PRIVATE",
-    "description":"description: private"
+    "type":"PRIMARY",
+    "description":"primary address for all contact types"
   },
   {
-    "type":"BUSINESS",
-    "description":"description: business"
+    "type":"SECONDARY",
+    "description":"secondary address fpr all contact types"
   },
   {
     "type":"DELIVERY",
-    "description":"description: delivery"
+    "description":"primary delivery address"
+  },
+  {
+      "type":"DELIVERY_SECONDARY",
+      "description":"secondary delivery address"
   },
   {
     "type":"BILLING",
-    "description":"description: billing"
+    "description":"primary billing address"
   },
   {
-    "type":"OTHER",
-    "description":"description: other"
+      "type":"BILLING_SECONDARY",
+      "description":"secondary billing address"
   }
 ]

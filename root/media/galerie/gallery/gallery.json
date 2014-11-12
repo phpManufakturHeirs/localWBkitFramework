@@ -1,0 +1,138 @@
+{
+  "disney_11_bg_112903.jpg": {
+    "name": "disney_11_bg_112903.jpg",
+    "fullsize": {
+      "url": "http:\/\/localhost:8080\/media\/galerie\/gallery\/fullsize\/disney_11_bg_112903.jpg",
+      "width": 1024,
+      "height": 768
+    },
+    "thumbnail": {
+      "url": "http:\/\/localhost:8080\/media\/galerie\/gallery\/thumbnail\/disney_11_bg_112903.jpg",
+      "width": 250,
+      "height": 184
+    },
+    "locale": {
+      "fallback": "en",
+      "en": {
+        "description": "",
+        "content": "",
+        "link": {
+          "url": "",
+          "target": "_parent",
+          "title": ""
+        }
+      },
+      "de": {
+        "description": "Bilder von pdphoto.org",
+        "content": "Bilder von pdphoto.org",
+        "link": {
+          "url": "",
+          "target": "_parent",
+          "title": ""
+        }
+      }
+    }
+  },
+  "la_3_bg_052204.jpg": {
+    "name": "la_3_bg_052204.jpg",
+    "fullsize": {
+      "url": "http:\/\/localhost:8080\/media\/galerie\/gallery\/fullsize\/la_3_bg_052204.jpg",
+      "width": 599,
+      "height": 800
+    },
+    "thumbnail": {
+      "url": "http:\/\/localhost:8080\/media\/galerie\/gallery\/thumbnail\/la_3_bg_052204.jpg",
+      "width": 145,
+      "height": 200
+    },
+    "locale": {
+      "fallback": "en",
+      "en": {
+        "description": "",
+        "content": "",
+        "link": {
+          "url": "",
+          "target": "_parent",
+          "title": ""
+        }
+      },
+      "de": {
+        "description": "Bilder von pdphoto.org",
+        "content": "Bilder von pdphoto.org",
+        "link": {
+          "url": "",
+          "target": "_parent",
+          "title": ""
+        }
+      }
+    }
+  },
+  "mums_6_bg_110203.jpg": {
+    "name": "mums_6_bg_110203.jpg",
+    "fullsize": {
+      "url": "http:\/\/localhost:8080\/media\/galerie\/gallery\/fullsize\/mums_6_bg_110203.jpg",
+      "width": 599,
+      "height": 800
+    },
+    "thumbnail": {
+      "url": "http:\/\/localhost:8080\/media\/galerie\/gallery\/thumbnail\/mums_6_bg_110203.jpg",
+      "width": 145,
+      "height": 200
+    },
+    "locale": {
+      "fallback": "en",
+      "en": {
+        "description": "",
+        "content": "",
+        "link": {
+          "url": "",
+          "target": "_parent",
+          "title": ""
+        }
+      },
+      "de": {
+        "description": "Bilder von pdphoto.org",
+        "content": "Bilder von pdphoto.org",
+        "link": {
+          "url": "",
+          "target": "_parent",
+          "title": ""
+        }
+      }
+    }
+  },
+  "zoo_2_bg_100304.jpg": {
+    "name": "zoo_2_bg_100304.jpg",
+    "fullsize": {
+      "url": "http:\/\/localhost:8080\/media\/galerie\/gallery\/fullsize\/zoo_2_bg_100304.jpg",
+      "width": 1024,
+      "height": 768
+    },
+    "thumbnail": {
+      "url": "http:\/\/localhost:8080\/media\/galerie\/gallery\/thumbnail\/zoo_2_bg_100304.jpg",
+      "width": 250,
+      "height": 184
+    },
+    "locale": {
+      "fallback": "en",
+      "en": {
+        "description": "",
+        "content": "",
+        "link": {
+          "url": "",
+          "target": "_parent",
+          "title": ""
+        }
+      },
+      "de": {
+        "description": "Bilder von pdphoto.org",
+        "content": "Bilder von pdphoto.org",
+        "link": {
+          "url": "",
+          "target": "_parent",
+          "title": ""
+        }
+      }
+    }
+  }
+}

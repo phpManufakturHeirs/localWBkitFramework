@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -186,6 +186,30 @@ EOD;
                 'extra_type_id' => $extra_type_id,
                 'category_type_name' => $type['category_type_name']
             ));
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Select ExtraCategory by the given name and category ID
+     *
+     * @param string $extra_name
+     * @param integer $category_type_id
+     * @throws \Exception
+     * @return Ambigous <boolean, array>
+     */
+    public function selectTypeByNameAndCategory($extra_name, $category_type_id)
+    {
+        try {
+            $ExtraType = FRAMEWORK_TABLE_PREFIX.'contact_extra_type';
+            $ExtraCategory = self::$table_name;
+            $SQL = "SELECT * FROM `$ExtraCategory` ".
+                "LEFT JOIN `$ExtraType` ON `$ExtraType`.`extra_type_id`=`$ExtraCategory`.`extra_type_id` ".
+                "WHERE `$ExtraType`.`extra_type_name`='$extra_name' AND ".
+                "`$ExtraCategory`.`category_type_id`$category_type_id";
+            $result = $this->app['db']->fetchAssoc($SQL);
+            return (is_array($result)) ? $result : false;
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }

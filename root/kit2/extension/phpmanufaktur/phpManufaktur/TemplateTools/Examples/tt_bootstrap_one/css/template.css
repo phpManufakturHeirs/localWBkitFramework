@@ -1,0 +1,100 @@
+/**
+ * TemplateTools
+ *
+ * @author Team phpManufaktur <team@phpmanufaktur.de>
+ * @link https://kit2.phpmanufaktur.de/TemplateTools
+ * @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ */
+
+a {
+  text-decoration: none;
+  color: #333;
+  background-color: transparent;
+}
+a:link,
+a:visited {
+  color: #333;
+}
+a:active,
+a:hover {
+  color: #da251d;
+}
+
+@media (max-width: 768px) { 
+  .template-name {
+    padding-top: 5px;
+    padding-bottom: 10px;
+  }
+  .template-name-header {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .template-name-path {
+    font-size: 11px;
+  }
+  .navigation {
+    padding: 15px 0 5px 0;
+    font-size: 11px;
+  }
+}
+@media (min-width: 768px) {
+  .template-name {
+    padding-top: 30px;
+    padding-bottom: 0;
+  }
+  .template-name-header {
+    font-size: 30px;
+    font-weight: bolder;
+  }
+  .template-name-path {
+    font-size: 13px;
+  }
+  .navigation {
+    padding: 50px 0 200px 0;
+    font-size: 12px;
+  }
+}
+
+.navigation,
+.template-name {
+  font-family: Courier, monospace;  
+}
+
+.navigation,
+.logo-container {
+  color: #333;
+  background-color: rgba(0,0,0, 0.1);
+}
+.logo {
+  background-color: #fff;
+}
+
+.navigation ul,
+.navigation li {
+  list-style: none;
+  padding: 0;
+  margin: 3px 0 3px 10px;
+}
+.navigation a:hover,
+.navigation a:active,
+.navigation li.menu-current a:link,
+.navigation li.menu-current a:visited {
+  color: #da251d;
+}
+.navigation a:link,
+.navigation a:visited,
+.navigation li.menu-current li a:link,
+.navigation li.menu-current li a:visited {
+  color: #000;
+}
+
+.search {
+  margin-top: 10px;
+}
+
+.footer {
+  text-align: right;
+  font-size: 10px;
+  color: #999;
+}

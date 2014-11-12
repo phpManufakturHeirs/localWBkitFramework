@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -26,6 +26,7 @@ class ContactSelect extends Dialog {
      * Constructor
      *
      * @param Application $app
+     * @param array $options
      */
     public function __construct(Application $app=null, $options=null)
     {
@@ -33,28 +34,33 @@ class ContactSelect extends Dialog {
         // set the form options
 
         if (!is_null($app)) {
-            $this->initialize($options);
+            $this->initialize($app, $options);
         }
     }
 
-    protected function initialize($options=null)
+    /**
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Contact\Control\Alert::initialize()
+     */
+    protected function initialize(Application $app, $options=null)
     {
+        parent::initialize($app);
+
         $this->setOptions(array(
             'template' => array(
                 'namespace' => isset($options['template']['namespace']) ? $options['template']['namespace'] : '@phpManufaktur/Contact/Template',
-                'message' => isset($options['template']['message']) ? $options['template']['message'] : 'backend/message.twig',
-                'select' => isset($options['template']['select']) ? $options['template']['select'] : 'backend/simple/select.contact.twig'
+                'select' => isset($options['template']['select']) ? $options['template']['select'] : 'pattern/admin/simple/select.contact.twig'
             ),
             'route' => array(
-                'action' => isset($options['route']['action']) ? $options['route']['action'] : '/admin/contact/simple/contact',
+                'action' => isset($options['route']['action']) ? $options['route']['action'] : '/admin/contact/select',
                 'contact' => array(
                     'person' => array(
-                        'create' => isset($options['route']['contact']['person']['create']) ? $options['route']['contact']['person']['create'] : '/admin/contact/simple/contact/person',
-                        'edit' => isset($options['route']['contact']['person']['edit']) ? $options['route']['contact']['person']['edit'] : '/admin/contact/simple/contact/person/id/{contact_id}'
+                        'create' => isset($options['route']['contact']['person']['create']) ? $options['route']['contact']['person']['create'] : '/admin/contact/person/edit',
+                        'edit' => isset($options['route']['contact']['person']['edit']) ? $options['route']['contact']['person']['edit'] : '/admin/contact/person/edit/id/{contact_id}'
                     ),
                     'company' => array(
-                        'create' => isset($options['route']['contact']['company']['create']) ? $options['route']['contact']['company']['create'] : '/admin/contact/simple/contact/company',
-                        'edit' => isset($options['route']['contact']['company']['edit']) ? $options['route']['contact']['company']['edit'] : '/admin/contact/simple/contact/company/id/{contact_id}'
+                        'create' => isset($options['route']['contact']['company']['create']) ? $options['route']['contact']['company']['create'] : '/admin/contact/company/edit',
+                        'edit' => isset($options['route']['contact']['company']['edit']) ? $options['route']['contact']['company']['edit'] : '/admin/contact/company/edit/id/{contact_id}'
                     )
                 )
             )
@@ -86,7 +92,7 @@ class ContactSelect extends Dialog {
             'data' => self::$contact_id
         ))
         ->add('select_type', 'choice', array(
-            'choices' => array('PERSON' => 'PERSON', 'COMPANY' => 'COMPANY'),
+            'choices' => array('PERSON' => 'Person', 'COMPANY' => 'Company'),
             'empty_value' => false,
             'multiple' => false,
             'expanded' => true,
@@ -122,8 +128,8 @@ class ContactSelect extends Dialog {
         if (self::$contact_id > 0) {
             // select a specific contact ID for editing
             if (false === ($type = $this->ContactControl->getContactType(self::$contact_id))) {
-                $this->setMessage("The contact with the ID %contact_id% does not exists!",
-                    array('%contact_id%' => self::$contact_id));
+                $this->setAlert("The contact with the ID %contact_id% does not exists!",
+                    array('%contact_id%' => self::$contact_id), self::ALERT_TYPE_WARNING);
             }
             elseif ($type == 'PERSON') {
                 $subRequest = Request::create(str_replace('{contact_id}', self::$contact_id, self::$options['route']['contact']['person']['edit']));
@@ -158,16 +164,19 @@ class ContactSelect extends Dialog {
             }
             else {
                 // general error (timeout, CSFR ...)
-                $this->setMessage('The form is not valid, please check your input and try again!');
+                $this->setAlert('The form is not valid, please check your input and try again!', array(),
+                    self::ALERT_TYPE_DANGER, true, array('form_errors' => $form->getErrorsAsString(),
+                        'method' => __METHOD__, 'line' => __LINE__));
             }
         }
 
         return $this->app['twig']->render($this->app['utils']->getTemplateFile(self::$options['template']['namespace'], self::$options['template']['select']),
             array(
-                'message' => $this->getMessage(),
+                'alert' => $this->getAlert(),
                 'form' => $form->createView(),
                 'route' => self::$options['route'],
-                'extra' => $extra
+                'extra' => $extra,
+                'usage' => isset($extra['usage']) ? $extra['usage'] : $this->app['request']->get('usage', 'framework')
             ));
     }
 }

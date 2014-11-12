@@ -2,7 +2,7 @@
   kitCommand: Rating
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/CommandCollection
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
@@ -17,6 +17,7 @@
   <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CommandCollection/Template/Rating/default/jquery/jRating.jquery.js"></script>
 {% endblock jquery %}
 {% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
   <div class="rating-container">
     <div class="rating-stars rating-{{ guid }}" 
          data-average="{{ average }}" 

@@ -1,0 +1,33 @@
+{#
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Event
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+
+{% block stylesheet %}
+  {# load all stylesheets defined in the parent template #}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/event.min.css') %}
+    {# load the CSS for this template from the PRIMARY template defined in framework.json #}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/event.min.css' }}" media="screen, projection" />
+  {% else %}
+    {# ... otherwise load the CSS from the /bootstrap directory for this template #}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/bootstrap/css/event.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock %}
+{% block content %}
+  <div class="event">
+    <!-- {{ _self.getTemplateName() }} -->  
+
+    <h2>{{ 'Change Event configuration'|trans }}</h2>
+
+    {{ parent() }}
+    
+  </div>
+{% endblock %}  

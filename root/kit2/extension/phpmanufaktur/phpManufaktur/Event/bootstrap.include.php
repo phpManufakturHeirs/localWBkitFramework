@@ -4,28 +4,78 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/FacebookGallery
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
 
 use phpManufaktur\Basic\Control\CMS\EmbeddedAdministration;
 
-// not really needed but make error control more easy ...
-global $app;
-
+// grant the ROLE hierarchy for the EVENT ROLES
 $roles = $app['security.role_hierarchy'];
 if (!in_array('ROLE_EVENT_ADMIN', $roles)) {
     $roles['ROLE_ADMIN'][] = 'ROLE_EVENT_ADMIN';
-    $roles['ROLE_EVENT_ADMIN'][] = 'ROLE_EVENT_EDIT';
+    $roles['ROLE_EVENT_ADMIN'] = array(
+        'ROLE_EVENT_CONTACT',
+        'ROLE_EVENT_EDIT_ADMIN',
+        'ROLE_EVENT_EDIT_LOCATION',
+        'ROLE_EVENT_EDIT_ORGANIZER',
+        'ROLE_EVENT_EDIT_SUBMITTER',
+        'ROLE_EVENT_LOCATION',
+        'ROLE_EVENT_ORGANIZER',
+        'ROLE_EVENT_SUBMITTER',
+        'ROLE_EVENT_USER',
+        'ROLE_MEDIABROWSER_ADMIN',
+        'ROLE_MEDIABROWSER_USER'
+    );
     $app['security.role_hierarchy'] = $roles;
 }
 
+// add a access point for EVENT
+$entry_points = $app['security.role_entry_points'];
+$entry_points['ROLE_ADMIN'][] = array(
+    'route' => '/admin/event',
+    'name' => 'Event',
+    'info' => $app['translator']->trans('Event management suite for freelancers and organizers'),
+    'icon' => array(
+        'path' => '/extension/phpmanufaktur/phpManufaktur/Event/extension.jpg',
+        'url' => MANUFAKTUR_URL.'/Event/extension.jpg'
+    )
+);
+$entry_points['ROLE_ADMIN'][] = array(
+    'route' => '/admin/event/import',
+    'name' => 'Event Migrate',
+    'info' => $app['translator']->trans('Migrate data of a kitEvent installation into Event'),
+    'icon' => array(
+        'path' => '/extension/phpmanufaktur/phpManufaktur/Event/Data/Import/kitEvent/migrate.jpg',
+        'url' => MANUFAKTUR_URL.'/Event/Data/Import/kitEvent/migrate.jpg'
+    )
+);
 
-// scan the /Locale directory and add all available languages
-$app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/Event/Data/Locale');
-// scan the /Locale/Custom directory and add all available languages
-$app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/Event/Data/Locale/Custom');
+$app['security.role_entry_points'] = $entry_points;
+
+// add all ROLES provided and used by EVENT
+$roles = array(
+    'ROLE_EVENT_ADMIN',
+    'ROLE_EVENT_CONTACT',
+    'ROLE_EVENT_EDIT_ADMIN',
+    'ROLE_EVENT_EDIT_LOCATION',
+    'ROLE_EVENT_EDIT_ORGANIZER',
+    'ROLE_EVENT_EDIT_SUBMITTER',
+    'ROLE_EVENT_LOCATION',
+    'ROLE_EVENT_ORGANIZER',
+    'ROLE_EVENT_SUBMITTER',
+    'ROLE_EVENT_USER'
+);
+$roles_provided = $app['security.roles_provided'];
+if (!in_array($roles, $roles_provided)) {
+    foreach ($roles as $role) {
+        if (!in_array($role, $roles_provided)) {
+            $roles_provided[] = $role;
+        }
+    }
+    $app['security.roles_provided'] = $roles_provided;
+}
 
 /**
  * Use the EmbeddedAdministration feature to connect the extension with the CMS
@@ -34,7 +84,7 @@ $app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/Event/Data/Locale/Custom');
  */
 $app->get('/event/cms/{cms_information}', function ($cms_information) use ($app) {
     $administration = new EmbeddedAdministration($app);
-    return $administration->route('/admin/event/about', $cms_information);
+    return $administration->route('/admin/event', $cms_information);
 });
 
 /**
@@ -51,9 +101,9 @@ $admin->get('/event/uninstall',
     // uninstall routine for kfEvent
     'phpManufaktur\Event\Data\Setup\Uninstall::exec');
 
-
+$app->get('/admin/event',
+    'phpManufaktur\Event\Control\Backend\Backend::ControllerSelectDefaultTab');
 $app->get('/admin/event/about',
-    // About dialog
     'phpManufaktur\Event\Control\Backend\About::exec');
 
 $app->match('/admin/event/contact/list',
@@ -72,17 +122,17 @@ $app->match('/admin/event/contact/select',
 $app->match('/admin/event/contact/edit/id/{contact_id}',
     'phpManufaktur\Event\Control\Backend\ContactSelect::exec');
 
+// Create and Edit Person contacts
 $app->match('/admin/event/contact/person/edit',
-    // Create and Edit Person contacts
-    'phpManufaktur\Event\Control\Backend\ContactPerson::exec');
+    'phpManufaktur\Event\Control\Backend\ContactPerson::Controller');
 $app->match('/admin/event/contact/person/edit/id/{contact_id}',
-    'phpManufaktur\Event\Control\Backend\ContactPerson::exec');
+    'phpManufaktur\Event\Control\Backend\ContactPerson::Controller');
 
 $app->match('/admin/event/contact/company/edit',
     // Create and Edit Company contacts
-    'phpManufaktur\Event\Control\Backend\ContactCompany::exec');
+    'phpManufaktur\Event\Control\Backend\ContactCompany::Controller');
 $app->match('/admin/event/contact/company/edit/id/{contact_id}',
-    'phpManufaktur\Event\Control\Backend\ContactCompany::exec');
+    'phpManufaktur\Event\Control\Backend\ContactCompany::Controller');
 
 $app->match('/admin/event/contact/category/list',
     // Category List
@@ -157,6 +207,42 @@ $app->match('/admin/event/image/delete/id/{image_id}/event/{event_id}',
     // delete image from event
     'phpManufaktur\Event\Control\Backend\EventEdit::deleteImage');
 
+$app->get('/admin/event/copy',
+    'phpManufaktur\Event\Control\Backend\EventCopy::controllerCopyEvent');
+$app->post('/admin/event/copy/search/check',
+    'phpManufaktur\Event\Control\Backend\EventCopy::controllerSearchCheck');
+$app->get('/admin/event/copy/id/{event_id}',
+    'phpManufaktur\Event\Control\Backend\EventCopy::controllerCopyID');
+$app->post('/admin/event/copy/comments/check',
+    'phpManufaktur\Event\Control\Backend\EventCopy::controllerCommentsCheck');
+
+$app->get('/admin/event/recurring/id/{event_id}',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerStart')
+    ->value('event_id', -1);
+$app->post('/admin/event/recurring/check/type',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckType');
+$app->post('/admin/event/recurring/check/day/type',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckDayType');
+$app->post('/admin/event/recurring/check/day/sequence',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckDaySequence');
+$app->post('/admin/event/recurring/check/week/sequence',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckWeekSequence');
+$app->post('/admin/event/recurring/check/month/type',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckMonthType');
+$app->post('/admin/event/recurring/check/month/sequence',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckMonthSequence');
+$app->post('/admin/event/recurring/check/month/pattern',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckMonthPattern');
+$app->post('/admin/event/recurring/check/year/type',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckYearType');
+$app->post('/admin/event/recurring/check/year/sequence',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckYearSequence');
+$app->post('/admin/event/recurring/check/year/pattern',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckYearPattern');
+$app->post('/admin/event/recurring/check/date/end',
+    'phpManufaktur\Event\Control\Backend\RecurringEvent::ControllerCheckRecurringDateEnd');
+
+
 $app->match('/admin/event/list',
     // Show the Event List
     'phpManufaktur\Event\Control\Backend\EventList::exec');
@@ -166,8 +252,10 @@ $app->match('/admin/event/list/page/{page}',
 $app->match('/admin/event/search',
     'phpManufaktur\Event\Control\Backend\EventSearch::exec');
 
+// Import from kitEvent
+$app->match('/admin/event/import',
+    'phpManufaktur\Event\Control\Import\kitEvent\kitEvent::start');
 $app->match('/admin/event/import/kitevent',
-    // Import events from kitEvent
     'phpManufaktur\Event\Control\Import\kitEvent\kitEvent::start');
 $app->match('/admin/event/import/kitevent/start',
     'phpManufaktur\Event\Control\Import\kitEvent\kitEvent::start');
@@ -182,8 +270,20 @@ $app->get('/admin/event/qrcode/rebuild',
     'phpManufaktur\Event\Control\Command\EventQRCode::ControllerRebuildAllQRCodeFiles');
 
 // handling of subscriptions
-$app->get('/admin/event/registration',
-    'phpManufaktur\Event\Control\Backend\Subscribe::controllerList');
+$app->get('/admin/event/subscription',
+    'phpManufaktur\Event\Control\Backend\Subscribe::ControllerList');
+$app->match('/admin/event/subscription/add/start',
+    'phpManufaktur\Event\Control\Backend\Subscribe::ControllerAddSubscriptionStart');
+$app->match('/admin/event/subscription/add/contact',
+    'phpManufaktur\Event\Control\Backend\Subscribe::ControllerAddContact');
+$app->match('/admin/event/subscription/add/event',
+    'phpManufaktur\Event\Control\Backend\Subscribe::ControllerSearchEvent');
+$app->match('/admin/event/subscription/add/finish',
+    'phpManufaktur\Event\Control\Backend\Subscribe::ControllerFinishSubscription');
+$app->get('/admin/event/subscription/edit/{subscription_id}',
+    'phpManufaktur\Event\Control\Backend\Subscribe::ControllerEditSubscription');
+$app->post('/admin/event/subscription/edit/check',
+    'phpManufaktur\Event\Control\Backend\Subscribe::ControllerCheckSubscription');
 
 // handling of proposes
 $app->get('/admin/event/propose',
@@ -254,6 +354,8 @@ $app->match('/event/propose/location/search',
     'phpManufaktur\Event\Control\Command\Propose::controllerSearchLocation');
 $app->post('/event/propose/location/select',
     'phpManufaktur\Event\Control\Command\Propose::controllerSelectLocation');
+$app->get('/event/propose/location/create/group/{group_id}',
+    'phpManufaktur\Event\Control\Command\Propose::controllerCreateLocation');
 $app->get('/event/propose/location/id/{contact_id}',
     'phpManufaktur\Event\Control\Command\Propose::controllerLocationID');
 $app->post('/event/propose/event/check',

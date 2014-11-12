@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -33,12 +33,12 @@ class CategoryEdit extends Backend {
         $this->SimpleCategoryEdit = new SimpleCategoryEdit($this->app, array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Event/Template',
-                'message' => 'backend/message.twig',
-                'edit' => 'backend/contact.category.edit.twig'
+                'edit' => 'admin/contact/edit.category.twig'
             ),
             'route' => array(
                 'action' => '/admin/event/contact/category/edit?usage='.self::$usage,
-                'extra' => '/admin/event/contact/extra/list?usage='.self::$usage
+                'extra' => '/admin/event/contact/extra/list?usage='.self::$usage,
+                'list' => '/admin/event/contact/category/list?usage='.self::$usage
             )
         ));
     }

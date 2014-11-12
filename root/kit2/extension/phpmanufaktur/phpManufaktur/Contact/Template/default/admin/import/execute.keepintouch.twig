@@ -1,0 +1,43 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}  
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Contact/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Contact/Template/default/css/admin.min.css' }}" />
+{% endblock %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    <div class="panel panel-primary">
+      <div class="panel-heading">{{ 'Import contacts from KeepInTouch (KIT)'|trans }}</div>
+      <div class="panel-body">
+
+        {{ alert }}
+
+        {% if app.translator.locale == 'de' %}
+          {# german translation #}
+          <p>Es existieren <b>{{ contacts.detected }}</b> KeepInTouch Datensätze, die in kitFramework <i>Contact</i> importiert werden können.</p>
+          <p>Tatsächlich wurden <b>{{ contacts.imported }}</b> Datensätze importiert. Hierbei wurden alle Datensätze übersprungen, die bereits in <i>Contact</i> existieren.</p>
+        {% else %}
+          {# english translation #}
+          <p>Detected <b>{{ contacts.detected }}</b> KeepInTouch contact records which can imported to kitFramework <i>Contact</i>.</p>
+          <p>Really imported where <b>{{ contacts.imported }}</b>. Skipped records which are already exists.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>  
+{% endblock content %}

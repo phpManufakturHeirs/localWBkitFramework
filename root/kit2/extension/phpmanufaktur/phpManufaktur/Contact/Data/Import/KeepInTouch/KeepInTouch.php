@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -96,10 +96,11 @@ class KeepInTouch
         }
     }
 
-    public function getAllKITids()
+    public function getAllKITids($start_id=1)
     {
         try {
-            $SQL = "SELECT `contact_id` FROM `".CMS_TABLE_PREFIX."mod_kit_contact` WHERE `contact_status`!='statusDeleted'";
+            $SQL = "SELECT `contact_id` FROM `".CMS_TABLE_PREFIX."mod_kit_contact` WHERE ".
+                "`contact_status`!='statusDeleted' AND `contact_id` >= '$start_id' ORDER BY `contact_id` ASC";
             return $this->app['db']->fetchAll($SQL);
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
@@ -161,7 +162,7 @@ class KeepInTouch
             }
             $origin = array();
             foreach ($result as $key => $value) {
-            	$origin[$key] = is_string($value) ? $this->app['utils']->unsanitizeText($value) : $value;
+                $origin[$key] = is_string($value) ? $this->app['utils']->unsanitizeText($value) : $value;
             }
             $contact = array();
             $contact['origin'] = $origin;
@@ -175,11 +176,11 @@ class KeepInTouch
                     if (!isset($result['address_id'])) {
                         continue;
                     }
-                	$address = array();
-		            foreach ($result as $key => $value) {
-		            	$address[$key] = is_string($value) ? $this->app['utils']->unsanitizeText($value) : $value;
-		            }
-		            if (isset($origin['contact_address_standard']) && ($origin['contact_address_standard'] == $address_id)) {
+                    $address = array();
+                    foreach ($result as $key => $value) {
+                        $address[$key] = is_string($value) ? $this->app['utils']->unsanitizeText($value) : $value;
+                    }
+                    if (isset($origin['contact_address_standard']) && ($origin['contact_address_standard'] == $address_id)) {
                         $address['is_default'] = true;
                     }
                     else {
@@ -196,20 +197,13 @@ class KeepInTouch
                 foreach ($email_addresses as $email_item) {
                     list($type, $email) = explode('|', $email_item);
                     if (isset($origin['contact_email_standard']) && ($origin['contact_email_standard'] == $i)) {
-                        $usage = 'PRIMARY';
                         // this is also the login !!!
                         $contact['login'] = strtolower(trim($email));
-                    }
-                    elseif ($type == 'typeCompany') {
-                        $usage = 'BUSINESS';
-                    }
-                    else {
-                        $usage = 'PRIVATE';
                     }
                     $contact['communication'][] = array(
                         'type' => 'EMAIL',
                         'address' => strtolower(trim($email)),
-                        'usage' => $usage
+                        'usage' => 'PRIMARY'
                     );
                     $i++;
                 }
@@ -220,12 +214,6 @@ class KeepInTouch
                 $i=0;
                 foreach ($phone_addresses as $phone_item) {
                     list($type, $phone) = explode('|', $phone_item);
-                    if (isset($origin['contact_phone_standard']) && ($origin['contact_phone_standard'] == $i)) {
-                        $usage = 'PRIMARY';
-                    }
-                    else {
-                        $usage = 'PRIVATE';
-                    }
                     if ($type == 'phonePhone') {
                         $use_type = 'PHONE';
                     }
@@ -243,7 +231,7 @@ class KeepInTouch
                     $contact['communication'][] = array(
                         'type' => $use_type,
                         'address' => strtolower(trim($phone)),
-                        'usage' => $usage
+                        'usage' => 'PRIMARY'
                     );
                     $i++;
                 }
@@ -274,7 +262,7 @@ class KeepInTouch
                     $contact['communication'][] = array(
                         'type' => $use_type,
                         'address' => strtolower(trim($internet)),
-                        'usage' => 'PRIVATE'
+                        'usage' => 'PRIMARY'
                     );
                     $i++;
                 }

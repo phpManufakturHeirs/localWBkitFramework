@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -14,9 +14,9 @@ namespace phpManufaktur\Contact\Control\Import\KeepInTouch;
 use Silex\Application;
 use phpManufaktur\Contact\Data\Import\KeepInTouch\KeepInTouch as KeepInTouchData;
 use phpManufaktur\Contact\Control\Contact;
-use phpManufaktur\Contact\Control\Import\Dialog;
+use phpManufaktur\Basic\Control\Pattern\Alert;
 
-class KeepInTouch extends Dialog {
+class KeepInTouch extends Alert {
 
     protected static $kit_release = null;
     protected static $import_is_possible = false;
@@ -24,6 +24,7 @@ class KeepInTouch extends Dialog {
     protected $Contact = null;
     protected static $script_start = null;
     protected static $max_execution_time = 60; // 60 seconds
+    protected static $usage = null;
 
     /**
      * Initialize the class
@@ -45,6 +46,8 @@ class KeepInTouch extends Dialog {
         $this->Contact = new Contact($app);
         // increase the execution time to 60 seconds
         ini_set('max_execution_time', self::$max_execution_time);
+
+        self::$usage = $app['request']->get('usage', 'framework');
     }
 
     /**
@@ -61,19 +64,21 @@ class KeepInTouch extends Dialog {
         $records = 0;
         if (self::$import_is_possible) {
             $records = $this->KeepInTouch->countKITrecords();
-            $this->setMessage('Detected a KeepInTouch installation (Release: %release%) with %count% active or locked contacts.',
-                array('%release%' => self::$kit_release, '%count%' => $records));
+            $this->setAlert('Detected a KeepInTouch installation (Release: %release%) with %count% active or locked contacts.',
+                array('%release%' => self::$kit_release, '%count%' => $records), self::ALERT_TYPE_INFO);
         }
         else {
-            $this->setMessage('There exists no KeepInTouch installation at the parent CMS!');
+            $this->setAlert('There exists no KeepInTouch installation at the parent CMS!', array(), self::ALERT_TYPE_WARNING);
         }
 
         $this->app['session']->set('KIT_IMPORT_CONTACTS_DETECTED', $records);
         $this->app['session']->set('KIT_IMPORT_CONTACTS_IMPORTED', 0);
 
-        return $this->app['twig']->render($this->app['utils']->getTemplateFile('@phpManufaktur/Contact/Template', 'backend/import/start.keepintouch.twig'),
+        return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+            '@phpManufaktur/Contact/Template', 'admin/import/start.keepintouch.twig'),
             array(
-                'message' => $this->getMessage(),
+                'usage' => self::$usage,
+                'alert' => $this->getAlert(),
                 'records' => $records,
                 'import_is_possible' => self::$import_is_possible,
                 'kit_release' => self::$kit_release
@@ -110,13 +115,13 @@ class KeepInTouch extends Dialog {
                 $addresses[] = array(
                     'address_id' => -1,
                     'contact_id' => -1,
-                    'address_type' => ($contact_type == 'PERSON') ? 'PRIVATE' : 'BUSINESS',
-                    'address_street' => $address['address_street'],
+                    'address_type' => 'PRIMARY',
+                    'address_street' => $this->app['utils']->sanitizeText($address['address_street']),
                     'address_zip' => $address['address_zip'],
-                    'address_city' => $address['address_city'],
+                    'address_city' => $this->app['utils']->sanitizeText($address['address_city']),
                     'address_country_code' => ($address['address_country'] != '-1') ? strtoupper($address['address_country']) : '',
-                    'address_appendix_1' => $address['address_extra'],
-                    'address_state' => $address['address_region']
+                    'address_appendix_1' => $this->app['utils']->sanitizeText($address['address_extra']),
+                    'address_state' => $this->app['utils']->sanitizeText($address['address_region'])
                 );
             }
         }
@@ -148,8 +153,8 @@ class KeepInTouch extends Dialog {
                     'contact_id' => -1,
                     'person_gender' => $kit['person_gender'],
                     'person_title' => $kit['person_title'],
-                    'person_first_name' => $kit['origin']['contact_person_first_name'],
-                    'person_last_name' => $kit['origin']['contact_person_last_name'],
+                    'person_first_name' => $this->app['utils']->sanitizeText($kit['origin']['contact_person_first_name']),
+                    'person_last_name' => $this->app['utils']->sanitizeText($kit['origin']['contact_person_last_name']),
                     'person_birthday' => (!empty($kit['origin']['contact_birthday'])) ? $kit['origin']['contact_birthday'] : '0000-00-00',
                     'person_primary_company_id' => isset($kit['primary_company_id']) ? $kit['primary_company_id'] : -1
                 )
@@ -160,9 +165,9 @@ class KeepInTouch extends Dialog {
                 array(
                     'company_id' => -1,
                     'contact_id' => -1,
-                    'company_name' => $kit['origin']['contact_company_name'],
-                    'company_department' => $kit['origin']['contact_company_dept'],
-                    'company_additional' => $kit['origin']['contact_company_add'],
+                    'company_name' => $this->app['utils']->sanitizeText($kit['origin']['contact_company_name']),
+                    'company_department' => $this->app['utils']->sanitizeText($kit['origin']['contact_company_dept']),
+                    'company_additional' => $this->app['utils']->sanitizeText($kit['origin']['contact_company_add']),
                     'company_primary_person_id' => isset($kit['primary_person_id']) ? $kit['primary_person_id'] : -1
                     )
             );
@@ -176,7 +181,7 @@ class KeepInTouch extends Dialog {
                 'note_id' => -1,
                 'note_title' => 'Imported from KeepInTouch',
                 'note_type' => 'TEXT',
-                'note_content' => strip_tags($note['memo_memo']),
+                'note_content' => $this->app['utils']->sanitizeText(strip_tags($note['memo_memo'])),
                 'note_originator' => $note['memo_update_by'],
                 'note_date' => $note['memo_update_when']
             );
@@ -184,7 +189,6 @@ class KeepInTouch extends Dialog {
 
         // insert the contact data
         if (!$this->Contact->insert($data, $contact_id)) {
-            self::$message = $this->Contact->getMessage();
             return false;
         }
 
@@ -217,7 +221,9 @@ class KeepInTouch extends Dialog {
         $prompt_success = true;
         if (self::$import_is_possible) {
             // get all KIT IDs
-            $kit_ids = $this->KeepInTouch->getAllKITids();
+
+            $start_id = $app['session']->get('KIT_IMPORT_LAST_ID', 1);
+            $kit_ids = $this->KeepInTouch->getAllKITids($start_id);
 
             // check for additional fields
             // - not implemented yet -
@@ -287,21 +293,20 @@ class KeepInTouch extends Dialog {
                         // update the person contact data
                         if (!$this->Contact->update($data, $person_contact_id)) {
                             // something went wrong!
-                            self::$message = $this->Contact->getMessage();
                             break;
                         }
                     }
                 }
-
+                $this->app['session']->set('KIT_IMPORT_LAST_ID', $kit_id['contact_id']);
                 // increase counter
                 $counter++;
-                $total = $this->app['session']->get('KIT_IMPORT_CONTACTS_IMPORTED', 0) + $counter;
+                $total = $this->app['session']->get('KIT_IMPORT_CONTACTS_IMPORTED', 0) + 1;
                 $this->app['session']->set('KIT_IMPORT_CONTACTS_IMPORTED', $total);
 
                 if (((microtime(true) - self::$script_start) + 5) > self::$max_execution_time) {
                     // abort import to prevent timeout
-                    $this->setMessage('To prevent a timeout of the script the import was aborted after import of %counter% records. Please reload this page to continue the import process.',
-                            array('%counter%' => $counter));
+                    $this->setAlert('To prevent a timeout of the script the import was aborted after import of %counter% records. Please reload this page to continue the import process.',
+                            array('%counter%' => $counter), self::ALERT_TYPE_INFO);
                     $this->app['monolog']->addInfo(sprintf('[Import KeepInTouch] Script aborted after %.3f seconds and %d records to prevent a timeout', microtime(true) - self::$script_start, $counter));
                     $prompt_success = false;
                     break;
@@ -312,20 +317,23 @@ class KeepInTouch extends Dialog {
             $contacts_imported = $this->app['session']->get('KIT_IMPORT_CONTACTS_IMPORTED', 0);
 
             if ($prompt_success) {
-                $this->setMessage('The import from KeepInTouch was successfull finished.');
+                $this->setAlert('The import from KeepInTouch was successfull finished.', array(), self::ALERT_TYPE_SUCCESS);
                 $this->app['monolog']->addInfo('The import from KeepInTouch was successfull finished.');
 
                 $this->app['session']->remove('KIT_IMPORT_CONTACTS_DETECTED');
                 $this->app['session']->remove('KIT_IMPORT_CONTACTS_IMPORTED');
+                $this->app['session']->remove('KIT_IMPORT_LAST_ID');
             }
         }
         else {
-            $this->setMessage('There exists no KeepInTouch installation at the parent CMS!');
+            $this->setAlert('There exists no KeepInTouch installation at the parent CMS!', array(), self::ALERT_TYPE_WARNING);
         }
 
-        return $this->app['twig']->render($this->app['utils']->getTemplateFile('@phpManufaktur/Contact/Template', 'backend/import/execute.keepintouch.twig'),
+        return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+            '@phpManufaktur/Contact/Template', 'admin/import/execute.keepintouch.twig'),
             array(
-                'message' => $this->getMessage(),
+                'usage' => self::$usage,
+                'alert' => $this->getAlert(),
                 'contacts' => array(
                     'detected' => $contacts_detected,
                     'imported' => $contacts_imported

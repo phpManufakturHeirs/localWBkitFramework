@@ -1,0 +1,39 @@
+{% block toolbar %}
+  <ul class="nav nav-tabs">
+    {% set default_link = FRAMEWORK_URL ~ '/admin/event/about' %}
+    {% for item in toolbar %}
+      <li{% if item.active %} class="active"{% endif %}>
+        <a href="{{ item.link ~ '?usage=' ~ usage }}" title="{{ item.hint|trans }}">
+          {%if item.name == 'event_list' %}
+            <i class="fa fa-calendar"></i>
+          {% elseif item.name == 'event_edit' %}
+            <i class="fa fa-calendar-o"></i>
+          {% elseif item.name == 'subscription' %}
+            <i class="fa fa-ticket"></i>
+          {% elseif item.name == 'propose' %}
+            <i class="fa fa-bullhorn"></i>
+          {% elseif item.name == 'contact_list' %}
+            <i class="fa fa-users"></i>
+          {% elseif item.name == 'contact_edit' %}
+            <i class="fa fa-user"></i>
+          {% elseif item.name == 'event_groups' %}
+            <i class="fa fa-tasks"></i>
+          {% elseif item.name == 'about' %}
+            <i class="fa fa-question"></i>
+          {% endif %}
+          {% if item.name != 'about' %}  
+            <span class="visible-lg pull-right">&nbsp;{{ item.text|trans }}</span>  
+          {% endif %}
+        </a>
+      </li>
+      {% if item.active %}
+        {% set default_link = item.link %}
+      {% endif %}
+    {% endfor %}
+    {% if usage is defined and usage != 'framework' %}
+      <li>
+        <a class="kitframework-icon" href="{{ default_link }}" title="{{ 'Open the %extension% extension in kitFramework'|trans({'%extension%':'Event'}) }}" target="_blank"><i class="fa fa-puzzle-piece"></i></a>
+      </li>
+    {% endif %}
+  </ul>
+{% endblock toolbar %}

@@ -1,14 +1,10 @@
 [
   {
-    "usage":"PRIVATE",
-    "description":"description: private"
-  },
-  {
-    "usage":"BUSINESS",
-    "description":"description: business"
-  },
-  {
     "usage":"PRIMARY",
     "description":"description: primary"
+  },
+  {
+      "usage":"SECONDARY",
+      "description":"secondary communication channel"
   }
 ]

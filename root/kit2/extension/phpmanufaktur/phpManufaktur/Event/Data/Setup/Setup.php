@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/FacebookGallery
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -26,6 +26,7 @@ use phpManufaktur\Event\Data\Event\Images;
 use phpManufaktur\Event\Data\Event\Subscription;
 use phpManufaktur\Event\Data\Event\Propose;
 use phpManufaktur\Event\Control\Configuration;
+use phpManufaktur\Event\Data\Event\RecurringEvent;
 
 class Setup
 {
@@ -90,6 +91,9 @@ class Setup
 
             $Propose = new Propose($app);
             $Propose->createTable();
+
+            $RecurringEvent = new RecurringEvent($app);
+            $RecurringEvent->createTable();
 
             // setup kit_framework_event as Add-on in the CMS
             $admin_tool = new InstallAdminTool($app);

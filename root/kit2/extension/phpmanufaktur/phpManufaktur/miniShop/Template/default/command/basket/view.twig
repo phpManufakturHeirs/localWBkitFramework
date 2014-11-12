@@ -1,0 +1,38 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/miniShop/Template/default/css/basket.min.css" media="screen, projection" />
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <h1>{{ 'Your shopping basket'|trans }}</h1>  
+    
+    {{ alert }}
+    
+    {% if order.articles is defined and order.articles|length > 0 %}
+      <form action="{{ permalink_base_url ~ '/basket' }}" class="form-inline" method="post" role="form" target="_parent">
+        {# show a summary of the basket content as form #}
+        {% include '@phpManufaktur/miniShop/Template/default/command/basket/summary.twig' with {'use_as_form':true} %}
+        {{ form_rest(form) }}
+      </form>
+      <div class="order-now">
+        <a href="{{ FRAMEWORK_URL ~ '/minishop/order' }}" class="btn btn-default" role="button"><i class="fa fa-money"></i> {{ 'Order now'|trans }}</a>
+      </div>
+    {% endif %}  
+    
+    <div class="switch-to-list">
+      <a href="{{ shop_url }}" target="_parent" class="btn btn-default" role="button"><i class="fa fa-arrow-circle-left"></i> {{ 'Switch to the article list'|trans }}</a>
+    </div>
+{% endblock content %}
+
+

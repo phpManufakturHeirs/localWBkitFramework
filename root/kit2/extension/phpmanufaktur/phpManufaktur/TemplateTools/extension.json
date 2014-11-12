@@ -1,0 +1,70 @@
+{
+  "name":"TemplateTools",
+  "guid":"1DDF7076-0F4B-4E05-9109-D2CABAE9E573",
+  "category":"extension",
+  "group":"phpManufaktur",
+  "vendor":{
+      "name":"phpManufaktur",
+      "url":"https:\/\/phpmanufaktur.de",
+      "mail":"team@phpmanufaktur.de",
+      "address":{
+          "street":"Stockholmer Straße 31",
+          "zip":"13359",
+          "city":"Berlin",
+          "country":"Germany"
+      },
+      "phone":"+49 30 68813647"
+  },
+  "type":"framework",
+  "path":"\/extension\/phpmanufaktur\/phpManufaktur\/TemplateTools",
+  "namespace":"phpManufaktur\\TemplateTools",
+  "release":{
+    "number":"0.27",
+    "date":"2014-09-19",
+    "status":"beta",
+    "changelog":"https:\/\/github.com\/phpManufaktur\/kfTemplateTools\/blob\/master\/CHANGELOG.md"
+  },
+  "description": {
+    "en":{
+      "title":"Template tools for your CMS",
+      "short":"Template tools for WebsiteBaker, LEPTON CMS and BlackCat CMS",
+      "long":"Template tools for WebsiteBaker, LEPTON CMS and BlackCat CMS",
+      "url":"https:\/\/kit2.phpmanufaktur.de\/TemplateTools"
+    },
+    "de":{
+      "title":"Template Werkzeuge für ihr CMS",
+      "short":"Template Werkzeuge für WebsiteBaker, LEPTON CMS und BlackCat CMS",
+      "long":"Template Werkzeuge für WebsiteBaker, LEPTON CMS und BlackCat CMS",
+      "url":"https:\/\/kit2.phpmanufaktur.de\/TemplateTools"
+    }
+  },
+  "require":{
+    "framework": {
+      "release":"0.27"
+    },
+    "Basic": {
+        "release":"1.0.14"
+    },
+    "Library":{
+        "release":"0.38"
+    }
+  },
+  "setup": {
+      "install":"\/admin\/templatetools\/setup",
+      "update":"\/admin\/templatetools\/update",
+      "uninstall":"\/admin\/templatetools\/uninstall"
+  },
+  "license": {
+    "name":"MIT License",
+    "url":"https:\/\/github.com\/phpManufaktur\/kfTemplateTools\/raw\/master\/LICENSE.md"
+  },
+  "download": {
+    "availability":"public",
+    "agreement":"free",
+    "github":{
+      "organization":"phpManufaktur",
+      "repository":"kfTemplateTools"
+    },
+    "url":"https:\/\/github.com\/phpManufaktur\/kfTemplateTools"
+  }
+}

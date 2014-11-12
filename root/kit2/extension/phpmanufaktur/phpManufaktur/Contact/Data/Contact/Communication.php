@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -52,7 +52,7 @@ class Communication
       `communication_id` INT(11) NOT NULL AUTO_INCREMENT ,
       `contact_id` INT(11) NOT NULL DEFAULT '-1' ,
       `communication_type` VARCHAR(32) NOT NULL DEFAULT 'NONE' ,
-      `communication_usage` VARCHAR(32) NOT NULL DEFAULT 'OTHER' ,
+      `communication_usage` VARCHAR(32) NOT NULL DEFAULT 'PRIMARY',
       `communication_value` TEXT NOT NULL ,
       `communication_status` ENUM('ACTIVE','LOCKED','DELETED') NOT NULL DEFAULT 'ACTIVE' ,
       `communication_timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,

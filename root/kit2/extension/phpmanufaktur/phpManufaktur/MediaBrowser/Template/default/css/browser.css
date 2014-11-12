@@ -1,0 +1,32 @@
+/*
+  MediaBrowser
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/MediaBrowser
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+*/
+
+label {
+  margin: 0;
+  padding: 0;
+}
+.caption {
+  font-size: 12px;
+}
+.exit,
+.delete {
+  width: 100%;
+  text-align: right;
+}
+.filename {
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  -moz-binding: url(../xml/ellipsis.xml#ellipsis);
+}
+input[type=submit] {
+  width: auto;
+}

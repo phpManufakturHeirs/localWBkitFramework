@@ -71,7 +71,25 @@ EOD;
     }
 
     /**
-     * Check if the give column exists in the table
+     * Return a valid version string for the MySQL client version,
+     * using mysqli_get_client_version()
+     *
+     * @return string
+     */
+    public function getMySQLversion()
+    {
+        // for version 4.1.6 return 40106;
+        $mysqlVersion =  mysqli_get_client_version();
+        //create mysql version string to check it
+        $mainVersion = (int)($mysqlVersion/10000);
+        $a = $mysqlVersion - ($mainVersion*10000);
+        $minorVersion = (int)($a/100);
+        $subVersion = $a - ($minorVersion*100);
+        return $mainVersion.'.'.$minorVersion.'.'.$subVersion;
+    }
+
+    /**
+     * Check if the given column exists in the table
      *
      * @param string $table
      * @param string $column_name
@@ -127,6 +145,97 @@ EOD;
                 return in_array($value, $check);
             }
             return null;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Get the ENUM values of the given $table / $field
+     *
+     * @param string $table
+     * @param string $field
+     * @throws \Exception
+     * @return Ambigous <boolean, array>
+     */
+    public function getEnumValues($table, $field)
+    {
+        try {
+            $SQL = "SHOW COLUMNS FROM `$table` WHERE FIELD = '$field'";
+            $result = $this->app['db']->fetchAssoc($SQL);
+            $enum_array = array();
+            if (isset($result['Type']) && (false !== strpos($result['Type'], "enum('"))) {
+                $enum = str_replace(array("enum('", "')", "''"), array('', '', "'"), $result['Type']);
+                $enum_array = explode("','", $enum);
+            }
+            return (!empty($enum_array)) ? $enum_array : false;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Get the SET values of the given table and field
+     *
+     * @param string $table
+     * @param string $field
+     * @throws \Exception
+     * @return Ambigous <boolean, array>
+     */
+    public function getSetValues($table, $field)
+    {
+        try {
+            $SQL = "SHOW COLUMNS FROM `$table` WHERE FIELD = '$field'";
+            $result = $this->app['db']->fetchAssoc($SQL);
+            $set_array = array();
+            if (isset($result['Type']) && (false !== strpos($result['Type'], "set('"))) {
+                $set = str_replace(array("set('", "')", "''"), array('', '', "'"), $result['Type']);
+                $set_array = explode("','", $set);
+            }
+            return (!empty($set_array)) ? $set_array : false;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Get the columns of the given table
+     *
+     * @param string $table
+     * @throws \Exception
+     * @return array
+     */
+    public function getColumns($table)
+    {
+        try {
+            $result = $this->app['db']->fetchAll("SHOW COLUMNS FROM `$table`");
+            $columns = array();
+            foreach ($result as $column) {
+                $columns[] = $column['Field'];
+            }
+            return $columns;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Truncate the given table. This function will disable foreign keys before
+     * operate and enable them after the truncation
+     *
+     * @param string $table
+     * @throws \Exception
+     */
+    public function truncateTable($table)
+    {
+        try {
+            $SQL = <<<EOD
+    SET foreign_key_checks = 0;
+    TRUNCATE TABLE `$table`;
+    SET foreign_key_checks = 1;
+EOD;
+            $this->app['db']->query($SQL);
+            $this->app['monolog']->addInfo("Truncate table '$table'", array(__METHOD__, __LINE__));
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }

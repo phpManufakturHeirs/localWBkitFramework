@@ -92,6 +92,13 @@ EOD;
         }
     }
 
+    /**
+     * Select TAG names by the given group ID
+     *
+     * @param integer $group_id
+     * @throws \Exception
+     * @return Ambigous <boolean, array>
+     */
     public function selectTagNamesByGroupID($group_id)
     {
         try {
@@ -107,6 +114,13 @@ EOD;
         }
     }
 
+    /**
+     * Delete the given TAG name assigned to the given group ID
+     *
+     * @param string $tag_name
+     * @param integer $group_id
+     * @throws \Exception
+     */
     public function deleteTagByGroup($tag_name, $group_id)
     {
         try {

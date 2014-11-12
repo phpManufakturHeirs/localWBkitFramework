@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -33,11 +33,11 @@ class ExtraEdit extends Backend {
         $this->SimpleExtraFieldEdit = new SimpleExtraFieldEdit($this->app, array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Event/Template',
-                'message' => 'backend/message.twig',
-                'edit' => 'backend/contact.extra.edit.twig'
+                'edit' => 'admin/contact/edit.extra.twig'
             ),
             'route' => array(
-                'action' => '/admin/event/contact/extra/edit?usage='.self::$usage
+                'action' => '/admin/event/contact/extra/edit?usage='.self::$usage,
+                'list' => '/admin/event/contact/extra/list?usage='.self::$usage
             )
         ));
     }

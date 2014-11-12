@@ -1,0 +1,65 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/miniShop/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'View Order'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/miniShop/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/miniShop/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/miniShop/Template/default/css/admin.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/miniShop/Template/default/admin/toolbar.twig' %}
+
+    <h1>{{ 'View Order'|trans }}</h1>
+    
+    {{ alert }}
+    
+    {% if order|length > 0 %}
+      
+      <div class="address">
+        {% if contact.contact_type == 'COMPANY' %}
+          <p>{{ contact.company_name }}
+            {% if contact.company_department|length > 0 %}<br />{{ contact.company_deparment }}{% endif %}</p>
+          {% else %}
+          <p>{{ contact.person_gender|lower|humanize|trans }}<br />
+            {% if contact.person_first_name|length > 0 %}{{ contact.person_first_name }} {% endif %}{{ contact.person_last_name }}</p>
+          {% endif %}
+        <p>{{ contact.address_street }}<br />
+          {{ contact.address_zip }} {{ contact.address_city }}</p>
+
+        {% if contact.communication_phone|length > 0 %}<p>{{ contact.communication_phone }}</p>{% endif %}
+        <p><a href="mailto:{{ contact.communication_email }}">{{ contact.communication_email }}</a></p>
+        
+        <div class="info">
+          <p><em>{{ 'order_timestamp'|humanize|trans }}</em>: {{ order.order_timestamp|date('DATETIME_FORMAT'|trans) }} {{ "o'clock"|trans }}</p>
+          <p><em>{{ 'confirmation_timestamp'|humanize|trans }}</em>: {{ order.confirmation_timestamp|date('DATETIME_FORMAT'|trans) }} {{ "o'clock"|trans }}</p>
+          <p><em>{{ 'payment_method'|humanize|trans }}</em>: {{ order.payment_method|lower|humanize|trans }}</p>
+        </div>
+        
+      </div>
+      
+      {% include '@phpManufaktur/miniShop/Template/default/command/basket/summary.twig' with {'order':order.data} %}
+      
+      
+    {% endif %}
+  </div>
+{% endblock %}    

@@ -13,6 +13,7 @@ namespace phpManufaktur\Basic\Control\kitCommand;
 
 use Silex\Application;
 use phpManufaktur\Basic\Data\kitCommandParameter;
+use phpManufaktur\Basic\Control\Pattern\Alert;
 
 /**
  * The elementary basic class for all kitCommands
@@ -20,10 +21,8 @@ use phpManufaktur\Basic\Data\kitCommandParameter;
  * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  *
  */
-class Basic
+class Basic extends Alert
 {
-    protected $app = null;
-    protected static $message = '';
     private static $cms_info = null;
     private static $parameter = null;
     private static $GET = null;
@@ -55,7 +54,8 @@ class Basic
      */
     protected function initParameters(Application $app, $parameter_id=-1)
     {
-        $this->app = $app;
+        parent::initialize($app);
+
         // set the given parameter ID
         self::$parameter_id = $parameter_id;
 
@@ -92,7 +92,8 @@ class Basic
         $cmdParameter = new kitCommandParameter($this->app);
 
         if (is_null($this->app['request']->request->get('cms'))) {
-            if (self::$parameter_id == '-1') {
+            if ((self::$parameter_id == '-1') ||
+                (false === ($params = $cmdParameter->selectParameter(self::$parameter_id)))) {
                 // create a default parameter array for the FRAMEWORK
                 //throw new \Exception('Need at least CMS POST parameters or a parameter ID!');
                 $params = array(
@@ -120,9 +121,9 @@ class Basic
                     'iFrame' => null
                 );
             }
-            elseif (false === ($params = $cmdParameter->selectParameter(self::$parameter_id))) {
-                throw new \Exception('Can not get the data for parameter ID '.self::$parameter_id);
-            }
+            //elseif (false === ($params = $cmdParameter->selectParameter(self::$parameter_id))) {
+            //    throw new \Exception('Can not get the data for parameter ID '.self::$parameter_id);
+            //}
             $this->app['request']->request->set('cms', $params['cms']);
             $this->app['request']->request->set('parameter', $params['parameter']);
             $this->app['request']->request->set('GET', $params['GET']);
@@ -169,11 +170,26 @@ class Basic
             );
         }
 
+        // check if scroll_to_id isset by a GET parameter of the CMS of the kitFramework
+        if (isset(Basic::$GET['frame_scroll_to_id'])) {
+            $this->setFrameScrollToID(Basic::$GET['frame_scroll_to_id']);
+        }
+        elseif (null != ($scroll_to = $this->app['request']->query->get('frame_scroll_to_id'))) {
+            $this->setFrameScrollToID($scroll_to);
+        }
+        elseif (isset(Basic::$GET['fsti'])) {
+            $this->setFrameScrollToID(Basic::$GET['fsti']);
+        }
+        elseif (null != ($scroll_to = $this->app['request']->query->get('fsti'))) {
+            $this->setFrameScrollToID($scroll_to);
+        }
+
         $tracking = '';
         if (Basic::$frame['tracking'] && file_exists(FRAMEWORK_PATH.'/config/tracking.htt')) {
             // enable the tracking for the iframe
             $tracking = file_get_contents(FRAMEWORK_PATH.'/config/tracking.htt');
         }
+
         // set the values for the page
         Basic::$page = array(
             'title' => (isset(Basic::$parameter['frame_title'])) ? Basic::$parameter['frame_title'] : '',
@@ -182,7 +198,8 @@ class Basic
             'robots' => (isset(Basic::$parameter['frame_robots'])) ? Basic::$parameter['frame_robots'] : 'index,follow',
             'charset' => (isset(Basic::$parameter['frame_charset'])) ? Basic::$parameter['frame_charset'] : 'UTF-8',
             'tracking' => $tracking,
-            'cache' => (isset(Basic::$parameter['frame_cache']) && ((Basic::$parameter['frame_cache'] == 1) || (strtolower(Basic::$parameter['frame_cache'] == 'true')))) ? true : false
+            'cache' => (isset(Basic::$parameter['frame_cache']) && ((Basic::$parameter['frame_cache'] == 1) || (strtolower(Basic::$parameter['frame_cache']) == 'true'))) ? true : false,
+            'page_title' => (isset(Basic::$parameter['page_title']) && ((Basic::$parameter['page_title'] == 0) || (strtolower(Basic::$parameter['page_title']) == 'false'))) ? false : true
         );
 
         if (Basic::$parameter_id == -1) {
@@ -191,8 +208,19 @@ class Basic
 
         // set the locale from the CMS locale
         $this->app['translator']->setLocale($this->getCMSlocale());
+
+        if ((Basic::$cms_info['user']['id'] > 0) && !empty(Basic::$cms_info['user']['name'])) {
+            // set a session with the active CMS user name
+            $this->app['session']->set('CMS_USERNAME', Basic::$cms_info['user']['name']);
+        }
     }
 
+    /**
+     * Create a new paramter ID (PID)
+     *
+     * @param string $parameter_array
+     * @return Ambigous <integer, unknown>
+     */
     protected function createParameterID($parameter_array=null)
     {
         if (!is_array($parameter_array)) {
@@ -209,6 +237,9 @@ class Basic
         $link = md5($parameter_str);
 
         $cmdParameter = new kitCommandParameter($this->app);
+
+        // cleanup the command parameter table!
+        $cmdParameter->cleanup();
 
         if (false === ($para = $cmdParameter->selectParameter($link))) {
             // create a new parameter record
@@ -366,7 +397,8 @@ class Basic
     public function getBasicSettings()
     {
         return array(
-            'message' => $this->getMessage(),
+            'alert' => $this->getAlert(),
+            'message' => $this->getAlert(),
             'cms' => Basic::$cms_info,
             'frame' => Basic::$frame,
             'page' => Basic::$page,
@@ -376,11 +408,16 @@ class Basic
     }
 
     /**
+     * Return a message
+     *
      * @return the $message
+     * @deprecated use getAlert() instead!
      */
     public function getMessage()
     {
-        return Basic::$message;
+        $debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $this->app['monolog']->addDebug('getMessage() is deprecated, use getAlert() instead!', array($debug));
+        return $this->getAlert();
     }
 
     /**
@@ -391,38 +428,38 @@ class Basic
      * @param string $message
      * @param array $params
      * @param boolean $log_message
+     * @deprecated use setAlert() instead!
      */
     public function setMessage($message, $params=array(), $log_message=false)
     {
-        Basic::$message .= $this->app['twig']->render($this->app['utils']->getTemplateFile(
-            '@phpManufaktur/Basic/Template',
-            'kitcommand/iframe.message.twig',
-            self::$preferred_template),
-            array(
-                'message' => $this->app['translator']->trans($message, $params)
-            ));
-        if ($log_message) {
-            // log this message
-            $this->app['monolog']->addDebug(strip_tags($this->app['translator']->trans($message, $params, 'messages', 'en')));
-        }
+        $debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $this->app['monolog']->addDebug('setMessage() is deprecated, use setAlert() instead!', array($debug));
+        $this->setAlert($message, $params, self::ALERT_TYPE_INFO, array(), $log_message);
     }
 
     /**
      * Check if a message is active
      *
      * @return boolean
+     * @deprecated use isAlert() instead!
      */
     public function isMessage()
     {
-        return !empty(Basic::$message);
+        $debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $this->app['monolog']->addDebug('isMessage() is deprecated, use isAlert() instead!', array($debug));
+        return $this->isAlert();
     }
 
     /**
      * Clear the existing message(s)
+     *
+     * @deprecated use clearAlert() instead!
      */
     public function clearMessage()
     {
-        Basic::$message = '';
+        $debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $this->app['monolog']->addDebug('clearMessage() is deprecated, use clearAlert() instead!', array($debug));
+        $this->clearAlert();
     }
 
     /**
@@ -675,14 +712,52 @@ class Basic
         return Basic::$frame['class'];
     }
 
+    /**
+     * Set the frame_scroll_to_id parameter
+     *
+     * @param string $class_id
+     */
     public function setFrameScrollToID($class_id)
     {
         Basic::$frame['scroll_to_id'] = $class_id;
     }
 
+    /**
+     * Get the frame_scroll_to_id parameter
+     *
+     * @return string class ID
+     */
     public function getFrameScrollToID()
     {
         return Basic::$frame['scroll_to_id'];
+    }
+
+    /**
+     * Check if a frame_scroll_to_id parameter isset
+     *
+     * @return boolean
+     */
+    public function isSetFrameScrollToID()
+    {
+        return (bool) !empty(Basic::$frame['scroll_to_id']);
+    }
+
+    /**
+     * Disable the tracking for this kitCommand by removing the tracking code
+     */
+    public function disableTracking()
+    {
+        Basic::$page['tracking'] = '';
+    }
+
+    /**
+     * Check if a tracking code is existing and iFrame will be tracked
+     *
+     * @return boolean
+     */
+    public function isTracking()
+    {
+        return (!empty(Basic::$page['tracking']));
     }
 
     /**

@@ -1,0 +1,33 @@
+{% block toolbar %}
+  <ul class="toolbar nav nav-tabs">
+    {% set default_link = FRAMEWORK_URL ~ '/admin/contact/about' %}
+    {% for item in toolbar %}
+      <li{% if item.active %} class="active"{% endif %}>
+        <a href="{{ item.link ~ '?usage=' ~ usage }}" title="{{ item.hint }}">
+          {% if item.name == 'about' %}
+            <i class="fa fa-question"></i>
+          {% elseif item.name == 'entrypoints' %}
+            <i class="fa fa-puzzle-piece"></i>
+          {% elseif item.name == 'extensions' %}
+            <i class="fa fa-gift"></i>
+          {% elseif item.class is defined and item.class != false %}
+            <i class="{{ item.class }}"></i>
+          {% else %}
+            <i class="fa fa-square-o"></i>
+          {% endif %}
+          {% if item.name != 'about' %}  
+            <span class="visible-lg pull-right">&nbsp;{{ item.text|trans }}</span>
+          {% endif %}
+        </a>
+      </li>
+      {% if item.active %}
+        {% set default_link = item.link %}
+      {% endif %}
+    {% endfor %}
+    {% if usage is defined and usage != 'framework' %}
+      <li>
+        <a class="kitframework-icon" href="{{ default_link }}" title="{{ 'Open the CMS Tool in kitFramework'|trans }}" target="_blank"><i class="fa fa-puzzle-piece"></i></a>
+      </li>
+    {% endif %}
+  </ul>
+{% endblock toolbar %}

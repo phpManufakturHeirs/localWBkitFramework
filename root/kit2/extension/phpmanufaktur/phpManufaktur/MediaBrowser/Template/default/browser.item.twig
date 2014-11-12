@@ -1,0 +1,21 @@
+{#
+  MediaBrowser
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/MediaBrowser
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<div class="thumbnail">
+  <a href="{{ image.link.select.url }}" title="{{ 'Select file: %file%'|trans({'%file%':image.basename}) }}">
+    <img class="img-responsive" src="{{ image.icon.url }}" alt="{{ image.basename }}" />
+  </a>
+  <div class="caption">
+    <div class="delete"><a href="{{ image.link.delete.url }}" title="{{ 'Delete file: %file%'|trans({'%file%':image.basename}) }}"><span class="glyphicon glyphicon-trash"></span></a></div>
+    <div class="dimension"><span class="glyphicon glyphicon-picture"></span>&nbsp;{{ image.dimension.string }}</div>
+    <div class="size"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;{{ image.size.string }}</div>
+    <div class="date"><span class="glyphicon glyphicon-calendar"></span>&nbsp;{{ image.modified|date('DATETIME_FORMAT'|trans) }}</div>
+    <div class="filename"><a href="{{ image.link.select.url }}" title="{{ 'Select file: %file%'|trans({'%file%':image.basename}) }}">{{ image.basename }}</a></div>
+  </div>
+</div>

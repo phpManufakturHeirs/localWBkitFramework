@@ -1,0 +1,8 @@
+{
+  "columns":[
+    "contact_id",
+    "order_name",
+    "address_zip",
+    "address_city"
+  ]
+}

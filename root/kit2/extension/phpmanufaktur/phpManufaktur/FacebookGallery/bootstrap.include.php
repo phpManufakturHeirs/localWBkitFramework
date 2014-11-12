@@ -11,18 +11,18 @@
 
 use phpManufaktur\Basic\Control\kitCommand\Basic as kitCommandBasic;
 
-// scan the /Locale directory and add all available languages
-$app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/FacebookGallery/Data/Locale');
-// scan the /Locale/Custom directory and add all available languages
-$app['utils']->addLanguageFiles(MANUFAKTUR_PATH.'/FacebookGallery/Data/Locale/Custom');
+// admin routes
+$app->get('admin/facebookgallery/setup',
+    'phpManufaktur\FacebookGallery\Data\Setup\Setup::ControllerSetup');
+$app->get('admin/facebookgallery/update',
+    'phpManufaktur\FacebookGallery\Data\Setup\Update::ControllerUpdate');
 
-$app->post('/command/facebookgallery', function() use ($app) {
-    // init basic kitCommand
-    $kitCommand = new kitCommandBasic($app);
-    return $kitCommand->createIFrame('/facebookgallery/exec');
-})
+// create the kitCommand iFrame for the FacebookGallery
+$app->post('/command/facebookgallery',
+    'phpManufaktur\FacebookGallery\Control\Gallery::ControllerCreateIFrame')
 ->setOption('info', MANUFAKTUR_PATH.'/FacebookGallery/command.facebookgallery.json');
 
-// execute the general FacebookGallery class
-$app->match('/facebookgallery/exec', 'phpManufaktur\FacebookGallery\Control\Gallery::exec');
+// execute the FacebookGallery
+$app->match('/facebookgallery',
+    'phpManufaktur\FacebookGallery\Control\Gallery::ControllerFacebookGallery');
 

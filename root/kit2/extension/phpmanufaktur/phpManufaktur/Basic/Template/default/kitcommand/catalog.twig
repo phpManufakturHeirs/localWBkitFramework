@@ -1,0 +1,62 @@
+{#
+  kitFramework:Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/iframe.body.twig') %}
+{% block title %}{{ 'kitCommand - General help container'|trans }}{% endblock %}
+{% block description %}{{ 'General help container for kitCommand help files'|trans }}{% endblock %}
+{% block robots %}noindex,follow{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/kitcommand/css/catalog.min.css" media="screen, projection" />
+{% endblock %}
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  {# need the parent to enable prompting messages #}
+  {{ parent() }}
+  <div class="catalog">
+    {% for extension in catalog %}
+      <div class="extension">
+        <div class="image">
+          <img src="data:image/{{ extension.logo_type }};charset=utf-8;base64,{{ extension.logo_blob }}" width="{{ extension.logo_width }}" height="{{ extension.logo_height }}" alt="{{ extension.description.title }}" />
+        </div>
+        <div class="info">
+          <h2>{{ extension.info.name }}</h2>
+          <div class="release">
+            <span class="label">{{ 'Release'|trans }}</span>
+            <span class="value">{{ extension.info.release.number }} ({{ extension.info.release.date|date('DATE_FORMAT'|trans) }})</span>
+          </div>
+          <div class="status">
+            <span class="label">{{ 'Status'|trans }}</span>
+            <span class="value {{ extension.info.release.status }}">{{ extension.info.release.status|trans }}</span>
+          </div>
+          {% if extension.info.download.availability|lower == 'public' %} 
+            <div class="license">
+              <span class="label">{{ 'License'|trans }}</span>
+              <span class="value"><a href="{{ extension.info.license.url }}" target="_blank">{{ extension.info.license.name }}</a></span>
+            </div>
+          {% else %}
+            <div class="usage">
+              <span class="label">{{ 'Usage'|trans }}</span>
+              <span class="value">{{ extension.info.download.availability|lower|trans }}</span>
+            </div>
+          {% endif %}
+          <div class="vendor">
+            <span class="label">{{ 'Vendor'|trans }}</span>
+            <span class="value"><a href="{{ extension.info.vendor.url }}" target="_blank">{{ extension.info.vendor.name }}</a></span>
+          </div>
+          <div class="description">
+            <div class="title">{{ extension.description.title }}</div>
+            <div class="content">{{ extension.description.long }}</div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="clear"></div>
+{% endblock content %}

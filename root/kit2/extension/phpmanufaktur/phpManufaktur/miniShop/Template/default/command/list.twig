@@ -1,0 +1,59 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% spaceless %}
+<!-- {{ _self.getTemplateName() }} -->
+<div id="minishop">
+  <div class="container-fluid">    
+    {# show the shopping basket at the top #}
+    {#% include '@phpManufaktur/miniShop/Template/default/command/include/basket.twig' %#}
+    
+    <div class="basket-container basket">
+      {{ kitCommand('miniShop_basket', {'action':'basket'}) }}
+    </div>
+    
+    {{ basic.alert }}
+    
+    {% if articles|length < 1 %}
+      {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig'
+      with {type:'alert-warning',content:'Currently are no articles available.'|trans} only %}
+    {% elseif articles|length > 0 %}
+      
+      {% set currency_symbol = attribute(config.currency, base.currency_iso).symbol %}
+      {% set decimal_separator = 'DECIMAL_SEPARATOR'|trans({},'messages', base.locale|lower) %}
+      {% set thousand_separator = 'THOUSAND_SEPARATOR'|trans({},'messages', base.locale|lower) %}
+
+      {% for article in articles %}
+        <div class="media article-list">
+          {% if article.article_image|length > 0 %}
+          <a class="pull-left" href="{{ permalink_base_url ~ '/article/' ~ article.permanent_link }}">
+            {% set img = image(article.article_image, parameter.thumbnail_max_width, parameter.thumbnail_max_height) %}
+            <img class="media-object" src="{{ img.src }}" alt="{{ article.article_name }}">
+          </a>
+          {% endif %}
+          <div class="media-body">
+            <a href="{{ permalink_base_url ~ '/article/' ~ article.permanent_link }}"><h2 class="media-heading">{{ article.article_name }}</h2></a>
+            {% if parameter.rating %}
+              <div class="rating-container small">
+                {{ kitCommand('rating', {'type':'MINISHOP','id':article.id,'size':'small'}) }}
+              </div>
+            {% endif %}
+            {{ article.description_short }}
+            <div class="article-price">
+              <a href="{{ permalink_base_url ~ '/article/' ~ article.permanent_link }}">
+                {{ article.article_price|number_format(2, decimal_separator, thousand_separator) }} {{ currency_symbol }}
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+    
+  </div>
+</div>
+{% endspaceless %}

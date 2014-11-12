@@ -6,7 +6,72 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
-**0.28**
+**0.40** - 2014-09-14
+
+* updated `@link` references
+* added URL for the changelog in the CMS Tool
+
+**0.39** - 2014-09-08
+
+* Comments: corrected iFrame height if reCaptcha is active
+* Comments: removed not needed `return false;` (causes problems in some browsers)
+* Comments: missing translation command and assigned translation
+
+**0.38** - 2014-09-03
+
+* not SET DEFAULT for TEXT fields! (table collection_comments)
+
+**0.37** - 2014-08-11
+
+* improved translation handling, added support for i18nEditor
+* generate extended debug information if the form submission is not valid 
+
+**0.36** - 2014-07-16
+
+* changed SQL query to count comments
+* add administrative links to reject, remove and confirm already published comments
+
+**0.35** - 2014-06-11
+
+* changed `robots` directive for the kitCommand `rating`
+* fixed problem if iframe is opened external and target is a flexContent permanent link
+* changed formatting for Comments container
+* fixed a problem creating the parameter PID - conflict with the new created parameter array (?!)
+
+**0.34** - 2014-05-07
+
+* all language files are now loaded by the BASIC extension
+
+**0.33** - 2014-03-10
+
+* changed import for the old FeedbackModule to usage of class `Alert`
+* added missing translations for tag `COMMENTS`
+* add template name as comment to support designers
+* added missing german translations to multiple email templates
+* For comments to EVENT redirect now to the permalink of the EVENT ID
+* add table `collection_comments_passed` and function to pass comments to a mapped identifier
+
+**0.32** - 2014-02-03
+
+* added support for `FLEXCONTENT_CATEGORY` and `FLEXCONTET_FAQ`
+
+**0.31** - 2014-01-24
+
+* Comments support now also flexContent
+* changed Comments templates to Bootstrap 3
+
+**0.30** - 2014-01-13
+
+* general disable the page tracking for the rating iFrames!
+* changed the JSON handling for ExcelRead search integration
+
+**0.29** - 2013-12-01
+
+* add function `countComments()`
+* simplified access to `Contact Control`
+* changed description of CommandCollection
+
+**0.28** - 2013-11-27
 
 * bugfix: update does not initialize RAL table
 

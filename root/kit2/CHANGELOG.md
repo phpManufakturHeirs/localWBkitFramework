@@ -6,6 +6,20 @@ MIT License (MIT) - <http://www.opensource.org/licenses/MIT>
 
 kitFramework - <https://kit2.phpmanufaktur.de>
 
+**0.29** - 2014-09-14
+
+* fatal: missing /Debug folder ... 8-(
+
+**0.28** - 2014-09-10
+
+* upgrade to Silex 1.2.1 (2014-07-01) with all depending libraries
+* finally removed Carbon and Nicl/Markdown from framework master branch (moved to kfLibrary in March 2014)
+* added libraries Goutte and Guzzle
+
+**0.27** - 2013-12-17
+
+* minor release, only very small fixes ...
+
 **0.26** - 2013-09-20
 
 * changed template handling

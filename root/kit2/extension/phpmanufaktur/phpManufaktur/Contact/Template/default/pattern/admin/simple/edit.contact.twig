@@ -1,0 +1,449 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{{ alert }}
+
+<form action="{{ FRAMEWORK_URL ~ route.action }}" method="post" {{ form_enctype(form) }} role="form">
+  {{ form_errors(form) }}
+  {{ form_row(form._token) }}
+
+  {{ form_row(form.contact_type) }}     
+  {{ form_row(form.contact_id) }}
+  
+  <fieldset> 
+    <legend>{{ 'Contact'|trans }}</legend>
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-4">
+        <label>{{ 'contact_id'|humanize|trans }}</label>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-8">
+        {% if form.contact_id.vars.value > 0 %}
+          {{ form.contact_id.vars.value }}
+        {% else %}
+          {{ '- new contact -'|trans }}
+        {% endif %}
+      </div>
+    </div>
+    
+    {% if form.contact_id.vars.value > 0 %}
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.contact_status) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.contact_status, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div>      
+    {% endif %}
+    
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-4">
+        {{ form_label(form.category) }}
+      </div>
+      <div class="col-lg-5 col-md-5 col-sm-6">
+        {{ form_widget(form.category, {'attr':{'class':'form-control input-sm'}}) }}
+      </div>
+      <div class="col-lg-1 col-md-1 col-sm-2">
+        <a class="btn btn-default input-sm" href="{{ FRAMEWORK_URL ~ route.category }}" role="button" title="{{ 'Edit categories'|trans }}"><i class="fa fa-pencil-square-o"></i></a>
+      </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.category_access) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.category_access, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div>
+      
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-4">
+        {{ form_label(form.tag) }}
+      </div>
+      <div class="col-lg-5 col-md-5 col-sm-6">
+        {# parse the checkbox fields #}
+        {% set i = 1 %}
+        {% for children in form.tag.vars.form.children %}
+          {% if i == 1 %}<div class="row">{% endif %}
+            <div class="col-lg-6 col-md-6">
+              <div class="checkbox tag">
+                <label>
+                  <input type="checkbox" name="{{ children.vars.full_name }}" id="{{ children.vars.id }}" value="{{ children.vars.value }}"{% if children.vars.data %} checked="checked"{% endif %} />
+                  {{ children.vars.value|capitalize|trans }}
+                </label>
+              </div>
+            </div>
+          {% set i = i+1 %}
+          {% if i > 2 %}
+            </div>
+            {% set i = 1 %}
+          {% endif %}
+        {% endfor %}
+        {% if i != 1 %}</div>{% endif %}
+      </div>
+      <div class="col-lg-1 col-md-1 col-sm-2">
+        <a class="btn btn-default input-sm" href="{{ FRAMEWORK_URL ~ route.tag }}" role="button" title="{{ 'Edit tags'|trans }}"><i class="fa fa-pencil-square-o"></i></a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-4">
+        {{ form_label(form.contact_name) }}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-8">
+        {{ form_widget(form.contact_name, {'attr':{'class':'form-control input-sm'}}) }}
+      </div>
+    </div> 
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-4">
+        {{ form_label(form.contact_login) }}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-8">
+        {{ form_widget(form.contact_login, {'attr':{'class':'form-control input-sm'}}) }}
+      </div>
+    </div> 
+  </fieldset>
+
+  {% if form.contact_type.vars.value == 'PERSON' %}
+    <fieldset>
+      <legend>{{ 'Person'|trans }}</legend>      
+      {{ form_row(form.person_id) }}
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.person_gender) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {# parse the radio fields #}
+          {% for children in form.person_gender.vars.form.children %}
+            <div class="radio">
+              <label>
+                <input type="radio" name="{{ children.vars.full_name }}" id="{{ children.vars.id }}" value="{{ children.vars.value }}"{% if children.vars.data %} checked="checked"{% endif %} />
+                {{ children.vars.value|humanize|trans }}
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.person_title) }}
+        </div>
+        <div class="col-lg-5 col-md-5 col-sm-6">
+          {{ form_widget(form.person_title, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+        <div class="col-lg-1 col-md-1 col-sm-2">
+          <a class="btn btn-default input-sm" href="{{ FRAMEWORK_URL ~ route.title }}" role="button" title="{{ 'Edit titles'|trans }}"><i class="fa fa-pencil-square-o"></i></a>
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.person_first_name) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.person_first_name, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.person_last_name) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.person_last_name, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.person_birthday) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.person_birthday, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+    </fieldset>
+  {% endif %}
+  
+  {% if form.contact_type.vars.value == 'COMPANY' %}
+    <fieldset>
+      <legend>{{ 'Company'|trans }}</legend>
+      {{ form_row(form.company_id) }}
+      
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.company_name) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.company_name, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.company_department) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.company_department, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.company_additional) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.company_additional, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.company_additional_2) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.company_additional_2, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.company_additional_3) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.company_additional_3, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+    </fieldset>
+  {% endif %}
+
+  <fieldset>
+    <legend>{{ 'Communication'|trans }}</legend>
+    {{ form_row(form.email_id) }}
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-4">
+        {{ form_label(form.email) }}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-8">
+        {{ form_widget(form.email, {'attr':{'class':'form-control input-sm'}}) }}
+      </div>
+    </div> 
+    {{ form_row(form.phone_id) }}
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-4">
+        {{ form_label(form.phone) }}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-8">
+        {{ form_widget(form.phone, {'attr':{'class':'form-control input-sm'}}) }}
+      </div>
+    </div> 
+    {{ form_row(form.cell_id) }}
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-4">
+        {{ form_label(form.cell) }}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-8">
+        {{ form_widget(form.cell, {'attr':{'class':'form-control input-sm'}}) }}
+      </div>
+    </div> 
+    {{ form_row(form.fax_id) }}
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-4">
+        {{ form_label(form.fax) }}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-8">
+        {{ form_widget(form.fax, {'attr':{'class':'form-control input-sm'}}) }}
+      </div>
+    </div> 
+    {% if form.contact_type.vars.value == 'COMPANY' %}
+      {{ form_row(form.url_id) }}
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.url) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.url, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+    {% endif %}
+  </fieldset>
+
+  {% if form.contact_type.vars.value == 'COMPANY' %}
+    <fieldset>
+      <legend>{{ 'Business address'|trans }}</legend>
+      {{ form_row(form.address_business_id) }}
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_business_street) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_business_street, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_business_zip) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_business_zip, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_business_city) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_business_city, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="height-15"></div>
+      {# hide the address_business_area field, with form_row(form.address_business_area) you can use it as regular text field #}
+      {{ form_widget(form.address_business_area, {'attr': {'class':'hidden'}} ) }}
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_business_state) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_business_state, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_business_country) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_business_country, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+    </fieldset>
+
+    <fieldset>
+      <legend>{{ 'Delivery address'|trans }}</legend>
+      {{ form_row(form.address_delivery_id) }}
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_delivery_street) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_delivery_street, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_delivery_zip) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_delivery_zip, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_delivery_city) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_delivery_city, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_delivery_country) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_delivery_country, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+    </fieldset>
+  {% else %}
+    {# PERSON - PRIVATE ADDRESS #}
+    <fieldset>
+      <legend>{{ 'Address'|trans }}</legend>
+      {{ form_row(form.address_id) }}
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_street) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_street, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_zip) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_zip, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_city) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_city, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="height-15"></div>
+      {# hide the address_area field you can use it also as regular text field #}
+      {{ form_widget(form.address_area, {'attr': {'class':'hidden'}} ) }}
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_state) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_state, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-4">
+          {{ form_label(form.address_country) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-8">
+          {{ form_widget(form.address_country, {'attr':{'class':'form-control input-sm'}}) }}
+        </div>
+      </div> 
+    </fieldset>
+  {% endif %}
+  
+  {% if extra_info|length > 0 %}
+    <fieldset>
+      <legend>{{ 'Extra fields'|trans }}</legend>
+      {% for extra in extra_info %}
+        {% if form[extra.name] is defined %}
+          <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-4">
+              {{ form_label(form[extra.name]) }}
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-8">
+              {{ form_widget(form[extra.name], {'attr':{'class':'form-control input-sm'}}) }}
+            </div>
+          </div> 
+        {% endif %}
+      {% endfor %}
+    </fieldset>
+  {% endif %}
+
+  <fieldset>
+    <legend>{{ 'Note'|trans }}</legend>
+    {{ form_row(form.note_id) }}
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-4">
+        {{ form_label(form.note) }}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-8">
+        {{ form_widget(form.note, {'attr':{'class':'form-control input-sm'}}) }}
+      </div>
+    </div>
+  </fieldset>
+
+  {#{ form_rest(form) }#}
+
+  <div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-4">
+      <label for="submit">&nbsp;</label>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-8">
+      <button class="btn btn-default" type="submit">{{ 'Submit'|trans }}</button>&nbsp;
+      <a class="btn btn-default" href="{{ FRAMEWORK_URL ~ route.list }}" role="button">{{ 'Cancel'|trans }}</a>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,18 @@
+{% block toolbar %}
+  <ul class="toolbar problems nav nav-tabs">
+    {% for item in toolbar %}
+      <li{% if item.active %} class="active"{% endif %}>
+        <a href="{{ item.link }}" title="{{ item.hint }}">
+          {% if item.name == 'conflicts' %}
+            <i class="fa fa-warning"></i>
+          {% elseif item.name == 'unassigned' %}
+            <i class="fa fa-unlink"></i>
+          {% elseif item.name == 'duplicates' %}
+            <i class="fa fa-copy"></i>
+          {% endif %}
+          <span class="visible-lg pull-right">&nbsp;{{ item.text }}</span>            
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock toolbar %}

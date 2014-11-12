@@ -1,0 +1,22 @@
+{# 
+  kitFramework::Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'framework/body.twig') %}
+{% block title %}{{ 'The requested page could not be found!'|trans }}{% endblock %}
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container">
+    <div class="page-header">
+      <h1>{{ 'Error 405'|trans }}</h1>
+    </div>
+    <div class="alert alert-info">
+      <p>{{ 'The requested route does not exists!'|trans }}</p>
+    </div>
+  </div>
+{% endblock %}

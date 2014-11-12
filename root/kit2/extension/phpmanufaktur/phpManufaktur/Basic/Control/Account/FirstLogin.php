@@ -15,48 +15,16 @@ use Silex\Application;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use phpManufaktur\Basic\Control\Pattern\Alert;
 
-class FirstLogin
+class FirstLogin extends Alert
 {
-    protected $app = null;
-    private static $message = '';
     protected static $user = null;
     protected static $redirect = null;
     protected static $usage = null;
     protected static $roles = null;
     protected static $auto_login = null;
     protected static $secured_area = null;
-
-    /**
-     * @return the $message
-     */
-    public function getMessage()
-    {
-        return self::$message;
-    }
-
-    /**
-     * Set a message. Messages are chained and will be translated with the given
-     * parameters. If $log_message = true, the message will also logged to the
-     * kitFramework logfile.
-     *
-     * @param string $message
-     * @param array $params
-     * @param boolean $log_message
-     */
-    public function setMessage($message, $params=array(), $log_message=false)
-    {
-        self::$message .= $this->app['twig']->render($this->app['utils']->getTemplateFile(
-            '@phpManufaktur/Basic/Template',
-            'kitcommand/iframe.message.twig'),
-            array(
-                'message' => $this->app['translator']->trans($message, $params)
-            ));
-            if ($log_message) {
-                // log this message
-                $this->app['monolog']->addDebug(strip_tags($this->app['translator']->trans($message, $params, 'messages', 'en')));
-            }
-    }
 
     /**
      * Create the login form
@@ -73,7 +41,9 @@ class FirstLogin
         ->add('username', 'hidden', array(
             'data' => self::$user['username']
         ))
-        ->add('password', 'password')
+        ->add('password', 'password', array(
+            'attr' => array('autofocus' => 'autofocus')
+        ))
         ->add('email', 'hidden', array(
             'data' => self::$user['email']
         ))
@@ -106,7 +76,10 @@ class FirstLogin
      */
     public function controllerCMSLogin(Application $app)
     {
-        $this->app = $app;
+        $this->initialize($app);
+
+        // set the locale from the CMS locale
+        $app['translator']->setLocale($app['session']->get('CMS_LOCALE', 'en'));
 
         if (null === (self::$redirect = $app['request']->request->get('redirect', null))) {
             throw new \Exception('Missing the POST parameter `redirect`');
@@ -134,7 +107,7 @@ class FirstLogin
             array(
                 'usage' => self::$usage,
                 'form' => $form->createView(),
-                'message' => $this->getMessage()
+                'alert' => $this->getAlert()
             ));
     }
 
@@ -147,7 +120,7 @@ class FirstLogin
      */
     public function controllerCheckCMSLogin(Application $app)
     {
-        $this->app = $app;
+        $this->initialize($app);
 
         $form = $this->getLoginForm($app);
         $form->bind($app['request']);
@@ -161,26 +134,28 @@ class FirstLogin
             }
             if ($check['name'] != $check['username']) {
                 // user has changed the given login name!
-                $this->setMessage("You must login as user '%username%'!", array('%username%' => $check['username']));
+                $this->setAlert("You must login as user '%username%'!",
+                    array('%username%' => $check['username']), self::ALERT_TYPE_WARNING);
                 return $app['twig']->render($app['utils']->getTemplateFile(
                     '@phpManufaktur/Basic/Template',
                     'framework/first.login.twig'),
                     array(
                         'usage' => $check['usage'],
                         'form' => $form->createView(),
-                        'message' => $this->getMessage()
+                        'alert' => $this->getAlert()
                     ));
             }
             if (md5($check['password']) != $cmsUserData['password']) {
                 // the password is not identical
-                $this->setMessage('The password you typed in is not correct, please try again.');
+                $this->setAlert('The password you typed in is not correct, please try again.',
+                    array(), self::ALERT_TYPE_WARNING);
                 return $app['twig']->render($app['utils']->getTemplateFile(
                     '@phpManufaktur/Basic/Template',
                     'framework/first.login.twig'),
                     array(
                         'usage' => $check['usage'],
                         'form' => $form->createView(),
-                        'message' => $this->getMessage()
+                        'alert' => $this->getAlert()
                     ));
             }
 

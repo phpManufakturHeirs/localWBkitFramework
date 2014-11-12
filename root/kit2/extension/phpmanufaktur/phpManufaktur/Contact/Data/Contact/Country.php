@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -120,6 +120,7 @@ EOD;
     public function existsCountryCode($country_code)
     {
         try {
+            $country_code = strtoupper($country_code);
             $SQL = "SELECT `country_code` FROM `".self::$table_name."` WHERE `country_code`='$country_code'";
             $result = $this->app['db']->fetchColumn($SQL);
             return ($country_code === $result) ? true : false;
@@ -137,7 +138,25 @@ EOD;
     public function selectCountry($country_code) {
         try {
             $SQL = "SELECT `country_name` FROM `".self::$table_name."` WHERE `country_code`='$country_code'";
-            return $this->app['db']->fetchColumn($SQL);
+            $country = $this->app['db']->fetchAssoc($SQL);
+            return (isset($country['country_name'])) ? $country['country_name'] : false;
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Select the country code by the give country name
+     *
+     * @param string $country_name
+     * @throws \Exception
+     * @return Ambigous <boolean, string>
+     */
+    public function selectCountryCode($country_name) {
+        try {
+            $SQL = "SELECT `country_code` FROM `".self::$table_name."` WHERE `country_name` LIKE '%$country_name%'";
+            $country = $this->app['db']->fetchAssoc($SQL);
+            return (isset($country['country_code'])) ? $country['country_code'] : false;
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }

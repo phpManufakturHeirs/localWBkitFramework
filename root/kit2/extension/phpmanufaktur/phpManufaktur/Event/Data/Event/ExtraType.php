@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/FacebookGallery
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -108,13 +108,13 @@ EOD;
     public function getTypeArrayForTwig()
     {
         return array(
-            'TEXT' => 'Text - plain',
-            'HTML' => 'Text - HTML',
-            'VARCHAR' => 'Text - 256 characters',
-            'INT' => 'Integer',
-            'FLOAT' => 'Float',
-            'DATE' => 'Date',
-            'DATETIME' => 'Date and Time'
+            'TEXT' => $this->app['translator']->trans('Text - plain'),
+            'HTML' => $this->app['translator']->trans('Text - HTML'),
+            'VARCHAR' => $this->app['translator']->trans('Text - 256 characters'),
+            'INT' => $this->app['translator']->trans('Integer'),
+            'FLOAT' => $this->app['translator']->trans('Float'),
+            'DATE' => $this->app['translator']->trans('Date'),
+            'DATETIME' => $this->app['translator']->trans('Date and Time')
         );
     }
 
@@ -154,7 +154,7 @@ EOD;
             $insert = array();
             foreach ($data as $key => $value) {
                 if (($key == 'extra_type_id') || ($key == 'extra_type_timestamp')) continue;
-                $insert[$this->app['db']->quoteIdentifier($key)] = is_string($value) ? $this->app['utils']->unsanitizeText($value) : $value;
+                $insert[$this->app['db']->quoteIdentifier($key)] = is_string($value) ? $this->app['utils']->sanitizeText($value) : $value;
             }
             $this->app['db']->insert(self::$table_name, $insert);
             $type_id = $this->app['db']->lastInsertId();
@@ -199,7 +199,7 @@ EOD;
             $results = $this->app['db']->fetchAll($SQL);
             $types = array();
             foreach ($results as $type) {
-                $types[$type['extra_type_name']] = ucfirst(str_replace('_', ' ', strtolower($type['extra_type_name'])));
+                $types[$type['extra_type_name']] = $this->app['utils']->humanize($type['extra_type_name']);
             }
             return $types;
         } catch (\Doctrine\DBAL\DBALException $e) {

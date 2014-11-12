@@ -1,0 +1,15 @@
+{#
+  TemplateTools
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% if CMS_MAINTENANCE_MODE %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="maintenance-hint">
+    {{ 'The maintenance mode is active - non authenticated visitors can not see this content!'|trans }}
+  </div>
+{% endif %}

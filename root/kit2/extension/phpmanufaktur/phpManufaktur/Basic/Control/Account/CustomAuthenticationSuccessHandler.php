@@ -15,7 +15,6 @@ use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessH
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use phpManufaktur\Basic\Data\Security\Users;
 use Silex\Application;
 
 class CustomAuthenticationSuccessHandler extends DefaultAuthenticationSuccessHandler
@@ -45,8 +44,9 @@ class CustomAuthenticationSuccessHandler extends DefaultAuthenticationSuccessHan
         $data = array(
             'last_login' => date('Y-m-d H:i:s')
         );
-        $Users = new Users($this->app);
-        $Users->updateUser($user->getUsername(), $data);
+        // save the last login of the user
+        $this->app['account']->updateUserData($user->getUsername(), $data);
+
         return $this->httpUtils->createRedirectResponse($request, $this->determineTargetUrl($request));
     }
 }

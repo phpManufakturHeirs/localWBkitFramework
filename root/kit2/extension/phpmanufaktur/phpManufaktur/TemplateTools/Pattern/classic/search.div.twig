@@ -1,0 +1,16 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if PAGE_ID > 0 %}
+  {# show the search field only at regular pages not at the search results #}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="search-container">
+    {# just include the ready to use search form #}
+    {% include '@pattern/classic/search.form.twig' %}
+  </div>
+{% endif %}  

@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -56,15 +56,23 @@ class EventList extends Basic
         $parameter['rating'] = (isset($parameter['rating']) &&
             ((strtolower($parameter['rating']) == 'false') || ($parameter['rating'] == 0))) ? false : true;
 
+        // should information about comments added to the result?
+        $parameter['comments_info'] = (isset($parameter['comments_info']) &&
+            ((strtolower($parameter['comments_info']) == 'true') || ($parameter['comments_info'] == 1))) ? true : false;
 
+        // which comments type must be used?
+        $parameter['comments_type'] = (isset($parameter['comments_type'])) ? strtoupper($parameter['comments_type']) : 'EVENT';
+
+        $parameter['compatibility'] = isset($parameter['compatibility']);
 
         $messages = array();
         $SQL = '';
-        if (false === ($events = $EventFilter->filter($filter, $messages, $SQL))) {
+        if (false === ($events = $EventFilter->filter(
+            $filter, $messages, $SQL, $parameter['comments_info'], $parameter['comments_type']))) {
             foreach ($messages as $message) {
-                $this->setMessage($message);
+                $this->setAlert($message);
             }
-            $this->setMessage('No results for this filter!');
+            $this->setAlert('No results for this filter!');
         }
 
         $this->app['monolog']->addDebug("[EventFilter] SQL: $SQL",

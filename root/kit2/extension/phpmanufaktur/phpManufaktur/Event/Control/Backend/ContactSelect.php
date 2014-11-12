@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -24,7 +24,7 @@ class ContactSelect extends Backend {
         parent::__construct($app);
         if (!is_null($app)) {
             $this->initialize($app);
-        }        
+        }
     }
 
     protected function initialize(Application $app)
@@ -33,8 +33,7 @@ class ContactSelect extends Backend {
         $this->SimpleContactSelect = new SimpleContactSelect($this->app, array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Event/Template',
-                'message' => 'backend/message.twig',
-                'select' => 'backend/contact.select.twig'
+                'select' => 'admin/contact/select.contact.twig'
             ),
             'route' => array(
                 'action' => '/admin/event/contact/select?usage='.self::$usage,
@@ -51,7 +50,7 @@ class ContactSelect extends Backend {
             )
         ));
     }
-    
+
     public function setContactID($contact_id)
     {
         $this->SimpleContactSelect->setContactID($contact_id);

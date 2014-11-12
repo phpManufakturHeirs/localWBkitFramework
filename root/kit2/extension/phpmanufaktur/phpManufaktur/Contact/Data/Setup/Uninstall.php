@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -34,6 +34,7 @@ use phpManufaktur\Contact\Data\Contact\ExtraType;
 use phpManufaktur\Contact\Data\Contact\ExtraCategory;
 use phpManufaktur\Contact\Data\Contact\Message;
 use phpManufaktur\Basic\Control\CMS\UninstallAdminTool;
+use phpManufaktur\Contact\Data\Contact\Form;
 
 class Uninstall
 {
@@ -125,6 +126,10 @@ class Uninstall
             $Message = new Message($app);
             $Message->dropTable();
             $app['monolog']->addInfo('[Contact Uninstall] Drop table `contact_message`');
+
+            $Form = new Form($app);
+            $Form->dropTable();
+            $app['monolog']->addInfo('[Contact Uninstall] Drop table `contact_form`');
 
             $app['monolog']->addInfo('[Contact Uninstall] Dropped all tables successfull');
 

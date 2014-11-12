@@ -1,0 +1,18 @@
+{#
+  TemplateTools
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends "@pattern/classic/html.simple.twig" %}
+{% block revisit %}1 day{% endblock %}
+{% block body %}
+  <div class="maintenance">
+    <h1>{{ 'Maintenance'|trans }}</h1>
+    <p>{{ 'Sorry, but this site is temporary offline due service operations.'|trans }}</p>
+    <p>{{ 'We will be back soon ...'|trans }}</p>
+  </div>
+{% endblock %}

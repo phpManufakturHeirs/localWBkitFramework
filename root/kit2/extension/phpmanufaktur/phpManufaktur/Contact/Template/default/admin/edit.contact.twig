@@ -1,0 +1,84 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if extra.usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Contact/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Contact/Template/default/css/form.horizontal.min.css' }}" />
+  {% if form.contact_type.vars.value == 'PERSON' %}
+    <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/ui/latest/themes/smoothness/jquery-ui.min.css" />
+  {% endif %}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Contact/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Contact/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Contact/Template/default/css/admin.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+{% block title %}{{ 'Create or edit contact'|trans }}{% endblock %}
+{% block jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CKEditor/Source/ckeditor.js"></script>
+{% endblock jquery %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    
+    {% include '@phpManufaktur/Contact/Template/default/admin/toolbar.twig' with {toolbar: extra.toolbar,usage:extra.usage} %}
+    
+    <h2>{{ 'Edit contact'|trans }}</h2>
+    
+    {% include '@phpManufaktur/Contact/Template/default/pattern/implement/edit.contact.twig' %}
+    
+  </div>
+{% endblock content %}
+
+{% block footer_jquery %}
+  {{ parent() }}
+  {% if form.contact_type.vars.value == 'PERSON' %}
+    <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/i18n/jquery-ui-i18n.min.js"></script>
+  {% endif %}
+{% endblock footer_jquery %}
+
+{% block footer %}
+  
+  {# the CKEditor need extra space - loop through the form and search for attr.type == 'html' #}
+  {% set iframe_add_height = 0 %}
+  {% for item in form %}
+    {% if item.vars.attr.type is defined and item.vars.attr.type == 'html' %}
+      {% set iframe_add_height = iframe_add_height + 180 %}
+    {% endif %}
+  {% endfor %}  
+  
+  {{ parent() }}
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      $(document).ready(function() {
+        {% if form.contact_type.vars.value == 'PERSON' %}
+          $.datepicker.setDefaults($.datepicker.regional['{{ app.translator.locale }}']);
+          $('#form_person_birthday').datepicker({ 
+            changeMonth: true,
+            changeYear: true,
+            minDate: '-100Y',
+            maxDate: -1,
+            yearRange: '{{ ('now'|date('Y'))-100 }}:{{ 'now'|date('Y') }}'
+          });        
+        {% endif %}
+      });
+    }
+  </script>
+{% endblock footer %}

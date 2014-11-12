@@ -27,6 +27,12 @@ class Users
 
     protected $app = null;
 
+    /**
+     * Constructor
+     *
+     * @param Application $app
+     * @throws \Exception
+     */
     public function __construct (Application $app)
     {
         $this->app = $app;
@@ -42,9 +48,28 @@ class Users
         }
     }
 
+    /**
+     * Select the CMS user by the given user name
+     *
+     * @param string $name
+     * @param boolen $is_admin
+     * @throws \Exception
+     * @return boolean|array
+     */
     public function selectUser ($name, &$is_admin = false)
     {
         return $this->cms->selectUser($name, $is_admin);
     }
 
+    /**
+     * Select the CMS user by the given ID
+     *
+     * @param integer $user_id
+     * @throws \Exception
+     * @return Ambigous <boolean, array>
+     */
+    public function select($user_id)
+    {
+        return $this->cms->select($user_id);
+    }
 }

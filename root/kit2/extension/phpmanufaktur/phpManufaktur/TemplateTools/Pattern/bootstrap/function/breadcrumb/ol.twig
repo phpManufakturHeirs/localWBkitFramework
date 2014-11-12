@@ -1,0 +1,19 @@
+<!-- {{ _self.getTemplateName() }} -->
+<ol class="breadcrumb">
+  {% if link_home %}
+    <li{% if active %} class="active"{% endif %}>
+      {% if active %}
+        <i class="glyphicon glyphicon-home"></i>
+      {% else %}  
+        <a href="{{ CMS_URL }}" title="{{ 'Home'|trans }}"><i class="glyphicon glyphicon-home"></i></a>
+      {% endif %}
+    </li>
+  {% endif %}
+  {% if li_before|length > 0 %}
+    {{ li_before }}
+  {% endif %}  
+  {{ breadcrumbs }}
+  {% if li_after|length > 0 %}
+    {{ li_after }}
+  {% endif %}    
+</ol>

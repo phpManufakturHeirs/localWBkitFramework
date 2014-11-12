@@ -2,7 +2,7 @@
   Event
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/Event
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
@@ -11,24 +11,26 @@
 <form action="{{ FRAMEWORK_URL ~ route.event.check ~ '?pid=' ~ basic.pid }}" method="post">
   {#{ form_widget(form) }#}
 
-  <div>
-    <label>{{ 'Organizer'|trans }}</label>
-    <div class="address_info">
-      {% if organizer.contact_type == 'COMPANY' %}
-        {{ organizer.company_name }}<br />
-      {% else %}
-        {{ organizer.person_gender|trans }}
-        {% if organizer.person_first_name|length > 0 %}{{ organizer.person_first_name }} {% endif %}
-        {{ organizer.person_last_name }}<br />
-      {% endif %}
-      {% if organizer.address_street|length > 0 %}{{ organizer.address_street }}<br />{% endif %}  
-      {{ organizer.address_country_code }} {{ organizer.address_zip }} {{ organizer.address_city }}<br />
-      {% if organizer.communication_phone|length > 0 %}<i class="icon-phone"></i> {{ organizer.communication_phone }}<br />{% endif %}
-      {% if organizer.communication_email|length > 0 %}<i class="icon-envelope"></i> <a href="mailto:{{ organizer.communication_email }}">{{ organizer.communication_email }}</a>{% endif %}
-    </div>
-  </div>
-  <div class="clear"></div>
-  <div>&nbsp;</div>
+  {% if 'unknown.organizer@event.dummy.tld' not in organizer.contact_login %}
+    <div>
+      <label>{{ 'Organizer'|trans }}</label>
+      <div class="address_info">
+        {% if organizer.contact_type == 'COMPANY' %}
+          {{ organizer.company_name }}<br />
+        {% else %}
+          {{ organizer.person_gender|trans }}
+          {% if organizer.person_first_name|length > 0 %}{{ organizer.person_first_name }} {% endif %}
+          {{ organizer.person_last_name }}<br />
+        {% endif %}
+        {% if organizer.address_street|length > 0 %}{{ organizer.address_street }}<br />{% endif %}  
+        {{ organizer.address_country_code }} {{ organizer.address_zip }} {{ organizer.address_city }}<br />
+        {% if organizer.communication_phone|length > 0 %}<i class="icon-phone"></i> {{ organizer.communication_phone }}<br />{% endif %}
+        {% if organizer.communication_email|length > 0 %}<i class="icon-envelope"></i> <a href="mailto:{{ organizer.communication_email }}">{{ organizer.communication_email }}</a>{% endif %}
+      </div>
+    </div>  
+    <div class="clear"></div>  
+    <div>&nbsp;</div>
+  {% endif %}
   <div>
     <label>{{ 'Event location'|trans }}</label>
     <div class="address_info">
@@ -47,6 +49,15 @@
   </div>
   <div class="clear"></div>
   <div>&nbsp;</div>
+  
+  {% if parameter.mode is defined and parameter.mode == 'simple' %}
+    {# show only a minimum of form fields #}
+    {% set mode = 'simple' %}
+  {% else %}
+    {# show all available form fields #}
+    {% set mode = 'full' %}
+  {% endif %}
+
   {{ form_row(form._token) }}
 
   {{ form_row(form.event_id) }}
@@ -56,14 +67,25 @@
   {{ form_row(form.event_date_from) }}
   {{ form_row(form.event_date_to) }}
 
-  {{ form_row(form.event_publish_from) }}
-  {{ form_row(form.event_publish_to) }}
-  {{ form_row(form.event_deadline) }}
+  {% if mode == 'full' %}
+    {{ form_row(form.event_publish_from) }}
+    {{ form_row(form.event_publish_to) }}
+    {{ form_row(form.event_deadline) }}
+  {% else %}
+    {{ form_widget(form.event_publish_from, {'attr': {'class':'hidden'}} ) }}
+    {{ form_widget(form.event_publish_to, {'attr': {'class':'hidden'}} ) }}
+    {{ form_widget(form.event_deadline, {'attr': {'class':'hidden'}} ) }}
+  {% endif %}
 
   {{ form_row(form.event_url) }}
-  {{ form_row(form.event_costs) }}
-
-  {{ form_row(form.event_participants_max) }}
+    
+  {% if mode == 'full' %}  
+    {{ form_row(form.event_costs) }}
+    {{ form_row(form.event_participants_max) }}
+  {% else %}
+    {{ form_widget(form.event_costs, {'attr': {'class':'hidden'}} ) }}
+    {{ form_widget(form.event_participants_max, {'attr': {'class':'hidden'}} ) }}
+  {% endif %}
 
   {{ form_row(form.description_title) }}
 
@@ -80,19 +102,25 @@
       ) }}
     </div>
   </div>
-  <div class="clear"></div>
-  <div>
-    <div class="label{% if config.event.description.long.required %} required{% endif %}">{{ form.description_long.vars.label|trans }}</div>
-    <div class="value">
-      {{ CKEditor(
-            form.description_long.vars.id,
-            form.description_long.vars.full_name,
-            form.description_long.vars.value,
-            '98%', '250px',
-            MANUFAKTUR_URL ~ '/Event/Template/default/command/ckeditor.config.simple.js'
-      ) }}
+  
+  {% if mode == 'full' %}
+    <div class="clear"></div>
+    <div>
+      <div class="label{% if config.event.description.long.required %} required{% endif %}">{{ form.description_long.vars.label|trans }}</div>
+      <div class="value">
+        {{ CKEditor(
+              form.description_long.vars.id,
+              form.description_long.vars.full_name,
+              form.description_long.vars.value,
+              '98%', '250px',
+              MANUFAKTUR_URL ~ '/Event/Template/default/command/ckeditor.config.simple.js'
+        ) }}
+      </div>
     </div>
-  </div>
+  {% else %}
+    {{ form_widget(form.description_long, {'attr': {'class':'hidden'}} ) }}
+  {% endif %}
+  
   <div>&nbsp;</div>
   <div>
     <label for="submit">&nbsp;</label>

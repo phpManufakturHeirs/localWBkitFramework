@@ -1,0 +1,71 @@
+{#
+  FacebookGallery
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/FacebookGallery
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}FacebookGallery - {{ 'Available galleries'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/FacebookGallery/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/gallery.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/FacebookGallery/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/gallery.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/FacebookGallery/Template/default/css/gallery.min.css' }}" media="screen, projection" />
+  {% endif %}
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL ~ '/font-awesome/latest/css/font-awesome.min.css' }}" media="screen, projection" />
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL ~ '/jquery/lightbox/latest/css/lightbox.css' }}" media="screen, projection" />
+{% endblock stylesheet %}
+{% block content %}
+  {% if parameter.limit not in [2,3,4,6,8,9,12] %}
+     {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig'
+        with {content:'Allowed values for the parameter <em>limit</em> are 2,3,4,6,8,9 and 12 but not %limit%!'|trans({'%limit%':parameter.limit})} only %}
+  {% else %}
+    {% if parameter.limit in [2,4] %}
+      {% set column = 'col-xs-6' %}
+    {% elseif parameter.limit in  [3,6,9] %}
+      {% set column = 'col-xs-4' %}
+    {% elseif parameter.limit in [8,12] %}
+      {% set column = 'col-xs-3' %}
+    {% else %}
+      {# fallback if parameter.limit is not fitting #}
+      {% set column = 'col-xs-3' %}
+    {% endif %}
+    <div class="row">
+      {% for photo in gallery.data %}
+        {% if photo.name is defined %}
+          {% set title = photo.name %}
+        {% else %}
+          {% set title = '' %}
+        {% endif %}
+        <div class="{{ column }}">
+          {% if photo.images[parameter.size] is defined %}
+            <a href="{{ photo.images[0].source }}" data-lightbox="facebook-gallery"><img src="{{ photo.images[parameter.size].source }}" width="{{ photo.images[parameter.size].width }}" height="{{ photo.images[parameter.size].height }}" alt="{{ title }}" title="{{ title }}" /></a>
+          {% else %}
+            {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig'
+              with {content:'This image is not available in size %size%, try another size value!'|trans({'%size%':parameter.size})} only %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    {% if gallery.paging is defined %}
+    <div class="row">
+      <div class="col-xs-12 text-right">
+        {% if gallery.paging.previous is defined %}
+          <a href="{{ FRAMEWORK_URL ~ '/facebookgallery?pid=' ~ basic.pid ~ '&limit=' ~ parameter.limit ~ '&before=' ~ gallery.paging.cursors.before|url_encode }}" title="{{ 'Previous page'|trans }}"><i class="fa fa-caret-square-o-left fa-2x"></i></a>&nbsp;
+        {% endif %}
+        {% if gallery.paging.next is defined %}
+          <a href="{{ FRAMEWORK_URL ~ '/facebookgallery?pid=' ~ basic.pid ~ '&limit=' ~ parameter.limit ~ '&after=' ~ gallery.paging.cursors.after|url_encode }}" title="{{ 'Next page'|trans }}"><i class="fa fa-caret-square-o-right fa-2x"></i></a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+  {% endif %}
+{% endblock %}
+{% block footer_jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/lightbox/latest/js/lightbox.min.js"></script>
+{% endblock footer_jquery %}

@@ -1,0 +1,25 @@
+{
+  "columns":[
+    "contact_id",
+    "contact_type",
+    "communication_email",
+    "company_name",
+    "person_first_name",
+    "person_last_name",
+    "address_city",
+    "address_country_code"
+  ],
+  "list":{
+    "rows_per_page":100,
+    "select_status":[
+      "ACTIVE",
+      "LOCKED"
+    ],
+    "order":{
+      "by":[
+        "person_last_name"
+      ],
+      "direction":"ASC"
+    }
+  }
+}

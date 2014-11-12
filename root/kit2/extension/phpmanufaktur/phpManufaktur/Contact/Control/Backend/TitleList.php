@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -19,6 +19,11 @@ class TitleList extends Backend {
 
     protected $SimpleTitleList = null;
 
+    /**
+     * Constructor
+     *
+     * @param Application $app
+     */
     public function __construct(Application $app=null)
     {
         parent::__construct($app);
@@ -27,22 +32,31 @@ class TitleList extends Backend {
         }
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Contact\Control\Backend\Backend::initialize()
+     */
     protected function initialize(Application $app)
     {
         parent::initialize($app);
         $this->SimpleTitleList = new SimpleTitleList($this->app, array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Contact/Template',
-                'message' => 'backend/message.twig',
-                'list' => 'backend/admin/contact.title.list.twig'
+                'alert' => 'pattern/alert.twig',
+                'list' => 'admin/list.title.twig'
             ),
             'route' => array(
-                'create' => '/admin/contact/backend/title/create?usage='.self::$usage,
-                'edit' => '/admin/contact/backend/title/edit/id/{title_id}?usage='.self::$usage
+                'create' => '/admin/contact/title/edit?usage='.self::$usage,
+                'edit' => '/admin/contact/title/edit/id/{title_id}?usage='.self::$usage
             )
         ));
     }
 
+    /**
+     * Controller for the title list
+     *
+     * @param Application $app
+     */
     public function controller(Application $app)
     {
         $this->initialize($app);

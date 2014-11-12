@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -105,6 +105,61 @@ EOD;
                     ));
                 }
             }
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Check if the given address type exists
+     *
+     * @param string $type_name
+     * @throws \Exception
+     * @return boolean
+     */
+    public function existsAdressType($type_name)
+    {
+        try {
+            $type_name = strtoupper($type_name);
+            $SQL = "SELECT `address_type_name` FROM `".self::$table_name."` WHERE `address_type_name`='$type_name'";
+            $type = $this->app['db']->fetchColumn($SQL);
+            return ($type === $type_name);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Insert a new address type
+     *
+     * @param string $type_name
+     * @param string $type_description
+     * @param integer reference $address_type_id
+     * @throws \Exception
+     */
+    public function insertAddressType($type_name, $type_description, &$address_type_id=-1)
+    {
+        try {
+            $this->app['db']->insert(self::$table_name, array(
+                'address_type_name' => strtoupper($type_name),
+                'address_type_description' => $this->app['utils']->sanitizeText($type_description)
+            ));
+            $address_type_id = $this->app['db']->lastInsertId();
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * Delete the given address type
+     *
+     * @param string $type_name
+     * @throws \Exception
+     */
+    public function deleteAddressType($type_name)
+    {
+        try {
+            $this->app['db']->delete(self::$table_name, array('address_type_name' => $type_name));
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }

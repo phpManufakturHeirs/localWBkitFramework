@@ -1,0 +1,40 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{{ 'Order by advance payment'|trans }}</title>
+  </head>
+  <body>
+    {% spaceless %}
+
+      {% set currency_symbol = attribute(config.currency, order_data.base.currency_iso).symbol %}
+      {% set decimal_separator = 'DECIMAL_SEPARATOR'|trans({},'messages', order_data.base.locale|lower) %}
+      {% set thousand_separator = 'THOUSAND_SEPARATOR'|trans({},'messages', order_data.base.locale|lower) %}
+
+      <p><strong>{{ 'Order by PayPal'|trans }}</strong></p>
+      
+      {% if contact.contact_type == 'COMPANY' %}
+        <p>{{ contact.company_name }}
+          {% if contact.company_department|length > 0 %}<br />{{ contact.company_deparment }}{% endif %}</p>
+        {% else %}
+        <p>{{ contact.person_gender|humanize|trans }}<br />
+          {% if contact.person_first_name|length > 0 %}{{ contact.person_first_name }} {% endif %}{{ contact.person_last_name }}</p>
+        {% endif %}
+      <p>{{ contact.address_street }}<br />
+        {{ contact.address_zip }} {{ contact.address_city }}</p>
+      
+      {% if contact.communication_phone|length > 0 %}<p>{{ contact.communication_phone }}</p>{% endif %}
+      <p>{{ contact.communication_email }}</p>
+
+      {% include '@phpManufaktur/miniShop/Template/default/command/mail/summary.order.twig' with {'order':order_data} %}
+
+    {% endspaceless %}
+  </body>
+</html>

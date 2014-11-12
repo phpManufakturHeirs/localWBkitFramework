@@ -1,0 +1,24 @@
+{
+  "columns":[
+    "event_id",
+    "event_date_from",
+    "event_date_to",
+    "description_title",
+    "event_participants_max",
+    "event_participants_confirmed",
+    "event_status"
+  ],
+  "list":{
+    "rows_per_page":40,
+    "select_status":[
+      "ACTIVE",
+      "LOCKED"
+    ],
+    "order":{
+      "by":[
+        "event_id"
+      ],
+      "direction":"DESC"
+    }
+  }
+}

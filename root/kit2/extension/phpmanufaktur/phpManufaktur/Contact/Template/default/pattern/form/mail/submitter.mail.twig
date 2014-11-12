@@ -1,0 +1,54 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if app.translator.locale == 'de' %}
+  {# GERMAN Version #}  
+  <p>Sie haben uns die folgenden Daten am {{ form_record.form_submitted_when|date('DATETIME_FORMAT'|trans) }} über die IP {{ form_record.form_submitter_ip }} übermittelt:</p>
+  
+  {% if contact_data|length > 0 %}
+    <p>Übermittelte Kontakt Daten:</p>
+    <p>{% for field, value in contact_data %}
+      {% if loop.index > 1 %}<br />{% endif %}
+      {{ field|humanize|trans }} => {{ value|trans }}
+    {% endfor %}</p>
+  {% endif %}
+      
+  {% if form_data|length > 0 %}
+    <p>Übermittelte Formular Daten:</p>
+    <p>{% for field, value in form_data %}
+      {% if loop.index > 1 %}<br />{% endif %}
+      {{ field|humanize|trans }} => {{ value|trans }}
+    {% endfor %}</p>  
+  {% endif %}
+  
+  <p>Vielen Dank!</p>
+  <p>Wir werden uns so rasch wie möglich mit Ihnen in Verbindung setzen.</p>
+{% else %}
+  {# ENGLISH Version #}
+  <p>At {{ form_record.form_submitted_when|date('DATETIME_FORMAT'|trans) }} you have submitted us the following data from IP {{ form_record.form_submitter_ip }}:</p>
+  
+  {% if contact_data|length > 0 %}
+    <p>Submitted Contact data:</p>
+    <p>{% for field, value in contact_data %}
+      {% if loop.index > 1 %}<br />{% endif %}
+      {{ field|humanize|trans }} => {{ value|trans }}
+    {% endfor %}</p>
+  {% endif %}
+      
+  {% if form_data|length > 0 %}
+    <p>Submitted Form data:</p>
+    <p>{% for field, value in form_data %}
+      {% if loop.index > 1 %}<br />{% endif %}
+      {{ field|humanize|trans }} => {{ value|trans }}
+    {% endfor %}</p>  
+  {% endif %}
+  
+  <p>Thank you!</p>  
+  <p>We will contact you as soon as possible.</p>
+{% endif %}

@@ -1,0 +1,48 @@
+{#
+  kitFramework
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'framework/body.twig') %}
+{% block title %}{{ 'kitFramework - Account'|trans }}{% endblock %}
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container">
+    <div class="page-header">
+      <h1>{{ 'Real active user roles'|trans }} <small>kitFramework</small></h1>
+    </div>
+    
+    {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig'
+        with {type:'alert-danger',content:'Be aware: You are now authenticated as user <b>%username%</b>!'|trans({'%username%':getUserDisplayName()})} only %}
+    
+    {{ alert }}
+    
+    {% if alert|length < 1 %}
+      {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig'
+        with {type:'alert-danger',content:'Be aware: You are now authenticated as user <b>%username%</b>!'|trans({'%username%':getUserDisplayName()})} only %}
+    {% endif %}
+    
+    <div>
+      <a class="btn btn-default" role="button" href="{{ FRAMEWORK_URL ~ '/switched/user/roles/id/' ~ account_id ~ '/exit?usage=' ~ usage ~  '&_switch_user=_exit' }}">{{ 'Switch back to the administration of this user account'|trans }}</a>
+    </div>
+    <div class="height-15"></div>
+    
+    {% if roles|length > 0 %}
+      <ul class="list-group">
+        {% for role in roles %}
+          <li class="col-sm-offset-1 col-sm-4 list-group-item {% if role.is_granted %}text-success{% else %}text-danger{% endif %}">{{ role.role }}{% if role.is_granted %}<span class="glyphicon glyphicon-ok pull-right"></span>{% endif %}</li>
+        {% endfor %}
+      </ul>
+      <div class="clearfix"></div>
+      <div class="height-15"></div>
+      <div>
+        <a class="btn btn-default" role="button" href="{{ FRAMEWORK_URL ~ '/switched/user/roles/id/' ~ account_id ~ '/exit?usage=' ~ usage ~  '&_switch_user=_exit' }}">{{ 'Switch back to the administration of this user account'|trans }}</a>
+      </div>
+      <div class="height-15"></div>      
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,539 @@
+{
+  "nav_tabs": {
+    "order": [
+      "list",
+      "edit",
+      "tags",
+      "categories",
+      "rss",
+      "import",
+      "about"
+    ],
+    "default": "about"
+  },
+  "list": {
+    "category": {
+      "default": "ARTICLE"
+    }
+  },
+  "content": {
+    "field": {
+      "title": {
+        "required": true,
+        "length": {
+          "minimum": 2,
+          "maximum": 128
+        }
+      },
+      "language": {
+        "required": true
+      },
+      "page_title": {
+        "required": false,
+        "length": {
+          "minimum": 2,
+          "maximum": 128
+        }
+      },
+      "description": {
+        "required": false,
+        "length": {
+          "minimum": 50,
+          "maximum": 180
+        }
+      },
+      "keywords": {
+        "required": false,
+        "separator": "comma",
+        "words": {
+          "minimum": 3,
+          "maximum": 20
+        }
+      },
+      "permalink": {
+        "required": true
+      },
+      "redirect_url": {
+        "required": false
+      },
+      "redirect_target": {
+        "required": false,
+        "default": "_blank"
+      },
+      "publish_from": {
+        "required": true,
+        "add": {
+          "hours": 0
+        }
+      },
+      "breaking_to": {
+        "required": false,
+        "add": {
+          "hours": 168
+        }
+      },
+      "archive_from": {
+        "required": false,
+        "add": {
+          "days": 365
+        }
+      },
+      "teaser": {
+        "required": false
+      },
+      "content": {
+        "required": false
+      },
+      "status": {
+        "required": true
+      },
+      "rss": {
+        "required": false
+      },
+      "event_date_from": {
+        "required": true
+      },
+      "event_date_to": {
+        "required": true
+      },
+      "event_organizer": {
+        "required": false,
+        "tags": [
+          
+        ]
+      },
+      "event_location": {
+        "required": false,
+        "tags": [
+          
+        ]
+      },
+      "glossary_type": {
+        "required": true
+      }
+    },
+    "permalink": {
+      "directory": "\/{language}\/content"
+    },
+    "images": {
+      "directory": {
+        "start": "\/media\/public",
+        "select": "\/media\/public\/content\/teaser"
+      }
+    },
+    "language": {
+      "select": false,
+      "default": "DE",
+      "support": {
+        "DE": {
+          "code": "DE",
+          "name": "German"
+        },
+        "EN": {
+          "code": "EN",
+          "name": "English"
+        }
+      }
+    },
+    "tag": {
+      "auto-link": {
+        "enabled": true,
+        "remove-sharp": false,
+        "replacement": {
+          "link": "\u003Ca class=\"tag auto-link\" href=\"{link}\" title=\"{description}\"\u003E{tag}\u003C\/a\u003E",
+          "invalid": "\u003Cspan class=\"tag invalid\" title=\"The hashtag {tag} does not exist!\"\u003E\u003Ci class=\"fa fa-ban\"\u003E\u003C\/i\u003E {tag}\u003C\/span\u003E",
+          "unassigned": "\u003Cspan class=\"tag unassigned\" title=\"The hashtag {tag} exists but is not assigend to any content!\"\u003E\u003Ci class=\"fa fa-chain-broken\"\u003E\u003C\/i\u003E {tag}\u003C\/span\u003E"
+        },
+        "ellipsis": 64
+      }
+    }
+  },
+  "rss": {
+    "enabled": true,
+    "permalink": {
+      "directory": "\/{language}\/rss"
+    },
+    "channel": {
+      "limit": 50,
+      "image": {
+        "max_width": 100,
+        "max_height": 100
+      }
+    },
+    "tracking": {
+      "enabled": true
+    }
+  },
+  "admin": {
+    "import": {
+      "enabled": false,
+      "timelimit": 60,
+      "data": {
+        "handling": "CLEAN_UP",
+        "htmlpurifier": {
+          "enabled": true,
+          "config": {
+            "URI.MakeAbsolute": true,
+            "AutoFormat.RemoveEmpty": true,
+            "AutoFormat.RemoveEmpty.RemoveNbsp": true,
+            "HTML.ForbiddenElements": [
+              "b",
+              "em",
+              "i",
+              "span",
+              "strong"
+            ]
+          }
+        },
+        "remove": {
+          "double-space": true
+        },
+        "replace": {
+          "\u201e": "\"",
+          "\u201c": "\"",
+          "\u201a": "'",
+          "\u2019": "'"
+        },
+        "images": {
+          "move": true,
+          "teaser": {
+            "get_from_content": true,
+            "min_width": 150,
+            "min_height": 150
+          },
+          "sanitize": true
+        },
+        "teaser": {
+          "create": true,
+          "ellipsis": 500,
+          "html": true
+        },
+        "description": {
+          "create": true,
+          "source": "teaser",
+          "ellipsis": 150
+        },
+        "htaccess": {
+          "create": true,
+          "file": "flexcontent.htaccess"
+        }
+      }
+    }
+  },
+  "kitcommand": {
+    "permalink": {
+      "category": {
+        "robots": "index,follow"
+      },
+      "content": {
+        "robots": "index,follow"
+      },
+      "faq": {
+        "robots": "index,follow"
+      },
+      "tag": {
+        "robots": "noindex,follow"
+      }
+    },
+    "parameter": {
+      "action": {
+        "view": {
+          "load_css": true,
+          "load_jquery": true,
+          "title_level": 1,
+          "content_title": true,
+          "content_description": false,
+          "content_view": "content",
+          "content_categories": true,
+          "content_tags": true,
+          "content_permalink": true,
+          "content_control": true,
+          "content_author": true,
+          "content_date": true,
+          "content_rating": {
+            "enabled": true,
+            "maximum_rate": 5,
+            "size": "big",
+            "stars": 5,
+            "step": true,
+            "template": "default"
+          },
+          "content_comments": {
+            "enabled": true,
+            "captcha": false,
+            "gravatar": true,
+            "publish": "admin",
+            "rating": true
+          }
+        },
+        "category": {
+          "load_css": true,
+          "load_jquery": true,
+          "title_level": 1,
+          "category_name": true,
+          "category_description": true,
+          "category_image": true,
+          "category_image_max_width": 150,
+          "category_image_max_height": 150,
+          "content_limit": 100,
+          "content_exposed": 2,
+          "content_status": [
+            "BREAKING",
+            "PUBLISHED"
+          ],
+          "content_image": true,
+          "content_image_max_width": 350,
+          "content_image_max_height": 350,
+          "content_image_small_max_width": 100,
+          "content_image_small_max_height": 100,
+          "content_title": true,
+          "content_description": false,
+          "content_view": "teaser",
+          "content_tags": true,
+          "content_author": true,
+          "content_date": true,
+          "content_categories": false
+        },
+        "tag": {
+          "load_css": true,
+          "load_jquery": true,
+          "title_level": 1,
+          "tag_name": true,
+          "tag_description": true,
+          "tag_image": true,
+          "tag_image_max_width": 150,
+          "tag_image_max_height": 150,
+          "content_limit": 100,
+          "content_exposed": 2,
+          "content_status": [
+            "BREAKING",
+            "PUBLISHED"
+          ],
+          "content_image": true,
+          "content_image_max_width": 350,
+          "content_image_max_height": 350,
+          "content_image_small_max_width": 100,
+          "content_image_small_max_height": 100,
+          "content_title": true,
+          "content_description": false,
+          "content_view": "teaser",
+          "content_tags": true,
+          "content_author": true,
+          "content_date": true,
+          "content_categories": true
+        },
+        "list": {
+          "load_css": true,
+          "load_jquery": true,
+          "title_level": 1,
+          "categories": [
+            
+          ],
+          "categories_exclude": [
+            
+          ],
+          "order_by": "publish_from",
+          "order_direction": "DESC",
+          "content_limit": 100,
+          "paging": 0,
+          "content_exposed": 2,
+          "content_status": [
+            "BREAKING",
+            "PUBLISHED"
+          ],
+          "content_image": true,
+          "content_image_max_width": 350,
+          "content_image_max_height": 350,
+          "content_image_small_max_width": 100,
+          "content_image_small_max_height": 100,
+          "content_title": true,
+          "content_description": false,
+          "content_view": "teaser",
+          "content_tags": true,
+          "content_author": true,
+          "content_date": true,
+          "content_categories": true
+        },
+        "list_simple": {
+          "load_css": true,
+          "load_jquery": true,
+          "title_level": 1,
+          "categories": [
+            
+          ],
+          "categories_exclude": [
+            
+          ],
+          "order_by": "publish_from",
+          "order_direction": "DESC",
+          "content_limit": 10,
+          "paging": 0,
+          "content_status": [
+            "BREAKING",
+            "PUBLISHED"
+          ],
+          "content_image": true,
+          "content_image_max_width": 350,
+          "content_image_max_height": 350,
+          "content_image_small_max_width": 100,
+          "content_image_small_max_height": 100,
+          "content_title": true,
+          "content_description": false,
+          "content_view": "teaser",
+          "content_tags": true,
+          "content_author": true,
+          "content_date": true,
+          "content_categories": true
+        },
+        "faq": {
+          "load_css": true,
+          "load_jquery": true,
+          "title_level": 1,
+          "category_name": true,
+          "category_description": true,
+          "category_image": true,
+          "category_image_max_width": 150,
+          "category_image_max_height": 150,
+          "faq_rating": {
+            "enabled": true,
+            "maximum_rate": 5,
+            "size": "big",
+            "stars": 5,
+            "step": true,
+            "template": "default"
+          },
+          "faq_comments": {
+            "enabled": true,
+            "captcha": false,
+            "gravatar": true,
+            "publish": "admin",
+            "rating": true
+          },
+          "faq_permalink": true,
+          "faq_control": true,
+          "order_by": "title",
+          "order_direction": "ASC",
+          "content_status": [
+            "BREAKING",
+            "PUBLISHED"
+          ],
+          "content_limit": 100,
+          "content_date": false,
+          "content_author": false,
+          "content_view": "teaser",
+          "content_categories": false,
+          "content_tags": true,
+          "content_image": true,
+          "content_image_max_width": 150,
+          "content_image_max_height": 150,
+          "content_rating": {
+            "enabled": false,
+            "maximum_rate": 5,
+            "size": "big",
+            "stars": 5,
+            "step": true,
+            "template": "default"
+          }
+        }
+      }
+    },
+    "content": {
+      "kitcommand": {
+        "enabled": true,
+        "libraries": {
+          "enabled": false,
+          "jquery": [
+            "jquery\/awesomecloud\/latest\/jquery.awesomeCloud.min.js"
+          ],
+          "css": [
+            
+          ]
+        }
+      }
+    },
+    "libraries": {
+      "enabled": true,
+      "jquery": [
+        "jquery\/jquery\/latest\/jquery.min.js",
+        "bootstrap\/latest\/js\/bootstrap.min.js"
+      ],
+      "css": [
+        "bootstrap\/latest\/css\/bootstrap.min.css",
+        "font-awesome\/latest\/css\/font-awesome.min.css"
+      ],
+      "extra": {
+        "cloud": {
+          "jquery": [
+            "jquery\/awesomecloud\/latest\/jquery.awesomeCloud.min.js"
+          ]
+        }
+      }
+    }
+  },
+  "glossary": {
+    "filter": {
+      "enabled": true,
+      "replacement": {
+        "not_exists": {
+          "title": "There exists no Glossary entry for '{search}'!",
+          "html": "\u003Cspan class=\"glossary not-exists\" title=\"{title}\"\u003E{text}\u003C\/span\u003E"
+        },
+        "inactive": {
+          "html": "\u003Cspan class=\"glossary inactive\"\u003E{text}\u003C\/span\u003E"
+        },
+        "link": {
+          "html": "\u003Ca class=\"glossary link\" href=\"{url}\" target=\"{target}\"\u003E{replacement}\u003C\/a\u003E"
+        },
+        "abbreviation": {
+          "html": "\u003Cabbr class=\"glossary abbreviation\" title=\"{explain}\"\u003E{text}\u003C\/abbr\u003E"
+        },
+        "acronym": {
+          "html": "\u003Cabbr class=\"glossary acronym\" title=\"{explain}\"\u003E{text}\u003C\/abbr\u003E"
+        },
+        "keyword": {
+          "html": "\u003Cspan class=\"glossary keyword\" title=\"{explain}\"\u003E{text}\u003C\/span\u003E"
+        }
+      }
+    }
+  },
+  "search": {
+    "cms": {
+      "enabled": true,
+      "image": {
+        "enabled": true,
+        "max_width": 100,
+        "max_height": 100
+      }
+    },
+    "result": {
+      "highlight": true,
+      "replacement": "\u003Cspan class=\"highlight\"\u003E{word}\u003C\/span\u003E"
+    },
+    "content": {
+      "status": [
+        "PUBLISHED",
+        "BREAKING",
+        "HIDDEN",
+        "ARCHIVED"
+      ]
+    },
+    "category": {
+      "title": {
+        "prefix": {
+          "enabled": true,
+          "prefix": "Category",
+          "replacement": "{prefix}: {title}"
+        }
+      }
+    },
+    "tag": {
+      "title": {
+        "prefix": {
+          "enabled": true,
+          "prefix": "Tag (#tag)",
+          "replacement": "{prefix}: {title}"
+        }
+      }
+    }
+  }
+}

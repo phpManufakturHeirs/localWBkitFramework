@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -13,53 +13,38 @@ namespace phpManufaktur\Event\Control\Backend;
 
 use Silex\Application;
 use phpManufaktur\Event\Control\Backend\Backend;
-use phpManufaktur\Contact\Control\Dialog\Simple\ContactCompany as SimpleContactCompany;
+use phpManufaktur\Contact\Control\Pattern\Implement\ContactEdit;
 
-class ContactCompany extends Backend {
+class ContactCompany extends Backend
+{
 
-    protected $SimpleContactCompany = null;
-
-    public function __construct(Application $app=null)
-    {
-        parent::__construct($app);
-        if (!is_null($app)) {
-            $this->initialize($app);
-        }        
-    }
-
-    protected function initialize(Application $app)
-    {
-        parent::initialize($app);
-        $this->SimpleContactCompany = new SimpleContactCompany($this->app, array(
-            'template' => array(
-                'namespace' => '@phpManufaktur/Event/Template',
-                'message' => 'backend/message.twig',
-                'contact' => 'backend/contact.company.twig'
-            ),
-            'route' => array(
-                'action' => '/admin/event/contact/company/edit?usage='.self::$usage,
-                'category' => '/admin/event/contact/category/list?usage='.self::$usage,
-                'tag' => '/admin/event/contact/tag/list?usage='.self::$usage
-            )
-        ));
-    }
-    
-    public function setContactID($contact_id)
-    {
-        $this->SimpleContactCompany->setContactID($contact_id);
-    }
-
-    public function exec(Application $app, $contact_id=null)
+    /**
+     * Controller to show a Contact Edit dialog
+     *
+     * @param Application $app
+     * @param integer $contact_id
+     * @return \phpManufaktur\Basic\Control\Pattern\rendered
+     */
+    public function Controller(Application $app, $contact_id=null)
     {
         $this->initialize($app);
+
+        $ContactEdit = new ContactEdit($app);
+
+        $ContactEdit->setContactType('COMPANY');
         if (!is_null($contact_id)) {
-            $this->setContactID($contact_id);
+            $ContactEdit->setContactID($contact_id);
         }
+
+        // set template namespace and file name
+        $ContactEdit->setTemplate('@phpManufaktur/Event/Template', 'admin/contact/edit.contact.twig');
+        $ContactEdit->setFieldDefinition(self::$config['contact']['company']['field']);
+
         $extra = array(
             'usage' => self::$usage,
             'toolbar' => $this->getToolbar('contact_edit')
         );
-        return $this->SimpleContactCompany->exec($extra);
+        return $ContactEdit->Execute($extra);
     }
 
 }

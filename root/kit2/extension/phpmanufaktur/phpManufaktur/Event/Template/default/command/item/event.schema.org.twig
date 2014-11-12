@@ -2,7 +2,7 @@
   Event
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/Event
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
@@ -71,6 +71,6 @@
 
   <div itemprop="offers" itemscope itemtype="http://schema.org/AggregateOffer">
     <meta itemprop="lowPrice" content="{%if event.event_costs > 0 %}{{ event.event_costs|number_format(2,',','.') }} &euro;{% else %}0,00 &euro;{% endif %}">
-    <meta itemprop="offerCount" content="{% if event.event_participants_max < 0 %}{{ config.event.microdata.offer_count_unlimited }}{% else %}{{ event.event_participants_max - event.event_participants_total }}{% endif %}">
+    <meta itemprop="offerCount" content="{% if event.event_participants_max is not null or event.event_participants_max < 0 %}{{ config.event.microdata.offer_count_unlimited }}{% else %}{{ event.event_participants_max - event.event_participants_total }}{% endif %}">
   </div>
 </div>

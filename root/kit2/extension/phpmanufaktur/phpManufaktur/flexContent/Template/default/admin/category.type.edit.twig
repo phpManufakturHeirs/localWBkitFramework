@@ -1,0 +1,198 @@
+{#
+  flexContent
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/flexContent
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/flexContent/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'flexContent - Create or edit a category'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/flexContent/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/flexContent/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/flexContent/Template/default/css/admin.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock stylesheet %}
+{% block jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CKEditor/Source/ckeditor.js"></script>
+{% endblock jquery %}
+
+{% block content %}
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/flexContent/Template/default/admin/toolbar.twig' %}
+    <div class="height-15"></div>
+
+    {{ alert }}
+
+    {% if (form.category_id.vars.value > 0) and (form.check_kitcommand.vars.value == 0) %}
+      {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig' 
+        with {content:'In the target URL <strong>%target_url%</strong> for the category <strong>%category_name%</strong> is the kitCommand <strong>~~ flexContent action[category] category_id[%category_id%] ~~</strong> needed!'|trans(
+        {'%category_id%':form.category_id.vars.value, '%target_url%':form.target_url.vars.value, '%category_name%':form.category_name.vars.value}),
+        'type':'alert-warning'} only %}
+    {% endif %}
+    
+    <form id="category_edit" method="post" {{ form_enctype(form) }} role="form">
+      {{ form_errors(form) }}
+      {{ form_row(form._token) }}
+      {{ form_row(form.category_id) }}
+      {{ form_row(form.language) }}
+      {{ form_row(form.check_kitcommand) }}
+
+      <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+          {# form contents at the left column #}
+          <div class="row">
+            <div class="col-sm-3">
+              <div class="form-group">
+                <label>{{ 'category_id'|humanize|trans }}</label>
+                <div>
+                {% if form.category_id.vars.value > 0 %}
+                  {{ '%05d'|format(form.category_id.vars.value) }}&nbsp;
+                  {% set kitcommand = '~~ flexContent action[category] category_id[' ~ form.category_id.vars.value ~ '] ~~' %}
+                  <a id="copycommand" class="btn btn-default" role="button" href="#" data-clipboard-text="{{ kitcommand }}">~~</a>
+                {% else %}
+                  {{ '- new entry -'|trans }}
+                {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              {{ form_label(form.category_type) }}
+              {{ form_widget(form.category_type, {'attr':{'class':'form-control input-sm'}}) }}
+            </div>
+          </div>
+          <div class="form-group">
+            {{ form_label(form.category_name) }}
+            {{ form_widget(form.category_name, {'attr':{'class':'form-control input-sm'}}) }}
+          </div>
+          <div class="form-group">
+            {{ form_label(form.category_permalink) }}&nbsp;({{ form.language.vars.value|trans }})&nbsp;-&nbsp;<span class="text-muted small">{{ form.permalink_url.vars.value }}</span>
+            {{ form_widget(form.category_permalink, {'attr':{'class':'form-control input-sm'}}) }}
+          </div>
+          <div class="form-group">
+            {{ form_label(form.target_url) }}&nbsp;-&nbsp;<span class="text-muted small">{{ CMS_URL }}</span>
+            {{ form_widget(form.target_url, {'attr':{'class':'form-control input-sm'}}) }}
+          </div>
+          <div class="form-group">
+            {{ form_label(form.category_description) }}
+            {{ CKEditor(
+                form.category_description.vars.id,
+                form.category_description.vars.full_name,
+                form.category_description.vars.value,
+                '100%', '150px',
+                MANUFAKTUR_URL ~ '/flexContent/Template/default/admin/ckeditor.config.category.type.js'
+            ) }}
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            {{ form_widget(form.delete) }}&nbsp;<span class="small text-muted">{{ 'delete this category type'|trans }}</span>
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <input class="form-control btn btn-default" type="button" name="save_content" onclick="submitForm('{{ FRAMEWORK_URL }}/flexcontent/editor/category/edit/check?usage={{ usage }}');" value="{{ 'Save'|trans }}" />
+          </div>
+
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 height-category-dialog">
+          <div class="height-30"></div>
+          {% if form.category_image.vars.value|length > 0 %}
+            <img class="img-rounded img-responsive" src="{{ FRAMEWORK_URL ~ form.category_image.vars.value }}" />
+          {% endif %}
+          <div class="height-15"></div>
+          <input class="form-control btn btn-default" type="button" name="image" onclick="submitForm('{{ FRAMEWORK_URL }}/flexcontent/editor/category/image/select?usage={{ usage }}');" value="{{ 'Select category type image'|trans }}" />
+          {% if form.category_image.vars.value|length > 0 %}
+            &nbsp;<a class="form-control btn btn-default" href="#" name="image_remove" role="button" onclick="submitForm('{{ FRAMEWORK_URL }}/flexcontent/editor/category/image/remove/id/{{ form.category_id.vars.value }}?usage={{ usage }}');" title="{{ 'Remove image'|trans }}"><i class="fa fa-trash-o"></i></a>
+          {% endif %}
+        </div>
+      </div>
+      {#{ form_rest(form) }#}
+    </form>
+  </div>
+{% endblock content %}
+
+{% block footer_jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/zeroclipboard/latest/ZeroClipboard.min.js"></script>  
+{% endblock footer_jquery %}
+    
+{% block footer %}
+  {% if CMS_TYPE == 'LEPTON' %}
+    {% set iframe_add_height = 180 %}
+  {% else %}
+    {% set iframe_add_height = 150 %}
+  {% endif %}
+  {{ parent() }}
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      function submitForm(action)
+      {
+        if (!$('#category_edit')[0].checkValidity()) {
+          alert('{{ 'Please fill in all requested fields before submitting the form!'|trans }}');
+        }
+        else {
+          $('#category_edit').attr('action', action);
+          $('#category_edit').submit();
+        }
+      }
+
+      $(document).ready(function() {
+        $("#form_category_name").change(function () {
+          var permalink = $('#form_category_permalink').val();
+          var name = $('#form_category_name').val();
+
+          if (permalink.length < 1) {
+            // no permalink defined, use the category name as propose ...
+            $.ajax({
+              url:"{{ FRAMEWORK_URL }}/flexcontent/editor/permalink/create/category?lang={{ form.language.vars.value }}",
+              type: "POST",
+              dataType: "json",
+              data: {
+                link: name
+              },
+              complete: function (XMLHttpRequest, textStatus) {
+                var result = $.parseJSON(XMLHttpRequest.responseText);
+                $('#form_category_permalink').val(result);
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                alert('Error creating PermaLink:'+textStatus);
+              }
+            });
+          }
+        });
+        
+        $('#global-zeroclipboard-html-bridge').tooltip();
+        
+        // ZeroClipboad
+        ZeroClipboard.config({ moviePath: '{{ LIBRARY_URL }}/jquery/zeroclipboard/latest/ZeroClipboard.swf' });
+        var clip = new ZeroClipboard(document.getElementById('copycommand'));
+        clip.on('complete', function(client, args){
+          alert("{{ 'Copied kitCommand to clipboard:'|trans }}"+" "+ args.text);
+        });
+        
+        clip.on('load', function(client) {
+          {% set kitcommand = '~~ flexContent action[category] category_id[' ~ form.category_id.vars.value ~ '] ~~' %}
+          {% set purpose = 'Show the description of the category and all assigned articles'|trans %}
+          $('#global-zeroclipboard-html-bridge').attr({
+            'data-toggle':'tooltip',
+            'data-title': '{{ 'Copy the complete kitCommand<br /><code>%command%</code><br />to clipboard. Purpose:<br />%purpose%.'|trans({'%command%':kitcommand, '%purpose%':purpose}) }}',
+            'data-placement': 'bottom',
+            'data-html': true
+          });
+          $('#global-zeroclipboard-html-bridge').tooltip('show');
+        });
+      });
+    }
+  </script>
+{% endblock footer %}

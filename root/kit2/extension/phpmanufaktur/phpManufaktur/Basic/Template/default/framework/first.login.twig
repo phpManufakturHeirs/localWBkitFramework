@@ -7,60 +7,58 @@
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
 #}
-{% if usage == 'framework' %}
-    {% set template_namespace = '@phpManufaktur/Basic/Template' %}
-    {% set template_file = 'framework/body.twig' %}
+{% if usage|default('framework') == 'framework' %}
+  {% set template_file = 'framework/body.twig' %}
 {% else %}
-    {% set template_namespace = '@phpManufaktur/Basic/Template' %}
-    {% set template_file = 'framework/backend.body.twig' %}
+  {% set template_file = 'framework/backend.body.twig' %}
 {% endif %}
-{% extends getTemplateFile(template_namespace, template_file) %}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', template_file) %}
 {% block title %}{{ 'kitFramework - First Login'|trans }}{% endblock %}
-{% block head %}
-  {{ parent() }}
-  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/css/login.css" media="screen, projection" />
-{% endblock %}
+{% block stylesheet %}
+  {# at the first login the Library is not initialized, so we have no access to the /latest directory ! #}
+  <link href="{{ LIBRARY_URL }}/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ LIBRARY_URL }}/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/css/framework.min.css" media="screen, projection" />
+{% endblock %}  
 {% block content %}
-  <div class="login_form">
-    <h2>{{ 'kitFramework - Login'|trans }}</h2>
-    {% if app.translator.locale == 'de' %}
-      {# GERMAN language #}
-      {% if message|length > 0 %}
-        <div class="message">{{ message }}</div>
-      {% else %}
-        <div class="message">
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container">
+    <div class="page-header">
+      <h1>{{ 'Login'|trans }} <small>kitFramework</small></h1>
+    </div>
+    
+    {{ alert }}
+    
+    {% if alert|length == 0 %}
+      <div class="alert alert-info">
+        {% if app.translator.locale == 'de' %}
+          {# GERMAN language #}
           <p>Hallo {{ form.display_name.vars.value }},</p>
-          <p>sie rufen das kitFramework zum ersten Mal auf.</p>
+          <p>Sie rufen das kitFramework zum ersten Mal auf.</p>
           <p>Sie sind bereits in {{ usage }} eingeloggt. Damit Sie künftig automatisch mit Ihrem Konto am kitFramework angemeldet werden können, müssen Sie einmalig Ihr Passwort eingeben.</p>
-        </div>
-      {% endif %}
-    {% else %}
-      {# ENGLISH language #}
-      {% if message|length > 0 %}
-        <div class="message">{{ message }}</div>
-      {% else %}
-        <div class="message">
+        {% else %}
+          {# ENGLISH language #}
           <p>Hello {{ form.display_name.vars.value }},</p>
           <p>this is the first time you are executing the kitFramework.</p>
           <p>You are already logged in  at {{ usage }}. To enable a auto-login into the kitFramework you must authenticate with your password only one times.</p>
-        </div>
-      {% endif %}
+        {% endif %}
+      </div>
     {% endif %}
-    <form action="{{ FRAMEWORK_URL }}/login/first/cms/check?usage={{ usage }}" method="post" {{ form_enctype(form) }}>
+    
+    {% form_theme form '@phpManufaktur/Basic/Template/default/framework/form.fields.horizontal.twig' %}
+    
+    <form class="form-horizontal" action="{{ FRAMEWORK_URL }}/login/first/cms/check?usage={{ usage }}" method="post" {{ form_enctype(form) }} role="form">
       {{ form_widget(form) }}
-      <label>&nbsp;</label><input type="submit" name="submit" />
-      <div class="clear"></div>
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-6">
+          <button type="submit" class="btn btn-default">{{ 'Submit'|trans }}</button>
+        </div>
+      </div>
     </form>
   </div>
 {% endblock %}
-{% block footer %}
-  {{ parent() }}
-  <script type="text/javascript">
-    if (typeof 'jQuery' !== 'undefined') {
-      $(document).ready(function() {
-        {# set focus to the password field #}
-        $('input[id=form_password]').focus();
-      });
-    }
-  </script>
-{% endblock footer %}
+
+{% block footer_jquery %}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/jquery/2.1.1/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+{% endblock footer_jquery %}

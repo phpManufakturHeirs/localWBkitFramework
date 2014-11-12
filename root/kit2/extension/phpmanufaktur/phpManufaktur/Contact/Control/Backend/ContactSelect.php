@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -19,6 +19,11 @@ class ContactSelect extends Backend {
 
     protected $SimpleContactSelect = null;
 
+    /**
+     * Constructor
+     *
+     * @param Application $app
+     */
     public function __construct(Application $app=null)
     {
         parent::__construct($app);
@@ -27,36 +32,51 @@ class ContactSelect extends Backend {
         }
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see \phpManufaktur\Contact\Control\Backend\Backend::initialize()
+     */
     protected function initialize(Application $app)
     {
         parent::initialize($app);
         $this->SimpleContactSelect = new SimpleContactSelect($this->app, array(
             'template' => array(
                 'namespace' => '@phpManufaktur/Contact/Template',
-                'message' => 'backend/message.twig',
-                'select' => 'backend/admin/contact.select.twig'
+                'alert' => 'pattern/admin/alert.twig',
+                'select' => 'admin/select.contact.twig'
             ),
             'route' => array(
-                'action' => '/admin/contact/backend/select?usage='.self::$usage,
+                'action' => '/admin/contact/select?usage='.self::$usage,
                 'contact' => array(
                     'person' => array(
-                        'create' => '/admin/contact/backend/person/edit?usage='.self::$usage,
-                        'edit' => '/admin/contact/backend/person/edit/id/{contact_id}?usage='.self::$usage
+                        'create' => '/admin/contact/person/edit?usage='.self::$usage,
+                        'edit' => '/admin/contact/person/edit/id/{contact_id}?usage='.self::$usage
                     ),
                     'company' => array(
-                        'create' => '/admin/contact/backend/company/edit?usage='.self::$usage,
-                        'edit' => '/admin/contact/backend/company/edit/id/{contact_id}?usage='.self::$usage
+                        'create' => '/admin/contact/company/edit?usage='.self::$usage,
+                        'edit' => '/admin/contact/company/edit/id/{contact_id}?usage='.self::$usage
                     )
                 )
             )
         ));
     }
 
+    /**
+     * Set the contact ID
+     *
+     * @param integer $contact_id
+     */
     public function setContactID($contact_id)
     {
         $this->SimpleContactSelect->setContactID($contact_id);
     }
 
+    /**
+     * Controller to select a existing contact or select the type to create a new one
+     *
+     * @param Application $app
+     * @param string $contact_id
+     */
     public function controller(Application $app, $contact_id=null)
     {
         $this->initialize($app);

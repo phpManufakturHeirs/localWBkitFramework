@@ -1,0 +1,81 @@
+{
+  "enabled": true,
+  "image": {
+    "alt": {
+      "default": "- no image description available -",
+      "set": true
+    },
+    "title": {
+      "default": "- no image description available -",
+      "set": true
+    }
+  },
+  "embed": {
+    "fancybox": {
+      "image": {
+        "class": "tweak-fancybox",
+        "remove": true
+      },
+      "element": "a",
+      "attribute": {
+        "href": "{src}",
+        "title": "{title}",
+        "class": "grouped_elements",
+        "rel": "fancybox"
+      }
+    },
+    "slimbox2": {
+      "image": {
+        "class": "tweak-slimbox",
+        "remove": true
+      },
+      "element": "a",
+      "attribute": {
+        "href": "{src}",
+        "title": "{title}",
+        "rel": "lightbox"
+      }
+    },
+    "lightbox2": {
+      "image": {
+        "class": "tweak-lightbox",
+        "remove": true
+      },
+      "element": "a",
+      "attribute": {
+        "href": "{src}",
+        "data-title": "{title}",
+        "data-lightbox": "lightbox"
+      }
+    }
+  },
+  "gallery": {
+    "locale": {
+      "locales": [
+        "en",
+        "de"
+      ],
+      "fallback": "en"
+    },
+    "image": {
+      "extension": [
+        "*.jpg",
+        "*.jpeg",
+        "*.png",
+        "*.JPG",
+        "*.JPEG",
+        "*.PNG"
+      ],
+      "fullsize": {
+        "max_width": 1200,
+        "max_height": 800
+      },
+      "thumbnail": {
+        "max_width": 250,
+        "max_height": 200
+      },
+      "set_title": true,
+      "set_alt": true
+    }
+  }
+}

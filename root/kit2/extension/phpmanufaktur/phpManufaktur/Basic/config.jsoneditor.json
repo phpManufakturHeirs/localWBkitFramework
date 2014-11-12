@@ -1,0 +1,52 @@
+{
+  "last_scan": "2014-10-23 13:46:19",
+  "wait_hours": 72,
+  "exclude": {
+    "file": [
+      "composer.json",
+      "package.json",
+      "bower.json",
+      "extension.*",
+      "command.*",
+      "filter.*",
+      "_*.json",
+      ".*.json",
+      "bak.*.json"
+    ],
+    "directory": [
+      "Data",
+      "Library\/Library"
+    ]
+  },
+  "help": {
+    "accounts.list.json": "help_accounts_list_json",
+    "cms.json": "help_cms_json",
+    "config.jsoneditor.json": "help_config_jsoneditor_json",
+    "doctrine.cms.json": "help_doctrine_cms_json",
+    "framework.json": "help_framework_json",
+    "proxy.json": "help_proxy_json",
+    "swift.cms.json": "help_swift_cms_json",
+    "config.minishop.json": "help_minishop_json"
+  },
+  "configuration_files": {
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\config\\cms.json": "cms.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\config\\doctrine.cms.json": "doctrine.cms.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\config\\framework.json": "framework.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\config\\proxy.json": "proxy.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\config\\swift.cms.json": "swift.cms.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Basic\\Template\\default\\framework\\accounts.list.json": "\\Basic\\Template\\default\\framework\\accounts.list.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Basic\\config.jsoneditor.json": "\\Basic\\config.jsoneditor.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Contact\\Template\\default\\admin\\list.contact.json": "\\Contact\\Template\\default\\admin\\list.contact.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Contact\\Template\\default\\command\\list.contact.json": "\\Contact\\Template\\default\\command\\list.contact.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Contact\\Template\\default\\form\\sample_check\\form.json": "\\Contact\\Template\\default\\form\\sample_check\\form.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Contact\\Template\\default\\form\\sample_contact\\form.json": "\\Contact\\Template\\default\\form\\sample_contact\\form.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Contact\\Template\\default\\form\\sample_customize\\form.json": "\\Contact\\Template\\default\\form\\sample_customize\\form.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Contact\\Template\\default\\form\\sample_newsletter\\form.json": "\\Contact\\Template\\default\\form\\sample_newsletter\\form.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Contact\\Template\\default\\form\\sample_panel\\form.json": "\\Contact\\Template\\default\\form\\sample_panel\\form.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Contact\\Template\\default\\form\\sample_select\\form.json": "\\Contact\\Template\\default\\form\\sample_select\\form.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Contact\\Template\\default\\pattern\\admin\\simple\\list.contact.json": "\\Contact\\Template\\default\\pattern\\admin\\simple\\list.contact.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\Contact\\config.contact.json": "\\Contact\\config.contact.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\miniShop\\Template\\default\\admin\\contact\\list.contact.json": "\\miniShop\\Template\\default\\admin\\contact\\list.contact.json",
+    "P:\\apache\\htdocs\\lepton\\lepton123\\kit2\\extension\\phpmanufaktur\\phpManufaktur\\miniShop\\config.minishop.json": "\\miniShop\\config.minishop.json"
+  }
+}

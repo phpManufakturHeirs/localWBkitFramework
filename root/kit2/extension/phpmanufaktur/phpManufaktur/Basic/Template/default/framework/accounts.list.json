@@ -1,0 +1,19 @@
+{
+  "columns":[
+    "id",
+    "username",
+    "email",
+    "displayname",
+    "status",
+    "last_login"
+  ],
+  "list":{
+    "rows_per_page":20,
+    "order":{
+      "by":[
+        "email"
+      ],
+      "direction":"ASC"
+    }
+  }
+}

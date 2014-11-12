@@ -1,0 +1,35 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{{ alert }}
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    {% if app.translator.locale == 'de' %}
+      {# GERMAN #}
+      <p>Bitte legen Sie den Typ des neuen Kontakt fest. Bitte beachten Sie, dass Sie den Typ nicht mehr ändern können wenn der Datensatz angelegt ist.</p>
+    {% else %}
+      {# ENGLISH #}
+      <p>Please select the type of contact you want to create. Be aware that you can not change the contact type if the record is created.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% form_theme form '@phpManufaktur/Contact/Template/default/pattern/form.fields.horizontal.twig' %}
+
+<form action="{{ FRAMEWORK_URL ~ route.action }}" class="form-horizontal" method="post" role="form">
+  
+  {{ form_widget(form) }}     
+  
+  <div class="form-group">
+    <div class="col-sm-9 col-sm-offset-3">
+      <button class="btn btn-default" type="submit">{{ 'Submit'|trans }}</button>
+    </div>
+  </div>
+</form>    

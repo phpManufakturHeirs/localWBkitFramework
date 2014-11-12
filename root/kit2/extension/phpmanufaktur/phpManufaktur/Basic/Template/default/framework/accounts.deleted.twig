@@ -1,0 +1,26 @@
+{#
+  kitFramework
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'framework/body.twig') %}
+{% block title %}{{ 'kitFramework - Account'|trans }}{% endblock %}
+{% block content %}
+  <div class="container">
+    <!-- {{ _self.getTemplateName() }} -->
+    <div class="page-header">
+      <h1>{{ 'Account'|trans }} <small>kitFramework</small></h1>
+    </div>
+    
+    {{ alert }}
+    
+    <div>
+      <a class="btn btn-default" role="button" href="{{ FRAMEWORK_URL ~ '/admin/accounts/list?usage=' ~ usage }}">{{ 'Accounts'|trans }}</a>&nbsp;
+    </div>
+    
+  </div>
+{% endblock %}

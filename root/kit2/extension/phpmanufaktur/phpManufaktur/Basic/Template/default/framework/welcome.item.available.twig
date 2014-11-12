@@ -1,0 +1,11 @@
+<div class="thumbnail">   
+  <img src="data:image/{{ item.logo_type }};charset=utf-8;base64,{{ item.logo_blob }}" width="{{ item.logo_width }}" height="{{ item.logo_height }}" alt="{{ item.description.title }}" />
+  <div class="caption">
+    <p><strong>{{ item.description.title }}</strong></p>
+    <p>{{ item.description.short }}</p>
+    <p>Release {{ item.release }} <em>({{ item.date|date('DATE_FORMAT'|trans) }})</em></p>
+    {% if item.info.download.github is defined %}
+      <p><a href="{{ FRAMEWORK_URL }}/admin/updater/install/{{ item.id }}?usage={{ usage }}">{{ 'Install'|trans }}</a></p>
+    {% endif %}
+  </div>
+</div>

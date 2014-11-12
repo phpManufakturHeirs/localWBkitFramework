@@ -1,0 +1,48 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{{ alert }}
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    {% if app.translator.locale == 'de' %}
+      {# GERMAN #}
+      <p>Der <strong>Bezeichner</strong> für den Titel wird immer in Großbuchstaben umgewandelt, Leerzeichen werden durch einen Unterstrich ersetzt, Sonderzeichen wie ä, ö, ü oder ß sind im Bezeichner nicht gestattet.</p>
+      <p>In der Voreinstellung werden die <strong>Kurzbezeichnungen</strong> und die <strong>Langbezeichnungen</strong> in allen Dialogen exakt so angezeigt, wie sie hier eingegeben wurden.</p>
+      <p>Sie können die <strong>Kurzbezeichnungen</strong> und die <strong>Langbezeichnungen</strong> in jede beliebige Sprache übersetzen, die Sie in Ihrem CMS nutzen. Fügen Sie den <strong>Kurzbezeichner</strong> bzw. <strong>Langebzeichner</strong> einfach einer benutzerdefinierten Sprachdatei im Verzeichnis <em>/kit2/extension/phpmanufaktur/phpManufaktur/Contact/Data/Locale/Custom</em> hinzu. Die <em>README.md</em> im gleichen Verzeichnis erklärt Ihnen, wie Sie benutzerdefinierte Sprachdateien anlegen und verwenden.</p>
+      {% if form.title_id.vars.value > 0 %}
+        <p>In der aktuellen Sprache {{ app.translator.locale|upper }} wird die <strong>Kurzbezeichnung</strong> von <strong>{{ form.title_short.vars.value }}</strong> in <strong>{{ form.title_short.vars.value|trans }}</strong> und die <strong>Langbezeichnung</strong> von <strong>{{ form.title_long.vars.value }}</strong> in <strong>{{ form.title_long.vars.value|trans }}</strong> übersetzt und angezeigt.</p>
+      {% endif %}
+    {% else %}
+      {# ENGLISH #}
+      <p>The <strong>name</strong> of the title will be always transformed to uppercase and spaces will be replaced by underscores, special chars are not allowed.</p>
+      <p>By default the <strong>short name</strong> and the <strong>long name</strong> will be shown exact as they are typed in this dialog.</p>
+      <p>You can <em>translate</em> the <strong>name</strong> to any language you are using within your CMS. Just add the <strong>short name</strong> and the <strong>long name</strong> to a custom language file in the directory <em>/kit2/extension/phpmanufaktur/phpManufaktur/Contact/Data/Locale/Custom</em>, the <em>README.md</em> in this directory will explain you how to create and use custom language files.</p>
+      {% if form.title_id.vars.value > 0 %}
+        <p>At the current language {{ app.translator.locale|upper }} the <strong>short name</strong> will be translated from <strong>{{ form.title_short.vars.value }}</strong> to <strong>{{ form.title_short.vars.value|trans }}</strong> and the <strong>long name</strong> from <strong>{{ form.title_long.vars.value }}</strong> to <strong>{{ form.title_long.vars.value|trans }}</strong>.</p>
+      {% endif %}  
+    {% endif %}
+  </div>
+</div>
+
+{% form_theme form '@phpManufaktur/Contact/Template/default/pattern/form.fields.horizontal.twig' %}
+
+<form action="{{ FRAMEWORK_URL ~ route.action }}" class="form-horizontal" method="post" role="form">
+  
+  <fieldset>
+    <legend>{{ 'Title definition'|trans }}</legend>
+    {{ form_widget(form) }}     
+  </fieldset>
+  
+  <div class="form-group">
+    <div class="col-sm-9 col-sm-offset-3">
+      <button class="btn btn-default" type="submit">{{ 'Submit'|trans }}</button>
+    </div>
+  </div>
+</form>    

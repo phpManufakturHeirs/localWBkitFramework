@@ -29,7 +29,7 @@
     </div>
   </div>
   <div class="navigation">
-    {% if parameter.link.detail.active and parameter.view != 'detail' %}
+    {% if parameter.link.detail.active and (parameter.view is not defined or parameter.view != 'detail') %}
       <a href="{{ parameter.link.detail.url }}" target="{{ parameter.link.detail.target }}">{{ 'Show detailed information'|trans }}</a>
     {% endif %}
   </div>

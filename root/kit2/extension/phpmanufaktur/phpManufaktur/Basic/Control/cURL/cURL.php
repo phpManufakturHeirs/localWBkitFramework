@@ -40,6 +40,13 @@ class cURL {
     public function Download ($source_url, $target_path, &$info = array())
     {
         try {
+            // time limit for cURL operation
+            if (function_exists('set_time_limit') && !$this->app['utils']->isFunctionDisabled('set_time_limit')) {
+                set_time_limit(180);
+            }
+            else {
+                $this->app['monolog']->addDebug('Function `set_time_limit()` is disabled!', array(__METHOD__, __LINE__));
+            }
 
             // first try to get the redirected URL
             $ch = curl_init();
@@ -50,6 +57,7 @@ class cURL {
             curl_setopt($ch, CURLOPT_USERAGENT, self::USERAGENT);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_USERPWD, "fd881e98b9f76fcd9f4d80e8c1cfca68ee9e35b4:x-oauth-basic");
 
             // set proxy if needed
             $this->app['utils']->setCURLproxy($ch);
@@ -72,6 +80,7 @@ class cURL {
             curl_setopt($ch, CURLOPT_TIMEOUT, 1000);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_USERPWD, "fd881e98b9f76fcd9f4d80e8c1cfca68ee9e35b4:x-oauth-basic");
 
             // set proxy if needed
             $this->app['utils']->setCURLproxy($ch);

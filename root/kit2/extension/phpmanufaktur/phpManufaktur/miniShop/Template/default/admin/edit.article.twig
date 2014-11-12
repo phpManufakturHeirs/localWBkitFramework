@@ -1,0 +1,181 @@
+{#
+  miniShop
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/miniShop
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/miniShop/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'miniShop - About'|trans }}{% endblock %}
+{% block jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CKEditor/Source/ckeditor.js"></script>
+{% endblock jquery %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL }}/jquery/ui/latest/themes/smoothness/jquery-ui.min.css" />
+  {% if fileExists(MANUFAKTUR_PATH ~ '/miniShop/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/miniShop/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/miniShop/Template/default/css/admin.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div id="article"></div>    
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/miniShop/Template/default/admin/toolbar.twig' %}
+    
+    <h1>{{ 'Article'|trans }}</h1>
+    
+    {{ alert }}
+    
+    {# assign the bootstrap 3 theming for horizontal forms to the Symfony Form Factory output #}  
+    {% form_theme form '@phpManufaktur/Contact/Template/default/pattern/form.fields.horizontal.twig' %}
+    
+    <form id="article-edit" action="{{ FRAMEWORK_URL ~ '/admin/minishop/article/edit/check' ~ usage_param }}" class="form-horizontal" method="post" role="form" {{ form_enctype(form) }}>
+      <div class="row">
+        <div class="col-sm-7">
+          {{ form_row(form.article_name) }}
+          {{ form_row(form.order_number) }}
+          {{ form_row(form.article_group) }}
+          {{ form_row(form.permanent_link) }}
+          {{ form_row(form.seo_title) }}
+          {{ form_row(form.seo_description) }}
+          {{ form_row(form.seo_keywords) }}
+          {{ form_row(form.description_short) }}
+          {{ form_row(form.article_variant_name) }}
+          {{ form_row(form.article_variant_values) }}
+          {{ form_row(form.article_variant_name_2) }}
+          {{ form_row(form.article_variant_values_2) }}
+        </div>
+        <div class="col-sm-5">
+          <div class="row">
+            <div class="col-sm-9 col-sm-offset-3">
+              {# article image #}
+              <div class="image-container">
+                {% if form.article_image.vars.value|length > 0 %}
+                  <img class="img-rounded img-responsive" src="{{ FRAMEWORK_URL ~ form.article_image.vars.value }}" />
+                {% endif %}
+              </div>
+            </div>
+            {% if form.article_image.vars.value|length > 0 %}
+              <div class="col-sm-12">
+                <div class="image-folder-gallery">
+                  {{ form_row(form.article_image_folder_gallery) }}
+                </div>            
+              </div>
+            {% endif %}
+            <div class="col-sm-9 col-sm-offset-3">
+              <div class="image-container-button">
+                <span class="image-button select"><input class="form-control btn btn-default" type="button" name="image" onclick="submitForm('{{ FRAMEWORK_URL ~ '/admin/minishop/article/image/select' ~ usage_param }}');" value="{{ 'Select article image'|trans }}" title="{{ 'Select article image'|trans }}" /></span>
+                  {% if form.article_image.vars.value|length > 0 %}
+                  <span class="image-button remove"><a class="form-control btn btn-default" href="#" name="image_remove" role="button" onclick="submitForm('{{ FRAMEWORK_URL ~ '/admin/minishop/article/image/remove/id/' ~ form.id.vars.value ~ usage_param }}')" title="{{ 'Remove image'|trans }}"><i class="fa fa-trash-o"></i></a></span>
+                    {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          {{ form_row(form.article_price) }}
+          {#{ form_row(form.article_limit) }#}
+          {{ form_row(form.shipping_cost) }}
+          {{ form_row(form.publish_date) }}
+          {{ form_row(form.available_date) }}
+          {{ form_row(form.status) }}
+          {{ form_row(form.article_delete_checkbox) }}  
+          
+          <div class="form-group">
+            <div class="col-sm-9 col-sm-offset-3">
+              <button class="btn btn-default" type="submit">{{ 'Save'|trans }}</button>&nbsp;
+              <a href="{{ FRAMEWORK_URL ~ '/admin/minishop/article/list' ~ usage_param }}" class="btn btn-default" role="button">{{ 'Abort'|trans }}</a>
+            </div>
+          </div>
+            
+        </div>
+      </div>
+      
+      {{ form_rest(form) }}
+      
+      <div class="form-group">
+        <div class="col-sm-12">
+          <button class="btn btn-default" type="submit">{{ 'Save'|trans }}</button>&nbsp;
+          <a href="{{ FRAMEWORK_URL ~ '/admin/minishop/article/list' ~ usage_param }}" class="btn btn-default" role="button">{{ 'Abort'|trans }}</a>
+        </div>
+      </div>
+    </form>   
+        
+  </div>
+{% endblock content %}
+{% block footer_jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/ui/latest/ui/minified/i18n/jquery-ui-i18n.min.js"></script>
+{% endblock footer_jquery %}
+{% block footer %}
+  {# add the height of CKE's to the iframe_add_height (default = 30) #}
+  {% set iframe_add_height = 520 %}
+  {{ parent() }}
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      
+      function submitForm(action)
+      {
+        if (!$('#article-edit')[0].checkValidity()) {
+          alert('{{ 'Please fill in all requested fields before submitting the form!'|trans }}');
+        }
+        else {
+          $('#article-edit').attr('action', action);
+          $('#article-edit').submit();
+        }
+      }
+      
+      $(document).ready(function() {
+      
+        // on page load scroll to the top of the form
+        document.getElementById('article').scrollIntoView(true);
+        
+        $.datepicker.setDefaults($.datepicker.regional['{{ app.translator.locale }}']);
+        $('.datepicker').datepicker({ 
+          changeMonth: true,
+          changeYear: true,
+          minDate: '-1Y',
+          maxDate: '+1Y',
+          yearRange: '{{ ('now'|date('Y'))-1 }}:{{ ('now'|date('Y'))+1 }}'
+        });
+        
+        $("#form_article_name").change(function () {
+          var permalink = $('#form_permanent_link').val();
+          var title = $('#form_article_name').val();
+
+          if (permalink.length < 1) {
+            // no permalink defined, use the article name as propose ...
+            $.ajax({
+              url:"{{ FRAMEWORK_URL ~ '/admin/minishop/article/edit/permalink/create' }}",
+              type: "POST",
+              dataType: "json",
+              data: {
+                link: title
+              },
+              complete: function (XMLHttpRequest, textStatus) {
+                var result = $.parseJSON(XMLHttpRequest.responseText);
+                $('#form_permanent_link').val(result);
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                alert('Error creating PermaLink:'+textStatus);
+              }
+            });
+          }
+        });
+      });
+    }
+  </script>
+{% endblock footer %}

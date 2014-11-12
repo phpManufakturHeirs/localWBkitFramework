@@ -1,0 +1,54 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/iframe.body.twig') %}
+{% block title %}{{ 'Register a public contact record'|trans }}{% endblock %}
+{% block description %}{{ 'Register a public contact record'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Contact/Template/default/css/form.horizontal.min.css' }}" />
+  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Contact/Template/default/css/command.min.css" />
+{% endblock %}  
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  {# need the parent to enable prompting messages #}
+  <h2>{{ 'Determine contact type'|trans }}</h2>
+  
+  {{ parent() }}
+  
+  <div class="panel panel-default">
+    <div class="panel-body">
+      {% if app.translator.locale == 'de' %}
+        {# GERMAN #}
+        <p>Sie sind im Begriff Kontakt Daten zu übermitteln. Bitte beachten Sie, dass diese Daten möglicher Weise auf dieser Webseite veröffentlicht werden.</p>
+        <p>Im ersten Schritt müssen Sie festlegen, ob die Kontakt Daten an eine <strong>Person</strong> oder <strong>Organisation</strong> gebunden sind. Falls Sie eine Privatperson oder ein Freischaffender sind, wählen Sie <strong>Person</strong>, falls Sie eine Firma, einen Verein oder eine Institution eintragen möchten, wählen Sie <strong>Organisation</strong>.</p>
+        <p><em>Der festgelegte Kontakt Typ kann später nicht mehr geändert werden!</em></p>
+      {% else %}
+        {# ENGLISH #}
+        <p>You are starting to submit contact data which will be probably published at this website and can be viewed by everyone.</p>
+        <p>In the first step you must determine if the contact data are assigned to a <strong>person</strong> or to a <strong>organization</strong>. If you are an individual or a freelancer select <strong>person</strong>, if you represent a company or any business organization select <strong>organization</strong>.</p>
+        <p><em>Be aware that you can not change the contact type at a later time!</em></p>
+      {% endif %}
+    </div>
+  </div>
+  
+  {# assign the bootstrap 3 theming for horizontal forms to the Symfony Form Factory output #}  
+  {% form_theme form '@phpManufaktur/Contact/Template/default/pattern/form.fields.horizontal.twig' %}
+
+  <form action="{{ FRAMEWORK_URL ~ '/contact/register?pid=' ~ basic.pid }}" class="form-horizontal" method="post" role="form">
+    {# loop through all form fields from the form.json #}
+    {{ form_widget(form) }}     
+
+    <div class="form-group">
+      <div class="col-sm-9 col-sm-offset-3">
+        <button class="btn btn-default" type="submit">{{ 'Determine contact type'|trans }}</button>
+      </div>
+    </div>
+  </form>    
+{% endblock %}

@@ -1,0 +1,27 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<!-- {{ _self.getTemplateName() }} -->
+<ul class="pager">
+  {% if previous.enabled %}
+    {% set class = '' %}
+    {% if previous.id < 1 %}{% set class = 'disabled ' %}{% endif %}  
+    {% if not center %}{% set class = class ~ 'previous' %}{% endif %}
+    <li{% if class|length > 0 %} class="{{ class|trim }}"{% endif %}>
+      <a href="{% if previous.page.page_url is defined %}{{ previous.page.page_url }}{% else %}#{% endif %}" accesskey="p" title="{{ '%direction% Page, Accesskey: [ALT]+%key%'|trans({'%key%':'p', '%direction%':'Previous'|trans}) }}">&larr; {{ 'Previous'|trans }}</a>
+    </li>
+  {% endif %}
+  {% if next.enabled %}
+    {% set class = '' %}
+    {% if next.id < 1 %}{% set class = 'disabled ' %}{% endif %}  
+    {% if not center %}{% set class = class ~ 'next' %}{% endif %}
+    <li{% if class|length > 0 %} class="{{ class|trim }}"{% endif %}>
+      <a href="{% if next.page.page_url is defined %}{{ next.page.page_url }}{% else %}#{% endif %}" accesskey="n" title="{{ '%direction% Page, Accesskey: [ALT]+%key%'|trans({'%key%':'n', '%direction%':'Next'|trans})}}">{{ 'Next'|trans }} &rarr;</a>
+    </li>
+  {% endif %}
+</ul>

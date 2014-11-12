@@ -4,17 +4,34 @@
   @author Team phpManufaktur <team@phpmanufaktur.de>
   @link https://kit2.phpmanufaktur.de
   @link https://github.com/phpManufaktur/kitFramework/wiki
-  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
 #}
 {% extends getTemplateFile('@phpManufaktur/Basic/Template', 'framework/body.twig') %}
-{% block title %}{{ 'kitFramework - Admin'|trans }}{% endblock %}
-{% block head %}
-  {{ parent() }}
-  <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Basic/Template/default/framework/css/account.css" media="screen, projection" />
-{% endblock %}
+{% block title %}{{ 'kitFramework - Account'|trans }}{% endblock %}
 {% block content %}
-  <div class="admin_container">
-    {{ 'Account not implemented yet!'|trans }}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container">
+    <div class="page-header">
+      <h1>{{ 'Account'|trans }} <small>kitFramework</small></h1>
+    </div>
+    
+    {{ alert }}
+    
+    {% if alert|length < 1 %}
+      {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig'
+        with {type:'alert-warning',content:'Be aware: Changing your email address may influence kitFramework extensions which are using the account data to identify you - please contact the webmaster in these cases. The username can only be changed by the administrator.'|trans} only %}
+    {% endif %}
+    
+    {% form_theme form '@phpManufaktur/Basic/Template/default/framework/form.fields.horizontal.twig' %}
+    
+    <form class="form-horizontal" action="{{ FRAMEWORK_URL ~ action ~ '?usage=' ~ usage }}" method="post" role="form">
+      {{ form_widget(form) }}
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-6">
+          <button type="submit" class="btn btn-default">{{ 'Submit'|trans }}</button>
+        </div>
+      </div>
+    </form>
   </div>
 {% endblock %}

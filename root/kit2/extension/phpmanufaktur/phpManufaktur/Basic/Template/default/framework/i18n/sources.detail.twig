@@ -1,0 +1,155 @@
+{#
+  i18nEditor
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/i18n/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework i18nEditor' }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/default/framework/css/framework.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/Basic/Template/default/framework/i18n/toolbar.twig' %}
+
+    <h1>{{ 'Locale source'|trans }} <small>i18nEditor</small></h1>
+
+    {{ alert }}
+
+    {% form_theme form '@phpManufaktur/Basic/Template/default/framework/form.fields.horizontal.twig' %}
+    <form class="form-horizontal" action="{{ FRAMEWORK_URL ~ '/admin/i18n/editor/sources/detail/check' ~ usage_param }}" method="post" role="form">
+      <div class="form-group">
+        <label class="col-sm-3 control-label">{{ 'locale_id'|humanize|trans }}</label>
+        <div class="col-sm-6">
+          <p class="form-control-static">{{ form.locale_id.vars.value }}</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">{{ 'locale_source'|humanize|trans }}</label>
+        <div class="col-sm-6">
+          <p class="form-control-static source">{{ form.locale_source.vars.value }}</p>
+        </div>
+      </div>
+      {{ form_widget(form) }}
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-6">
+          <button type="submit" class="btn btn-default">{{ 'Submit'|trans }}</button>&nbsp;
+          <a href="{{ FRAMEWORK_URL ~ '/admin/i18n/editor/sources' ~ usage_param }}" class="btn btn-default" role="button">{{ 'Abort'|trans }}</a>
+        </div>
+      </div>
+    </form>
+
+
+    {% if references|length > 0 %}
+      <h2>{{ 'Referenced files'|trans }}</h2>
+      <div class="table-responsive resources">
+        <table class="table table-striped table-condensed table-hover">
+          <thead>
+            <tr>
+              <th>{{ 'Extension'|trans }}</th>
+              <th>{{ 'Filename'|trans }}</th>
+              <th>{{ 'Line'|trans }}</th>
+              <th>{{ 'Usage'|trans }}</th>
+              <th>{{ 'Template'|trans }}</th>
+              <th>{{ 'Modified'|trans }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for reference in references %}
+              <tr>
+                <td class="extension">{{ reference.extension}}</td>
+                <td class="basename" title="{{ reference.file_path }}">{{ reference.basename }}</td>
+                <td class="line">{{ '%05d'|format(reference.line_number) }}</td>
+                <td class="usage">{{ reference.locale_usage|humanize|trans }}</td>
+                <td class="template">{% if reference.template != 'NONE' %}{{ reference.template }}{% endif %}</td>
+                <td class="modified">{{ reference.file_mtime }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+    {% if translations|length > 0 %}
+      <h2>{{ 'Translations'|trans }}</h2>
+      <div class="table-responsive translations">
+        <table class="table table-striped table-condensed table-hover">
+          <thead>
+            <tr>
+              <th>{{ 'locale_locale'|humanize|trans }}</th>
+              <th>{{ 'translation_text'|humanize|trans }}</th>
+              <th>{{ 'Extension'|trans }}</th>
+              <th>{{ 'locale_type'|humanize|trans }}</th>
+              <th>{{ 'translation_status'|humanize|trans }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for translation in translations %}
+              <tr>
+                <td>{{ translation.locale_locale }}</td>
+                <td class="source{% if translation.translation_status == 'CONFLICT' %} conflict{% endif %}"><a href="{{ FRAMEWORK_URL ~ '/admin/i18n/editor/translation/edit/id/' ~ translation.translation_id ~ usage_param }}" title="{{ 'Edit translation'|trans }}"><i class="fa fa-pencil-square-o"></i></a>&nbsp;{{ translation.translation_text|escape('html') }}</td>
+                <td>{{ translation.extension }}</td>
+                <td>{{ translation.locale_type|humanize|trans }}</td>
+                <td {% if translation.translation_status == 'CONFLICT' %}class="conflict"{% endif %}>{{ translation.translation_status|humanize|trans }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+{% endblock content %}
+{% block footer_jquery %}
+  {{ parent() }}
+  {# tablesorter #}
+  <script src="{{ LIBRARY_URL ~ '/jquery/tablesorter/latest/js/jquery.tablesorter.js' }}"></script>
+  <script src="{{ LIBRARY_URL ~ '/jquery/tablesorter/latest/js/jquery.tablesorter.widgets.js' }}"></script>
+  <script type="text/javascript">
+    $(function() {
+      $.extend($.tablesorter.themes.bootstrap, {
+        table      : 'table table-bordered',
+        caption    : 'caption',
+        header     : 'bootstrap-header',
+        footerRow  : '',
+        footerCells: '',
+        icons      : '',
+        sortNone   : 'bootstrap-icon-unsorted',
+        sortAsc    : 'icon-chevron-up glyphicon glyphicon-chevron-up',
+        sortDesc   : 'icon-chevron-down glyphicon glyphicon-chevron-down',
+        active     : '',
+        hover      : '',
+        filterRow  : '',
+        even       : '',
+        odd        : ''
+      });
+
+      $("table").tablesorter({
+        theme : "bootstrap",
+        widthFixed: true,
+        headerTemplate : '{content} {icon}',
+        widgets : [ "uitheme", "zebra" ],
+        widgetOptions : {
+          zebra : ["even", "odd"],
+          filter_reset : ".reset"
+        }
+      })
+    });
+  </script>
+{% endblock %}

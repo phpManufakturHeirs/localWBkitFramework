@@ -12,12 +12,15 @@
 namespace phpManufaktur\Basic\Control;
 
 use Silex\Application;
-use phpManufaktur\Basic\Control\CMS\OutputFilter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use phpManufaktur\Basic\Control\JSON\JSONFormat;
+use phpManufaktur\Basic\Control\jsonEditor\jsonFormat;
+use phpManufaktur\Basic\Control\kitCommand\Parser;
 
-require_once __DIR__.'/utf-8/functions-utf8.php';
+// EXTENSION_PATH is not initialized yet use the full path!
+if (file_exists(BOOTSTRAP_PATH.'/extension/phpmanufaktur/phpManufaktur/Library/Extension/htmlpurifier/4.6.0/library/HTMLPurifier.auto.php')) {
+    require_once BOOTSTRAP_PATH.'/extension/phpmanufaktur/phpManufaktur/Library/Extension/htmlpurifier/4.6.0/library/HTMLPurifier.auto.php';
+}
 
 /**
  * Class with usefull utils for the general usage within the kitFramework
@@ -42,7 +45,7 @@ class Utils
         $this->app = $app;
 
         // FRAMEWORK_PATH is not set at this point!
-        $proxy_file = __DIR__.'/../../../../../config/proxy.json';
+        $proxy_file = BOOTSTRAP_PATH.'/config/proxy.json';
 
         if (file_exists($proxy_file)) {
             // set the proxy options
@@ -91,7 +94,7 @@ class Utils
             $item = self::sanitizeText($item);
         }
         return $item;
-    } // sanitizeVariable()
+    }
 
     /**
      * Sanitize a text variable and prepare it for saving in a MySQL record
@@ -101,34 +104,10 @@ class Utils
      */
     public static function sanitizeText ($text)
     {
-        $search = array(
-            "<",
-            ">",
-            "\"",
-            "'",
-            "\\",
-            "\x00",
-            "\n",
-            "\r",
-            "'",
-            '"',
-            "\x1a"
-        );
-        $replace = array(
-            "&lt;",
-            "&gt;",
-            "&quot;",
-            "&#039;",
-            "\\\\",
-            "\\0",
-            "\\n",
-            "\\r",
-            "\'",
-            '\"',
-            "\\Z"
-        );
+        $search = array("<",">","\"","'","\\","\x00","\n","\r","'",'"',"\x1a");
+        $replace = array("&lt;","&gt;","&quot;","&#039;","\\\\","\\0","\\n","\\r","\'",'\"',"\\Z");
         return str_replace($search, $replace, $text);
-    } // sanitizeText()
+    }
 
     /**
      * Unsanitize a text variable and prepare it for output
@@ -139,19 +118,9 @@ class Utils
     public static function unsanitizeText($text)
     {
         $text = stripcslashes($text);
-        $text = str_replace(array(
-            "&lt;",
-            "&gt;",
-            "&quot;",
-            "&#039;"
-        ), array(
-            "<",
-            ">",
-            "\"",
-            "'"
-        ), $text);
+        $text = str_replace(array("&lt;","&gt;","&quot;","&#039;"), array("<",">","\"","'"), $text);
         return $text;
-    } // unsanitizeText()
+    }
 
     /**
      * Generate a globally unique identifier (GUID)
@@ -175,7 +144,7 @@ class Utils
         } else {
             return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
         }
-    } // createGUID()
+    }
 
     /**
      * Check a password for length, chars, special chars and return a strength
@@ -242,7 +211,7 @@ class Utils
         $strength = floor($strength / 10 + 1);
 
         return $strength;
-    } // passwordStrength()
+    }
 
     /**
      * Create a password
@@ -295,8 +264,18 @@ class Utils
     {
         $TEMPLATE_NAMESPACES = array(
             'phpManufaktur' => MANUFAKTUR_PATH,
-            'thirdParty' => THIRDPARTY_PATH
+            'phpmanufaktur' => MANUFAKTUR_PATH,
+            'thirdParty' => THIRDPARTY_PATH,
+            'thirdparty' => THIRDPARTY_PATH
         );
+        if ($this->app['filesystem']->exists(MANUFAKTUR_PATH.'/TemplateTools/Pattern')) {
+            $TEMPLATE_NAMESPACES['Pattern'] = MANUFAKTUR_PATH.'/TemplateTools/Pattern';
+            $TEMPLATE_NAMESPACES['pattern'] = MANUFAKTUR_PATH.'/TemplateTools/Pattern';
+            if (defined('CMS_PATH')) {
+                $TEMPLATE_NAMESPACES['Templates'] = CMS_PATH.'/templates';
+                $TEMPLATE_NAMESPACES['templates'] = CMS_PATH.'/templates';
+            }
+        }
 
         if ($template_namespace[0] != '@') {
             throw new \Exception('Namespace expected in variable $template_namespace but path found!');
@@ -352,21 +331,27 @@ class Utils
     {
         if ($byte < 1024) {
             $result = round($byte, 2) . ' Byte';
-        } elseif ($byte >= 1024 and $byte < pow(1024, 2)) {
+        }
+        elseif ($byte >= 1024 and $byte < pow(1024, 2)) {
             $result = round($byte / 1024, 2) . ' KB';
-        } elseif ($byte >= pow(1024, 2) and $byte < pow(1024, 3)) {
+        }
+        elseif ($byte >= pow(1024, 2) and $byte < pow(1024, 3)) {
             $result = round($byte / pow(1024, 2), 2) . ' MB';
-        } elseif ($byte >= pow(1024, 3) and $byte < pow(1024, 4)) {
+        }
+        elseif ($byte >= pow(1024, 3) and $byte < pow(1024, 4)) {
             $result = round($byte / pow(1024, 3), 2) . ' GB';
-        } elseif ($byte >= pow(1024, 4) and $byte < pow(1024, 5)) {
+        }
+        elseif ($byte >= pow(1024, 4) and $byte < pow(1024, 5)) {
             $result = round($byte / pow(1024, 4), 2) . ' TB';
-        } elseif ($byte >= pow(1024, 5) and $byte < pow(1024, 6)) {
+        }
+        elseif ($byte >= pow(1024, 5) and $byte < pow(1024, 6)) {
             $result = round($byte / pow(1024, 5), 2) . ' PB';
-        } elseif ($byte >= pow(1024, 6) and $byte < pow(1024, 7)) {
+        }
+        elseif ($byte >= pow(1024, 6) and $byte < pow(1024, 7)) {
             $result = round($byte / pow(1024, 6), 2) . ' EB';
         }
         return $result;
-    } // bytes2string()
+    }
 
     /**
      * fixes a path by removing //, /../ and other things
@@ -406,7 +391,7 @@ class Utils
         }
 
         return $new_path;
-    } // sanitizePath()
+    }
 
 
     /**
@@ -487,7 +472,7 @@ class Utils
         }
         // return the configuration array
         return $config;
-    } // readConfiguration()
+    }
 
     /**
      * Alias for readConfiguration()
@@ -507,32 +492,14 @@ class Utils
      *
      * @param string $locale_path
      * @throws \Exception
+     * @deprecated The BASIC extension will automatically load all language files!
      */
     function addLanguageFiles($locale_path)
     {
-        // scan the /Locale directory and add all available languages
-        try {
-            if (false === ($lang_files = scandir($locale_path)))
-                throw new \Exception(sprintf("Can't read the /Locale directory %s!", $locale_path));
-            $ignore = array('.', '..', 'index.php', 'README.md');
-            foreach ($lang_files as $lang_file) {
-                if (!is_file($locale_path.'/'.$lang_file)) continue;
-                if (in_array($lang_file, $ignore) || (pathinfo($locale_path.'/'.$lang_file, PATHINFO_EXTENSION) != 'php')) continue;
-                $lang_name = pathinfo($locale_path.'/'.$lang_file, PATHINFO_FILENAME);
-                // get the array from the desired file
-                $lang_array = include_once $locale_path.'/'.$lang_file;
-                // add the locale resource file
-                $this->app['translator'] = $this->app->share($this->app->extend('translator', function ($translator) use ($lang_array, $lang_name) {
-                    $translator->addResource('array', $lang_array, $lang_name);
-                    return $translator;
-                }));
-                $this->app['monolog']->addDebug('Added language file: '.substr($locale_path, strlen(FRAMEWORK_PATH)).'/'.$lang_file);
-            }
-        }
-        catch (\Exception $e) {
-            throw new \Exception(sprintf('Error scanning the /Locale directory %s.', $locale_path));
-        }
-    } // addLanguageFiles()
+        $this->app['monolog']->addDebug('The function addLanguageFiles() is deprecrated, all locales will be loaded automatically!',
+            array(__METHOD__, __LINE__, 'Locale: '.$locale_path));
+        return true;
+    }
 
     /**
      * Copy a file, or recursively copy a folder and its contents
@@ -585,7 +552,8 @@ class Utils
      */
     public function setCURLproxy($curl_resource)
     {
-        if (!is_null(self::$proxy)) {
+        if (!is_null(self::$proxy) && self::$proxy != "") {
+            $this->app['monolog']->addDebug('setting proxy config', array(__METHOD__, __LINE__));
             curl_setopt($curl_resource, CURLOPT_PROXYAUTH, self::$proxy_auth);
             curl_setopt($curl_resource, CURLOPT_PROXY, self::$proxy);
             curl_setopt($curl_resource, CURLOPT_PROXYPORT, self::$proxy_port);
@@ -601,17 +569,41 @@ class Utils
      */
     public function parseKITcommand($content)
     {
-        $Filter = new OutputFilter();
-        $commands = array();
-        // get the commands
-        $content = $Filter->parse($content, false, $commands);
-        // process each kitCommand
+        $Parser = new Parser();
+        $commands = $Parser->getCommandsOnly($this->app, $content);
         foreach ($commands as $command) {
-            // set the locale for the command
-            $command['cms']['locale'] = $this->app['translator']->getLocale();
-            $subRequest = Request::create('/command/'.$command['command'], 'POST', $command);
+            $parse = array(
+                'cms' => array(
+                    'locale' => $this->app['translator']->getLocale(),
+                    'page_id' => '-1',
+                    'page_url' => '',
+                    'user' => array(
+                        'id' => -1,
+                        'name' => '',
+                        'email' => ''
+                    ),
+                    'special' => array(
+                        'post_id' => null,
+                        'topic_id' => null
+                    )
+                ),
+                'GET' => array(),
+                'POST' => array(),
+                'command' => $command['command'],
+                'parameter' => $command['parameter'],
+                'expression' => $command['expression']
+            );
+            $subRequest = Request::create('/command/'.$command['command'], 'POST', $parse);
             $Response = $this->app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
-            $content = str_replace($command['expression'], $Response->getContent(), $content);
+            $command_response = $Response->getContent();
+            if ($this->isJSON($command_response)) {
+                // if the kitCommand return a JSON response we take only the 'response' part
+                $response = json_decode($command_response, true);
+                if (isset($response['response'])) {
+                    $command_response = $response['response'];
+                }
+            }
+            $content = str_replace($command['expression'], $command_response, $content);
         }
         return $content;
     }
@@ -654,8 +646,8 @@ class Utils
      */
     public function JSONFormat($chunk, $already_json = false)
     {
-        $JSONFormat = new JSONFormat();
-        return $JSONFormat->format($chunk, $already_json);
+        $jsonFormat = new jsonFormat();
+        return $jsonFormat->format($chunk, $already_json);
     }
 
     /**
@@ -666,6 +658,8 @@ class Utils
      */
     public function utf8_entities($convert)
     {
+        require_once __DIR__.'/utf-8/functions-utf8.php';
+
         return entities_to_umlauts2($convert);
     }
 
@@ -747,6 +741,249 @@ class Utils
             }
             return false;
         }
+    }
+
+    /**
+     * Sanitize a link or filename to a safe and clean one
+     *
+     * @param string $link
+     * @return string
+     */
+    public function sanitizeLink($link)
+    {
+        require_once __DIR__.'/utf-8/functions-utf8.php';
+
+        $link = entities_to_7bit($link);
+        // Now remove all bad characters
+        $bad = array('\'','"','`','!','@','#','$','%','^','&','*','=','+','|','/','\\',';',':',',','?');
+        $link = str_replace($bad, '', $link);
+        // replace multiple dots in filename to single dot and (multiple) dots at the end of the filename to nothing
+        $link = preg_replace(array('/\.+/', '/\.+$/'), array('.', ''), $link);
+        // Now replace spaces with page spacer
+        $link = trim($link);
+        $link = preg_replace('/(\s)+/', '-', $link);
+        // Now convert to lower-case
+        $link = strtolower($link);
+        // If there are any weird language characters, this will protect us against possible problems they could cause
+        $link = str_replace(array('%2F', '%'), array('/', ''), urlencode($link));
+        $link = str_replace('---', '-', $link);
+        // Finally, return the cleaned string
+        return $link;
+    }
+
+    /**
+     * Ellipsis function - shorten the given $text to $length at the nearest
+     * space and add three dots at the end ...
+     *
+     * @param string $text
+     * @param number $length
+     * @param boolean $striptags remove HTML tags by default
+     * @param boolean $htmlpurifier use HTML Purifier (false by default, ignored if striptags=true)
+     * @return string
+     */
+    public function Ellipsis($text, $length=100, $striptags=true, $htmlpurifier=false) {
+        if ($striptags) {
+            $text = strip_tags($text);
+        }
+
+        // remove leading and trailing spaces
+        $text = trim($text);
+
+        if (empty($text)) {
+            // nothing to do ...
+            return '';
+        }
+
+        $start_length = strlen($text);
+        $text .= ' ';
+        $text = substr($text, 0, $length);
+        $text = substr($text, 0, strrpos($text, ' '));
+
+        if (!$striptags && $htmlpurifier && class_exists('HTMLPurifier')) {
+            $config = \HTMLPurifier_Config::createDefault();
+            $purifier = new \HTMLPurifier($config);
+            $text = $purifier->purify($text);
+
+            $DOM = new \DOMDocument;
+
+            // enable internal error handling
+            libxml_use_internal_errors(true);
+
+            // need a hack to properly handle UTF-8 encoding
+            if (!$DOM->loadHTML(mb_convert_encoding($text, 'HTML-ENTITIES', "UTF-8"))) {
+                // on error still return the $text
+                return $text;
+            }
+            libxml_clear_errors();
+
+            $xpath = new \DOMXPath($DOM);
+            $textNodes = $xpath->query('//text()');
+            $lastTextNode = $textNodes->item($textNodes->length - 1);
+            $lastTextNode->nodeValue .= ' ...';
+
+            $XPath = new \DOMXPath($DOM);
+            // get only the body tag with its contents, then trim the body tag itself to get only the original content
+            $text = mb_substr($DOM->saveXML($XPath->query('//body')->item(0)), 6, -7, "UTF-8");
+        }
+        elseif ($start_length > strlen($text)) {
+            $text .= ' ...';
+        }
+        return $text;
+    }
+
+    /**
+     * Makes a technical name human readable.
+     *
+     * Sequences of underscores are replaced by single spaces. The first letter
+     * of the resulting string is capitalized, while all other letters are
+     * turned to lowercase.
+     *
+     * @param string $text The text to humanize.
+     * @return string The humanized text.
+     */
+    public function humanize($text)
+    {
+        return ucfirst(trim(strtolower(preg_replace('/[_\s]+/', ' ', $text))));
+    }
+
+    /**
+     * Check if the given string is a valid JSON string
+     *
+     * @param string $string
+     * @return boolean
+     */
+    public function isJSON($string)
+    {
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
+
+    /**
+     * Check if the given function is disabled in php.ini
+     *
+     * @param string $function
+     * @return boolean
+     */
+    public function isFunctionDisabled($function)
+    {
+        $disabled = explode(',', ini_get('disable_functions'));
+        return in_array($function, $disabled);
+    }
+
+    /**
+     * Convert a hexadecimal colorcode into an RGB array, return a 'rgb()' string
+     *
+     * @param string $hex hexadecimal, can contain a leading sharp
+     * @param boolean $formatted if true (default) return RGB string
+     * @param string $format_rgb format string for the RGB return
+     * @return Ambigous <string, array>
+     */
+    public function hex2rgb($hex, $formatted=true, $format_rgb='rgb(%d, %d %d)')
+    {
+        // remove the sharp at start
+        $hex =  ltrim($hex, '#');
+
+        if (strlen($hex) === 3) {
+            $rgb = array(
+                hexdec(substr($hex,0,1).substr($hex,0,1)),
+                hexdec(substr($hex,1,1).substr($hex,1,1)),
+                hexdec(substr($hex,2,1).substr($hex,2,1))
+            );
+        }
+        else {
+            $rgb = array(
+                hexdec(substr($hex,0,2)),
+                hexdec(substr($hex,2,2)),
+                hexdec(substr($hex,4,2))
+            );
+        }
+        // return RGB as formatted string or as array
+        return $formatted ? sprintf($format_rgb, $rgb[0], $rgb[1], $rgb[2]) : $rgb;
+    }
+
+    /**
+     * Convert the given rgb value into a hexadecimal color value with the leading '#'
+     *
+     * @param mixed $rgb can be an array(r,g,b) or a string in form 'r,g,b'
+     * @throws \Exception
+     * @return string hexadecimal value
+     */
+    public function rgb2hex($rgb)
+    {
+        if (is_string($rgb)) {
+            if (!strpos($rgb, ',')) {
+                throw new \Exception('Variable $rgb can be an array or a string in form r,g,b');
+            }
+            $rgb = explode(',', $rgb);
+        }
+
+        if (count($rgb) != 3) {
+            throw new \Exception('Variable $rgb can be an array or a string in form r,g,b');
+        }
+
+        $hex = "#";
+        $hex .= str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
+        $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
+        $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
+
+        return $hex;
+    }
+
+    /**
+     * Uses the htmlentities function to change special chars like é or Ö to a
+     * simple e or O - use i.e. for sorting functions
+     *
+     * @param string $string
+     * @param boolean $lowercase set to TRUE to return a lowercase string
+     * @return string
+     */
+    public function specialCharsToAsciiChars($string, $lowercase=false)
+    {
+        if (strpos($string = htmlentities($string, ENT_QUOTES, 'UTF-8'), '&') !== false) {
+            $string = html_entity_decode(preg_replace('~&([a-z]{1,2})(?:acute|cedil|circ|grave|lig|orn|ring|slash|tilde|uml);~i', '$1', $string), ENT_QUOTES, 'UTF-8');
+        }
+        return ($lowercase) ? strtolower($string) : $string;
+    }
+
+    /**
+     * Get the toolbar for all backend dialogs
+     *
+     * @param  string $active dialog
+     * @param  array  $config toolbar configuration
+     * @return array
+     */
+    public function getToolbar($active,$extension,$config) {
+        $toolbar = array();
+        foreach ($config['nav_tabs']['order'] as $tab) {
+            if(isset($config['nav_tabs']['options']) && is_array($config['nav_tabs']['options']) && isset($config['nav_tabs']['options'][$tab])) {
+                $toolbar[$tab] = array(
+                    'name'   => $tab,
+                    'text'   => ( isset($config['nav_tabs']['options'][$tab]['text'])
+                             ?  $this->app['translator']->trans($config['nav_tabs']['options'][$tab]['text'])
+                             :  $this->app['translator']->trans($tab) ),
+                    'hint'   => ( isset($config['nav_tabs']['options'][$tab]['hint'])
+                             ?  $this->app['translator']->trans($config['nav_tabs']['options'][$tab]['hint'])
+                             :  $this->app['translator']->trans('No hint available') ),
+                    'link'   => ( isset($config['nav_tabs']['options'][$tab]['link'])
+                             ?  FRAMEWORK_URL.$config['nav_tabs']['options'][$tab]['link']
+                             :  FRAMEWORK_URL.'/admin/'.$extension.'/'.$tab ),
+                    'class'  => ( isset($config['nav_tabs']['options'][$tab]['class'])
+                             ?  $config['nav_tabs']['options'][$tab]['class']
+                             :  false ),
+                    'active' => ($active == $tab)
+                );
+            }
+            else {
+                $toolbar[$tab] = array(
+                    'name'   => $tab,
+                    'text'   => $this->app['translator']->trans($tab),
+                    'hint'   => $this->app['translator']->trans('No hint available'),
+                    'link'   => FRAMEWORK_URL.'/admin/'.$extension.'/'.$tab,
+                    'active' => ($active == $tab)
+                );
+            }
+        }
+        return $toolbar;
     }
 
 }

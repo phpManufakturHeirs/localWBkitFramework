@@ -1,0 +1,93 @@
+{
+  "name":"miniShop",
+  "guid":"9EE2FA9B-6E62-4573-A4A4-54D08B2F016B",
+  "category":"extension",
+  "group":"phpManufaktur",
+  "vendor":{
+      "name":"phpManufaktur",
+      "url":"https:\/\/phpmanufaktur.de",
+      "mail":"team@phpmanufaktur.de",
+      "address":{
+          "street":"Stockholmer Straße 31",
+          "zip":"13359",
+          "city":"Berlin",
+          "country":"Germany"
+      },
+      "phone":"+49 30 68813647"
+  },
+  "type":"application",
+  "path":"\/extension\/phpmanufaktur\/phpManufaktur\/miniShop",
+  "namespace":"phpManufaktur\\miniShop",
+  "link":{
+    "about":"\/minishop\/about"
+  },
+  "release":{
+    "number":"0.17",
+    "date":"2014-10-28",
+    "status":"beta",
+    "changelog":"https:\/\/github.com\/phpManufaktur\/kfMiniShop\/blob\/master\/CHANGELOG.md"
+  },
+  "description":{
+    "en":{
+      "title":"miniShop",
+      "short":"Small and easy to use shop for your website",
+      "long":"Small and easy to use shop for your website",
+      "url":"https:\/\/kit2.phpmanufaktur.de\/miniShop"
+    },
+    "de":{
+      "title":"miniShop",
+      "short":"Ein kleiner und wendiger Shop für Ihre Website",
+      "long":"Ein kleiner und wendiger Shop für Ihre Website, sehr einfach einzurichten und einzubinden.",
+      "url":"https:\/\/kit2.phpmanufaktur.de\/miniShop"
+    }
+  },
+  "require":{
+    "framework":{
+      "release":"0.27"
+    },
+    "extension":{
+        "phpmanufaktur":{
+            "Basic":{
+                "release":"1.0.14"
+            },
+            "Library":{
+                "release":"0.38"
+            },
+            "CommandCollection":{
+                "release":"0.40"
+            },
+            "CKEditor":{
+                "release":"0.30"
+            },
+            "Contact":{
+                "release":"2.0.42"
+            },
+            "MediaBrowser":{
+                "release":"0.32"
+            }
+        }
+    }
+  },
+  "setup": {
+      "install":"\/admin\/minishop\/setup",
+      "update":"\/admin\/minishop\/update",
+      "uninstall":"\/admin\/minishop\/uninstall",
+      "icon_path":{
+        "BlackCat":"\/extension\/phpmanufaktur\/phpManufaktur\/miniShop\/Data\/Setup\/Icon\/icon.png",
+        "WebsiteBaker":"\/extension\/phpmanufaktur\/phpManufaktur\/miniShop\/Data\/Setup\/Icon\/tool_icon.png"
+      }
+  },
+  "license": {
+    "name":"MIT License",
+    "url":"https:\/\/github.com\/phpManufaktur\/kfMiniShop\/raw\/master\/LICENSE.md"
+  },
+  "download":{
+    "availability":"public",
+    "agreement":"free",
+    "github":{
+      "organization":"webbird",
+      "repository":"kfMiniShop"
+    },
+    "url":"https:\/\/github.com\/webbird\/kfMiniShop"
+  }
+}

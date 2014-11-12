@@ -1,0 +1,137 @@
+{#
+  kitFramework
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_file = 'framework/backend.body.twig' %}
+{% endif %}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', template_file) %}
+{% block title %}{{ 'Edit kitFramework configuration file'|trans }}{% endblock %}
+{% block stylesheet %}  
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css" href="{{ LIBRARY_URL ~ '/jsoneditor/latest/jsoneditor.min.css' }}">
+{% endblock stylesheet %}
+{% block jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ LIBRARY_URL ~ '/jsoneditor/latest/jsoneditor.min.js' }}"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL ~ '/jsoneditor/latest/asset/ace/ace.js' }}"></script>
+  <script type="text/javascript" src="{{ LIBRARY_URL ~ '/jsoneditor/latest/asset/jsonlint/jsonlint.js' }}"></script>  
+{% endblock jquery %}
+
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    
+    <h1>{{ 'Edit kitFramework configuration file'|trans }}</h1>
+
+    <div id="response">{{ alert }}</div>
+    
+    {% form_theme form '@phpManufaktur/Basic/Template/default/framework/form.fields.horizontal.twig' %}    
+    <form action="{{ FRAMEWORK_URL ~ '/admin/json/editor/load?usage=' ~ usage }}" class="form-horizontal" method="post" role="form">
+      <div class="form-group">
+        <div class="col-xs-6">
+          {{ form_widget(form.configuration_file) }}
+        </div>
+        <div class="col-xs-3">
+          <button type="submit" class="btn btn-default form-control" title="{{ 'Load the selected configuration file into the editor'|trans }}">{{ 'Load file'|trans }}</button>
+        </div>
+        <div class="col-xs-3">
+          <a class="btn btn-default form-control" role="button" href="{{ FRAMEWORK_URL ~ '/admin/json/editor/scan?usage=' ~ usage }}" title="{{ 'Scan the kitFramework for existing configuration files'|trans }}">{{ 'Rescan'|trans }}</a>
+        </div>
+      </div>
+      {{ form_rest(form) }}     
+    </form> 
+    
+    {% if json_path is defined and json_path|length > 0 %}
+      <div class="row">
+        <div class="col-xs-8">
+          <div id="jsoneditor"></div>
+          <div class="row">
+            <div class="col-xs-6">
+              <button class="btn btn-default form-control" id="jsonSave" />{{ 'Save file'|trans }}</button>
+            </div>
+            <div class="col-xs-6">
+              <a class="btn btn-default form-control" role="button" href="{{ FRAMEWORK_URL ~ '/admin/json/editor?usage=' ~ usage }}">{{ 'Abort'|trans }}</a> 
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-4">
+          {# reserved for help and additional information #}
+          {% if help|length > 0 %}
+            <div class="help-container">
+              <h2>{{ json_file }}</h2>
+              <div class="help-content">
+                {{ help }}
+              </div>
+              <div class="help-hint">
+                {% if app.translator.locale == 'de' %}
+                  {# GERMAN Version #}
+                  <p>Bitte helfen Sie mit, diese Open Source Software zu verbessern und teilen Sie Ihre Erfahrungen im <a href="https://support.phpmanufaktur.de" target="_blank">phpManufaktur Support Forum</a>.</p>
+                {% else %}
+                  {# ENGLISH Version #}
+                  <p>Please help to improve this Open Source Software and share your experience at the <a href="https://support.phpmanufaktur.de" target="_blank">phpManufaktur Support Forum</a>.</p>
+                {% endif %}
+              </div>
+            </div>          
+          {% endif %}
+        </div>     
+      </div>
+
+      
+    {% endif %}  
+    
+  </div>
+{% endblock %}
+
+{% block footer %}
+  {% if json_path is defined and json_path|length > 0 %}
+    <script type="text/javascript" >
+      if (typeof 'jQuery' !== 'undefined') {
+        $(document).ready(function() {
+          var container = document.getElementById('jsoneditor');
+          var options = {
+            mode: 'tree',
+            modes: ['code', 'form', 'text', 'tree', 'view'], // allowed modes
+            error: function(err) {
+              alert(err.toString());
+            }
+          };
+          var json = {{ json_content }};
+          var editor = new JSONEditor(container, options, json);
+
+          document.getElementById('jsonSave').onclick = function () {
+            var json = editor.get();          
+            $.ajax({
+                url:"{{ FRAMEWORK_URL ~ '/json/editor/save' }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                  json_content: JSON.stringify(json, null, 2),
+                  json_path: '{{ json_path|url_encode() }}'
+                },
+                complete: function (XMLHttpRequest, textStatus) {
+                  var result = $.parseJSON(XMLHttpRequest.responseText);
+                  $('#response').html(result.alert);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                  alert('Error saving the configuration file: "'+errorThrown+'" - please check the kitFramework Logfile for more information!');
+                }
+              }); 
+            // scroll to the ALERT
+            document.getElementById('response').scrollIntoView(true);  
+          };
+        });
+      };
+    </script>
+    {% set iframe_add_height = 400 %}
+  {% endif %}
+  {{ parent() }}  
+{% endblock footer %}

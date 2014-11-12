@@ -1,0 +1,119 @@
+{#
+  kitFramework::Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/tool/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework - Entry points'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/default/framework/css/framework.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container">
+    {% include '@phpManufaktur/Basic/Template/default/framework/tool/toolbar.twig' %}
+    
+    <div class="page-header">
+      <h1>{{ 'Entry points'|trans }} <small>kitFramework</small></h1>
+    </div>
+    
+    {{ alert }}
+    
+    <div class="panel panel-default">
+      <div class="panel-body">
+        {% if app.translator.locale == 'de' %}
+          {# GERMAN translation #}
+          <p>Die <em>Zugangspunkte</em> ermöglichen den Zugriff auf die unterschiedlichen Erweiterungen und Funktionen des kitFramework.</p>
+          <p>Die zur Verfügung stehenden <em>Zugangspunkte</em> sind abhängig von den installierten Erweiterungen und den Berechtigungen des jeweiligen Benutzer des kitFramework.</p>
+        {% else %}
+          {# ENGLISH translation #}
+          <p>The <em>Entry Points</em> enable you to access the different extensions and functions of the kitFramework.</p>
+          <p>The available <em>Entry Points</em> are depending on the installed extensions and the roles of the authenticated user of the kitFramework.</p>
+        {% endif %}
+      </div>
+    </div>
+    
+    <div class="hidden-md hidden-sm hidden-xs">
+      {# DESKTOP VIEW #}
+      {% set counter = 1 %}
+      {% for roles in entry_points %}
+        {% for entry in roles %}
+          {% if counter == 1 %}
+            <div class="row">
+          {% endif %}
+          <div class="col-lg-2">
+            {% include '@phpManufaktur/Basic/Template/default/framework/tool/entry.points.item.twig' %}
+          </div>
+          {% if counter == 6 %}
+            </div>
+            {% set counter = 1 %}
+          {% else %}
+            {% set counter = counter + 1 %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+      {% if counter != 1 %}</div>{% endif %}
+    </div>
+
+    <div class="hidden-lg hidden-xs hidden-sm">
+      {# TABLET VIEW #}
+      {% set counter = 1 %}
+      {% for roles in entry_points %}
+        {% for entry in roles %}
+          {% if counter == 1 %}
+            <div class="row">
+          {% endif %}
+          <div class="col-md-3">
+            {% include '@phpManufaktur/Basic/Template/default/framework/tool/entry.points.item.twig' %}
+          </div>
+          {% if counter == 4 %}
+            </div>
+            {% set counter = 1 %}
+          {% else %}
+            {% set counter = counter + 1 %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+      {% if counter != 1 %}</div>{% endif %}
+    </div>
+
+    <div class="hidden-lg hidden-md">
+      {# SMARTPHONE VIEW #}
+      {% set counter = 1 %}
+      {% for roles in entry_points %}
+        {% for entry in roles %}
+          {% if counter == 1 %}
+            <div class="row">
+          {% endif %}
+          <div class="col-xs-6">
+            {% include '@phpManufaktur/Basic/Template/default/framework/tool/entry.points.item.twig' %}
+          </div>
+          {% if counter == 2 %}
+            </div>
+            {% set counter = 1 %}
+          {% else %}
+            {% set counter = counter + 1 %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+      {% if counter != 1 %}</div>{% endif %}
+    </div>
+    
+  </div>
+{% endblock content %}

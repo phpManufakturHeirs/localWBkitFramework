@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -30,7 +30,7 @@ class EventConfig extends Basic
 
         if (isset($parameters['set'])) {
             if (!strpos($parameters['set'], '=')) {
-                $this->setMessage('Invalid key => value pair in the set[] parameter!');
+                $this->setAlert('Invalid key => value pair in the set[] parameter!');
             }
             else {
                 list($key, $value) = explode('=', $parameters['set']);
@@ -41,13 +41,13 @@ class EventConfig extends Basic
                         $config['permalink']['cms']['url'] = $value;
                         $Configuration->setConfiguration($config);
                         $Configuration->saveConfiguration();
-                        $this->setMessage('Permalink successfull changed');
+                        $this->setAlert('Permalink successfull changed');
                         break;
                 }
             }
         }
         else {
-            $this->setMessage('Please use the parameter set[] to set a configuration value.');
+            $this->setAlert('Please use the parameter set[] to set a configuration value.');
         }
 
         return $app['twig']->render($app['utils']->getTemplateFile(

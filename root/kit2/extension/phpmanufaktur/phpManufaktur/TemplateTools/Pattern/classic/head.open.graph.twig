@@ -1,0 +1,18 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#} 
+
+{# Facebook Open Graph Meta Tags #}
+<meta property="og:title" content="{{ page_title() }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ PAGE_URL }}">
+{% set image = page_image() %}
+{% if image|length > 0 %}
+  <meta property="og:image" content="{{ page_image() }}" />
+{% endif %}
+<meta property="og:description" content="{{ page_description() }}" />

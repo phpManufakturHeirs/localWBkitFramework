@@ -1,0 +1,64 @@
+{#
+  flexContent
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/flexContent
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% spaceless %}
+<!-- {{ _self.getTemplateName() }} -->
+<div id="flexcontent">
+  <div class="container-fluid">    
+      
+    {{ basic.alert }}
+
+    {# loop only if active contens available ... #}  
+    {% if contents.0.content is defined %}
+      {% for content in contents %}
+        {% if content.redirect_url|length > 0 %}
+          {% set url = content.redirect_url %}
+          {% set target = content.redirect_target %}
+        {% elseif content.content|length > 0 %}
+          {% if content.permalink_url is defined %}
+            {% set url = content.permalink_url %}
+          {% else %}
+            {% set url = permalink_base_url ~ '/' ~ content.permalink %}
+          {% endif %}
+          {% if basic.cms.page_visibility in ['private','registered'] %}
+             {# add the PID for protected pages to enable the permanent link class to authenticate the user #}            
+             {% set url = url ~ '?pid=' ~ basic.pid %}
+          {% endif %}
+          {% set target = '_self' %}
+        {% else %}
+          {% set url = '' %}
+          {% set target = '_self' %}
+        {% endif %}   
+        {% if loop.index == 1 %}<div class="row">{% endif %}
+        {% if loop.index < parameter.content_exposed+1 %}  
+          {# expose in columns #}
+          {% include '@phpManufaktur/flexContent/Template/default/command/content.exposed.twig' %}
+        {% endif %}
+        {% if loop.index == parameter.content_exposed %}</div>{% endif %}
+        {% if loop.index > parameter.content_exposed %}
+          {# show all other content items in a smaller list #}
+          {% include '@phpManufaktur/flexContent/Template/default/command/content.item.twig' %}
+        {% endif %}
+      {% endfor %}
+      {# if we have only one exposed content we must close the row here ... #}
+      {% if contents|length < 2 %}</div>{% endif %}
+    {% endif %}  
+  </div>
+
+  {# is a paging enabled? #}
+  {% if parameter.previous_page > 0  or parameter.next_page > 0 %}
+    <ul class="nav nav-pills pull-right">
+      <li><a href="{{ basic.cms.page_url }}?command=flexcontent&action={% if parameter.action == 'archive' %}archive{% else %}list{% endif %}&page={{ parameter.previous_page }}&robots=noindex,follow" class="btn btn-default btn-sm"{% if parameter.previous_page < 1 %} disabled="disabled"{% endif %} role="button" title="{{ 'Previous page'|trans }}"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+      <li><a href="{{ basic.cms.page_url }}?command=flexcontent&action={% if parameter.action == 'archive' %}archive{% else %}list{% endif %}&page={{ parameter.next_page }}&robots=noindex,follow" class="btn btn-default btn-sm"{% if parameter.next_page < 1 %} disabled="disabled"{% endif %} role="button" title="{{ 'Next page'|trans }}"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+    </ul>
+    <div class="clearfix"></div>
+  {% endif %}
+  
+</div>
+{% endspaceless %}

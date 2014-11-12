@@ -1,0 +1,45 @@
+{#
+  TemplateTools
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+<!-- {{ _self.getTemplateName() }} -->
+
+{% if parameter.company|default('')|length > 0 %}
+  {% set location = parameter.company %}
+{% else %}
+  {% set location = '' %}
+{% endif %}
+
+{% if parameter.street|default('')|length > 0 %}
+  {% if location|length > 0 %}
+    {% set location = location ~ ',' ~ parameter.street %}
+  {% else %}
+    {% set location = parameter.street %}
+  {% endif %}
+{% endif %}
+
+{% if parameter.zip|default('')|length > 0 %}
+  {% if location|length > 0 %}
+    {% set location = location ~ ',' ~ parameter.zip %}
+  {% else %}
+    {% set location = parameter.zip %}
+  {% endif %}
+{% endif %}
+
+{% if parameter.city|default('')|length > 0 %}
+  {% if location|length > 0 %}
+    {% set location = location ~ ',' ~ parameter.city %}
+  {% else %}
+    {% set location = parameter.city %}
+  {% endif %}
+{% endif %}
+
+{% if location|length == 0 %}
+  {% set location = 'phpManufaktur, Berlin' %}
+{% endif %}
+
+<iframe width="{{ parameter.width|default('100%') }}" height="{{ parameter.height|default('300px') }}" src="https://maps.google.de/maps?hl={{ parameter.locale|default('en') }}&q={{ location }}&ie=UTF8&t=&z={{ parameter.zoom|default(14) }}&iwloc=B&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe>

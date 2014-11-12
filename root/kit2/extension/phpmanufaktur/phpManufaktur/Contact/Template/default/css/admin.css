@@ -1,0 +1,149 @@
+/* 
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+*/
+
+.container-fluid,
+.container {
+  padding-left: 0;
+  padding-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+a.kitframework-icon {
+  color: #da251d !important;
+}
+
+/*
+  Label for the form fields
+*/
+label {
+  margin: 0 0 3px 0;
+  width: 100%;
+  text-align: right;
+}
+.checkbox label {
+  text-align: left;
+}
+
+@media (max-width: 767px) {
+  label {
+    text-align: left;
+  }
+}
+label.required:after {
+  content: '*';
+  color: #da251d;
+  background-color: transparent;
+  font-weight: bold;
+}
+
+fieldset {
+  border: 1px solid #dcdcdc;
+  padding: 10px;
+  margin: 10px 0;
+}
+legend {
+  width: auto;
+  padding: 0 10px;
+  margin-bottom: 0;
+  border-bottom: none;
+  font-size: 12px;
+  color: #dcdcdc;
+}
+
+.form-horizontal .form-group {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/*
+  Wrapper for the about dialog
+*/
+#about-wrap {
+  margin: 50px 0 0 0;
+  padding: 0;
+}
+
+/*
+  stripes for the tables
+*/
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+  background-color: #e8e8e8;
+}
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+  background-color: #e0e0e0;
+}
+
+.row {
+  margin: 5px 0;
+}
+
+/*
+  add some additional vertical space ...
+*/
+.height-5 {
+  min-height: 5px;
+}
+.height-15 {
+  min-height: 15px;
+}
+.height-30 {
+  min-height: 30px;
+}
+
+/*
+  Formatting form items
+*/
+select {
+  width: auto;
+}
+input {
+  width: 100%;  
+}
+input[type=radio],
+input[type=checkbox] {
+  width: auto;
+}
+.checkbox,
+.radio {
+  margin-top: 0;
+}
+.checkbox.tag  {
+  margin-bottom: 0;
+}
+input.btn.btn-default {
+  width: auto;
+}
+
+.search-contact-small {
+  width: 250px;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 999px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}

@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://addons.phpmanufaktur.de/event
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -23,19 +23,6 @@ class EventSearch extends Backend {
     protected $EventData = null;
 
     /**
-     * Constructor
-     *
-     * @param Application $app can be NULL
-     */
-    public function __construct(Application $app=null)
-    {
-        parent::__construct($app);
-        if (!is_null($app)) {
-            $this->initialize($app);
-        }
-    }
-
-    /**
      * Initialize the parent class Backend and the class EventList
      *
      * @see \phpManufaktur\Event\Control\Backend\Backend::initialize()
@@ -48,7 +35,7 @@ class EventSearch extends Backend {
 
         try {
             // search for the config file in the template directory
-            $cfg_file = $this->app['utils']->getTemplateFile('@phpManufaktur/Event/Template', 'backend/event.list.json', '', true);
+            $cfg_file = $this->app['utils']->getTemplateFile('@phpManufaktur/Event/Template', 'admin/list.event.json', '', true);
             // get the columns to show in the list
             $cfg = $this->app['utils']->readJSON($cfg_file);
             self::$columns = isset($cfg['columns']) ? $cfg['columns'] : $this->EventData->getColumns();
@@ -73,25 +60,28 @@ class EventSearch extends Backend {
         $this->initialize($app);
 
         if (null == ($search = $this->app['request']->get('search', null))) {
-            $this->setMessage('Please specify a search term!');
+            $this->setAlert('Please specify a search term!', array(), self::ALERT_TYPE_INFO);
             $events = array();
         }
         else {
             $SearchData = new Search($app);
             if (false === ($events = $SearchData->search($search))) {
                 $events = array();
-                $this->setMessage('No hits for the search term <i>%search%</i>!', array('%search%' => $search));
+                $this->setAlert('No hits for the search term <i>%search%</i>!',
+                    array('%search%' => $search), self::ALERT_TYPE_INFO);
             }
             else {
-                $this->setMessage('%count% hits for the search term </i>%search%</i>.', array('%count%' => count($events), '%search%' => $search));
+                $this->setAlert('%count% hits for the search term </i>%search%</i>.',
+                    array('%count%' => count($events), '%search%' => $search), self::ALERT_TYPE_SUCCESS);
             }
         }
 
-        return $this->app['twig']->render($this->app['utils']->getTemplateFile('@phpManufaktur/Event/Template', 'backend/event.search.twig'),
+        return $this->app['twig']->render($this->app['utils']->getTemplateFile(
+            '@phpManufaktur/Event/Template', 'admin/list.search.twig'),
             array(
                 'usage' => self::$usage,
                 'toolbar' => $this->getToolbar('event_list'),
-                'message' => $this->getMessage(),
+                'alert' => $this->getAlert(),
                 'events' => $events,
                 'columns' => self::$columns,
                 'route' => self::$route,

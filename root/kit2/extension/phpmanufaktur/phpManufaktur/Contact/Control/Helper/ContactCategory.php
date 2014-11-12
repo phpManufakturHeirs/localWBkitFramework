@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -42,14 +42,14 @@ class ContactCategory extends ContactParent
     public function validate(&$category_data, $contact_data=array(), $option=array())
     {
         if (!isset($category_data['category_type_name']) || empty($category_data['category_type_name'])) {
-            $this->setMessage('Missing the key %field_name%, it must always set and not empty!',
-                array('%field_name%' => 'category_type_name'));
+            $this->setAlert('Missing the key %field_name%, it must always set and not empty!',
+                array('%field_name%' => 'category_type_name'), self::ALERT_TYPE_WARNING);
             return false;
         }
 
         if (!$this->CategoryType->existsCategory($category_data['category_type_name'])) {
-            $this->setMessage("The category %category% does not exists!",
-                array('%category%' => $category_data['category_type_name']));
+            $this->setAlert("The category %category% does not exists!",
+                array('%category%' => $category_data['category_type_name']), self::ALERT_TYPE_WARNING);
             return false;
         }
         return true;

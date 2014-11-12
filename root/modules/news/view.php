@@ -1,4 +1,8 @@
 <?php
+
+// Bugfix: missing the global variable $MOD_NEWS (proceeded by the TemplateTools)
+global $MOD_NEWS;
+
 /**
  *
  * @category        modules

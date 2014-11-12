@@ -2,7 +2,7 @@
   Event
 
   @author Team phpManufaktur <team@phpmanufaktur.de>
-  @link https://kit2.phpmanufaktur.de
+  @link https://kit2.phpmanufaktur.de/Event
   @link https://github.com/phpManufaktur/kitFramework/wiki
   @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
   @license MIT License (MIT) http://www.opensource.org/licenses/MIT
@@ -12,9 +12,10 @@
 {% block stylesheet %}
   {{ parent() }}
   <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL }}/Event/Template/default/command/css/event.propose.css" media="screen, projection" />
-  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  <link href="{{ LIBRARY_URL ~ '/font-awesome/3.2.1/css/font-awesome.min.css' }}" rel="stylesheet">
 {% endblock stylesheet %}
 {% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
   
   {% if app.translator.locale == 'de' %}
     {# german translation #}
@@ -58,21 +59,38 @@
     
   <div class="contact_form">
     <form action="{{ FRAMEWORK_URL ~ route.contact.check ~ '?pid=' ~ basic.pid }}" method="post">
-      {#{ form_widget(form) }#}
       
-      {{ form_row(form.contact_type) }}
+      {% if parameter.mode is defined and parameter.mode == 'simple' %}
+        {# show only a minimum of form fields #}
+        {% set mode = 'simple' %}
+      {% else %}
+        {# show all available form fields #}
+        {% set mode = 'full' %}
+      {% endif %}
       
-      <fieldset>
-        <legend>{{ 'natural person'|trans }}</legend>
-        {{ form_row(form.person_gender) }}
-        {{ form_row(form.person_first_name) }}
-        {{ form_row(form.person_last_name) }}
-      </fieldset>
+      {% if mode == 'full' %}
+        {{ form_row(form.contact_type) }}      
+        <fieldset>
+          <legend>{{ 'natural person'|trans }}</legend>
+          {{ form_row(form.person_gender) }}
+          {{ form_row(form.person_first_name) }}
+          {{ form_row(form.person_last_name) }}
+        </fieldset>
+      {% else %}
+        {{ form_widget(form.contact_type, {'attr': {'class':'hidden'}} ) }}
+        {{ form_widget(form.person_gender, {'attr': {'class':'hidden'}} ) }}
+        {{ form_widget(form.person_first_name, {'attr': {'class':'hidden'}} ) }}
+        {{ form_widget(form.person_last_name, {'attr': {'class':'hidden'}} ) }}
+      {% endif %}
       
       <fieldset>
         <legend>{{ 'company, institution or association'|trans }}</legend>
         {{ form_row(form.company_name) }}
-        {{ form_row(form.company_department) }}
+        {% if mode == 'full' %}
+          {{ form_row(form.company_department) }}
+        {% else %}
+          {{ form_widget(form.company_department, {'attr': {'class':'hidden'}} ) }}
+        {% endif %}
       </fieldset>
       
       <fieldset>
@@ -87,14 +105,22 @@
         {{ form_row(form.address_street) }}
         {{ form_row(form.address_zip) }}
         {{ form_row(form.address_city) }}
-        {{ form_row(form.address_state) }}
+        {% if mode == 'full' %}
+          {{ form_row(form.address_state) }}
+        {% else %}
+          {{ form_widget(form.address_state, {'attr': {'class':'hidden'}} ) }}
+        {% endif %}
         {{ form_row(form.address_country) }}
       </fieldset>  
       
-      <fieldset>
-        <legend>{{ 'Note'|trans }}</legend>
-        {{ form_row(form.note) }}
-      </fieldset>
+      {% if mode == 'full' %}  
+        <fieldset>
+          <legend>{{ 'Note'|trans }}</legend>
+          {{ form_row(form.note) }}
+        </fieldset>
+      {% else %}
+        {{ form_widget(form.note, {'attr': {'class':'hidden'}} ) }}
+      {% endif %}  
       
       {{ form_rest(form) }}
       

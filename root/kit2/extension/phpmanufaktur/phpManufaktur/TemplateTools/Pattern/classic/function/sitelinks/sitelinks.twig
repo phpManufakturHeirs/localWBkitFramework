@@ -1,0 +1,63 @@
+{#
+  TemplateTools
+ 
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if sitelinks is defined and sitelinks|length > 0 %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="sitelinks">
+    {% if sitelinks.columns|length < 5 %}
+      {% set count_array = [1,2,3,4] %}
+    {% else %}
+      {% set count_array = [1,2,3,4,5,6] %}
+    {% endif %}
+    {# create 4 columns #}
+    {% set count = 1 %}
+    <table>
+      <thead>
+        <tr>
+          {% for head in sitelinks.columns %}
+            {% if count < 7 %}
+              <th><a href="{{ head.url }}"{% if head.active %} class="active"{% endif %} title="{{ head.page_title }}">{{ head.menu_title }}</a></th>
+              {% endif %}
+              {% set count = count +1 %}            
+            {% endfor %} 
+            {% for i in count_array %}
+              {# add empty columns if needed #}
+              {% if count == i %}
+              <th></th>
+                {% set count = count +1 %}
+              {% endif %}
+            {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {% set count = 1 %}
+          {% for columns in sitelinks.columns %}
+            {% if count < 7 %}
+              <td>
+                <ul>
+                  {% for item in columns.items %}
+                    <li><a href="{{ item.url }}"{% if item.active %} class="active"{% endif %} title="{{ item.page_title }}">{{ item.menu_title }}</a></li>
+                    {% endfor %}
+                </ul>
+              </td>
+            {% endif %}
+            {% set count = count +1 %}
+          {% endfor %}
+          {% for i in [1,2,3,4] %}
+            {# add empty columns if needed #}
+            {% if count == i %}
+              <td></td>
+              {% set count = count +1 %}
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+{% endif %}  

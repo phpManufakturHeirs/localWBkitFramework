@@ -1,0 +1,12 @@
+<div class="thumbnail">   
+  {% if item.start_url|length > 0 %}<a href="{{ FRAMEWORK_URL }}{{ item.start_url }}?usage={{ usage }}">{% endif %}
+    <img src="{% if item.logo_blob|length > 0 %}data:image/{{ item.logo_type }};charset=utf-8;base64,{{ item.logo_blob }}{% else %}{{ item.logo_url }}{% endif %}" width="{{ item.logo_width }}" height="{{ item.logo_height }}" alt="{{ item.description.title }}" />
+  {% if item.start_url|length > 0 %}</a>{% endif %}
+  {% if item.update_available %}
+    <div class="caption">
+      <p><strong>{{ 'Update available!'|trans }}</strong></p>
+      <p>Release {{ item.release_available }}<br />
+        <a class="" href="{{ FRAMEWORK_URL }}/admin/updater/update/{{ item.id }}?usage={{ usage }}">{{ 'Execute Update'|trans }}</a></p>
+    </div>
+  {% endif %}
+</div>

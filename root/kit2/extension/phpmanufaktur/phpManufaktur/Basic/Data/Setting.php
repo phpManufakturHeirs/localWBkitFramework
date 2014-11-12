@@ -26,7 +26,7 @@ class Setting {
 
     protected $default_values = array(
         'extension_catalog_release' => '0.10',
-        'extension_catalog_update' => 'auto', // possible: auto, manual
+        'extension_catalog_update' => 'auto' // possible: auto, manual
     );
 
     /**
@@ -105,6 +105,59 @@ EOD;
                 $this->app['db']->query($SQL);
             }
             $this->app['monolog']->addDebug("Inserted default values into table '".self::$table_name."'");
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * Insert a new name => value pair
+     *
+     * @param string $name
+     * @param string $value
+     * @throws \Exception
+     */
+    public function insert($name, $value)
+    {
+        try {
+            $insert = array(
+                'name' => $name,
+                'value' => $this->app['utils']->sanitizeText($value)
+            );
+            $this->app['db']->insert(self::$table_name, $insert);
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * Delete the record for the given name
+     *
+     * @param string $name
+     * @throws \Exception
+     */
+    public function deleteByName($name)
+    {
+        try {
+            $this->app['db']->delete(self::$table_name, array('name' => $name));
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * Check if the record with the given name exists
+     *
+     * @param string $name
+     * @throws \Exception
+     * @return boolean
+     */
+    public function exists($name)
+    {
+        try {
+            $SQL = "SELECT `id` FROM `".self::$table_name."` WHERE `name`='$name'";
+            $result = $this->app['db']->fetchColumn($SQL);
+            return ($result > 0);
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e->getMessage());
         }

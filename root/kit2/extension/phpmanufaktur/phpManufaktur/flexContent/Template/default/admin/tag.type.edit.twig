@@ -1,0 +1,172 @@
+{#
+  flexContent
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/flexContent
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/flexContent/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'flexContent - Create or edit a tag'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/flexContent/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/flexContent/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/flexContent/Template/default/css/admin.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock stylesheet %}
+{% block jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ MANUFAKTUR_URL }}/CKEditor/Source/ckeditor.js"></script>
+{% endblock jquery %}
+
+{% block content %}
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/flexContent/Template/default/admin/toolbar.twig' %}
+    <div class="height-15"></div>
+
+    {{ alert }}
+
+    <form id="tag_edit" method="post" {{ form_enctype(form) }} role="form">
+      {{ form_errors(form) }}
+      {{ form_row(form._token) }}
+      {{ form_row(form.tag_id) }}
+
+      <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+          {# form contents at the left column #}
+          <div class="form-group">
+            <label>{{ 'Tag ID'|trans }}</label>
+            <div>
+            {% if form.tag_id.vars.value > 0 %}
+              {{ '%05d'|format(form.tag_id.vars.value) }}&nbsp;
+              {% set kitcommand = '~~ flexContent action[tag] tag_id[' ~ form.tag_id.vars.value ~ '] ~~' %}
+              <a id="copycommand" class="btn btn-default" role="button" href="#" data-clipboard-text="{{ kitcommand }}">~~</a>
+            {% else %}
+              {{ '- new entry -'|trans }}
+            {% endif %}
+            </div>
+          </div>
+          <div class="form-group">
+            {{ form_label(form.tag_name) }}
+            {{ form_widget(form.tag_name, {'attr':{'class':'form-control input-sm'}}) }}
+          </div>
+          {{ form_row(form.language) }}
+          <div class="form-group">
+            {{ form_label(form.tag_permalink) }}&nbsp;({{ form.language.vars.value|trans }})&nbsp;-&nbsp;<span class="text-muted small">{{ form.permalink_url.vars.value }}</span>
+            {{ form_widget(form.tag_permalink, {'attr':{'class':'form-control input-sm'}}) }}
+          </div>
+          <div class="form-group">
+            {{ form_label(form.tag_description) }}
+            {{ CKEditor(
+                form.tag_description.vars.id,
+                form.tag_description.vars.full_name,
+                form.tag_description.vars.value,
+                '100%', '120px',
+                MANUFAKTUR_URL ~ '/flexContent/Template/default/admin/ckeditor.config.tag.type.js'
+            ) }}
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            {{ form_widget(form.delete) }}&nbsp;<span class="small text-muted">{{ 'delete this tag type'|trans }}</span>
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <input class="form-control btn btn-default" type="button" name="save_content" onclick="submitForm('{{ FRAMEWORK_URL }}/flexcontent/editor/buzzword/edit/check?usage={{ usage }}');" value="{{ 'Save'|trans }}" />
+          </div>
+
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 height-tag-dialog">
+          <div class="height-30"></div>
+          {% if form.tag_image.vars.value|length > 0 %}
+            <img class="img-rounded img-responsive" src="{{ FRAMEWORK_URL ~ form.tag_image.vars.value }}" />
+          {% endif %}
+          <div class="height-15"></div>
+          <input class="form-control btn btn-default" type="button" name="image" onclick="submitForm('{{ FRAMEWORK_URL }}/flexcontent/editor/buzzword/image/select?usage={{ usage }}');" value="{{ 'Select tag type image'|trans }}" />
+          {% if form.tag_image.vars.value|length > 0 %}
+            &nbsp;<a class="form-control btn btn-default" href="#" name="image_remove" role="button" onclick="submitForm('{{ FRAMEWORK_URL }}/flexcontent/editor/buzzword/image/remove/id/{{ form.tag_id.vars.value }}?usage={{ usage }}');" title="{{ 'Remove image'|trans }}"><i class="fa fa-trash-o"></i></a>
+          {% endif %}
+        </div>
+      </div>
+      {#{ form_rest(form) }#}
+    </form>
+  </div>
+{% endblock content %}
+  
+{% block footer_jquery %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ LIBRARY_URL }}/jquery/zeroclipboard/latest/ZeroClipboard.min.js"></script>  
+{% endblock footer_jquery %}
+  
+{% block footer %}
+  {{ parent() }}
+  <script type="text/javascript">
+    if (typeof 'jQuery' !== 'undefined') {
+      function submitForm(action)
+      {
+        if (!$('#tag_edit')[0].checkValidity()) {
+          alert('{{ 'Please fill in all requested fields before submitting the form!'|trans }}');
+        }
+        else {
+          $('#tag_edit').attr('action', action);
+          $('#tag_edit').submit();
+        }
+      }
+
+      $(document).ready(function() {
+        $("#form_tag_name").change(function () {
+          var permalink = $('#form_tag_permalink').val();
+          var name = $('#form_tag_name').val();
+
+          if (permalink.length < 1) {
+            // no permalink defined, use the tag name as propose ...
+            $.ajax({
+              url:"{{ FRAMEWORK_URL }}/flexcontent/editor/permalink/create/tag?lang={{ form.language.vars.value }}",
+              type: "POST",
+              dataType: "json",
+              data: {
+                link: name
+              },
+              complete: function (XMLHttpRequest, textStatus) {
+                var result = $.parseJSON(XMLHttpRequest.responseText);
+                $('#form_tag_permalink').val(result);
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                alert('Error creating PermaLink:'+textStatus);
+              }
+            });
+          }
+        });
+        
+        $('#global-zeroclipboard-html-bridge').tooltip();
+        
+        // ZeroClipboad
+        ZeroClipboard.config({ moviePath: '{{ LIBRARY_URL }}/jquery/zeroclipboard/latest/ZeroClipboard.swf' });
+        var clip = new ZeroClipboard(document.getElementById('copycommand'));
+        clip.on('complete', function(client, args){
+          alert("{{ 'Copied kitCommand to clipboard:'|trans }}"+" "+ args.text);
+        });
+        clip.on('load', function(client) {
+          {% set kitcommand = '~~ flexContent action[tag] tag_id[' ~ form.tag_id.vars.value ~ '] ~~' %}
+          {% set purpose = 'Show the description of the hashtag and all assigned articles'|trans %}
+          $('#global-zeroclipboard-html-bridge').attr({
+            'data-toggle':'tooltip',
+            'data-title': '{{ 'Copy the complete kitCommand<br /><code>%command%</code><br />to clipboard. Purpose:<br />%purpose%.'|trans({'%command%':kitcommand, '%purpose%':purpose}) }}',
+            'data-placement': 'bottom',
+            'data-html': true
+          });
+          $('#global-zeroclipboard-html-bridge').tooltip('show');
+        });
+      });
+    }
+  </script>
+{% endblock footer %}

@@ -1,0 +1,16 @@
+{#
+  Contact
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Contact
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{% if app.translator.locale == 'de' %}
+  {# GERMAN #}
+  <p>Die von Ihnen auf {{ FRAMEWORK_URL }} übermittelten Kontaktdaten wurden durch den Webmaster geprüft und zurückgewiesen, Entschuldigung!</p>
+{% else %}
+  {# ENGLISH #}
+  <p>The contact record you have submitted at {{ FRAMEWORK_URL }} has been proofed and rejected, Sorry!</p>
+{% endif %}

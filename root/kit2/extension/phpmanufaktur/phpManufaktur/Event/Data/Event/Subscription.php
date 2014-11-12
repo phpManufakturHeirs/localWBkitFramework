@@ -4,7 +4,7 @@
  * Event
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/FacebookGallery
+ * @link https://kit2.phpmanufaktur.de/Event
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -14,6 +14,7 @@ namespace phpManufaktur\Event\Data\Event;
 use Silex\Application;
 use phpManufaktur\Contact\Data\Contact\Overview;
 use phpManufaktur\Contact\Data\Contact\Message;
+use Carbon\Carbon;
 
 class Subscription
 {
@@ -200,7 +201,8 @@ EOD;
     {
         try {
             $SQL = "SELECT * FROM `".self::$table_name."` WHERE `subscription_id`='$subscription_id'";
-            return $this->app['db']->fetchAssoc($SQL);
+            $result = $this->app['db']->fetchAssoc($SQL);
+            return (isset($result['subscription_id'])) ? $result : false;
         } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Exception($e);
         }
@@ -247,9 +249,19 @@ EOD;
      * @throws \Exception
      * @return array
      */
-    public function selectList($limit=150)
+    public function selectList($limit=150, $add_days_to_event=-1)
     {
-        $SQL = "SELECT * FROM `".self::$table_name."` ORDER BY `subscription_date` DESC LIMIT $limit";
+        if ($add_days_to_event < 1) {
+            $add_days_to_event = 0;
+        }
+        $event_table = FRAMEWORK_TABLE_PREFIX.'event_event';
+        $subscription_table = self::$table_name;
+        $date = Carbon::create();
+        $date->subDays($add_days_to_event);
+        $date_to = $date->toDateTimeString();
+        $SQL = "SELECT * FROM `$subscription_table`, `$event_table` WHERE $subscription_table.event_id=$event_table.event_id ".
+            "AND $event_table.event_date_to >= '$date_to' ORDER BY `subscription_date` DESC LIMIT $limit";
+
         $results = $this->app['db']->fetchAll($SQL);
         $subscriptions = array();
         $EventData = new Event($this->app);

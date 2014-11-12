@@ -1,0 +1,20 @@
+{% block toolbar %}
+  <ul class="toolbar locale nav nav-tabs">
+    {% for item in toolbar %}
+      <li class="{% if item.active %}active {% endif %}{% if item.name == 'edit' %}disabled{% endif %}">
+        <a href="{% if item.name == 'edit' %}#{% else %}{{ item.link }}{% endif %}" title="{{ item.hint }}">
+          {% if item.name == 'summary' %}
+            <i class="fa fa-th-list"></i>
+          {% elseif item.name == 'pending' %}
+            <i class="fa fa-clock-o"></i>
+          {% elseif item.name == 'edit' %}
+            <i class="fa fa-pencil-square-o"></i>
+          {% elseif item.name == 'files' or item.name == 'custom' %}
+            <i class="fa fa-file-code-o"></i>
+          {% endif %}
+          <span class="visible-lg pull-right">&nbsp;{{ item.text }}</span>            
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock toolbar %}

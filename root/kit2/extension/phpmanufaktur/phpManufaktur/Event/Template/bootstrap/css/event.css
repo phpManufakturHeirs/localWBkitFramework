@@ -1,0 +1,60 @@
+/*
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Event
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+*/
+
+.container .event {
+  padding-left: 0;
+  padding-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.event h2 {
+  font-size: 20px;
+}
+.container .event h3 {
+  font-size: 18px;
+}
+.container .event label {
+  margin: 0 0 3px 0;
+}
+
+#event label.required:after {
+  padding-left: 3px;
+  content: '*';
+  color: #da251d;
+  background-color: transparent;
+  font-weight: bold;
+}
+#event select {
+  width: auto;
+}
+#event input {
+  width: 100%;  
+}
+#event input[type=radio],
+#event input[type=checkbox] {
+  width: auto;
+}
+#event .checkbox,
+#event .radio {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+#event a.form-control.btn.btn-default {
+  width: auto;  
+}
+#event input.btn.btn-default {
+  width: auto;
+  padding: 0 30px;
+}
+#event a.form-control.btn.btn-default:hover,
+input.btn.btn-default:hover {
+  color: #da251d;
+}

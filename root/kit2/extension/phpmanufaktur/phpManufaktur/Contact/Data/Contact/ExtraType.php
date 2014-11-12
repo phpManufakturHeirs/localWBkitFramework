@@ -4,7 +4,7 @@
  * Contact
  *
  * @author Team phpManufaktur <team@phpmanufaktur.de>
- * @link https://kit2.phpmanufaktur.de/contact
+ * @link https://kit2.phpmanufaktur.de/Contact
  * @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
@@ -96,6 +96,7 @@ EOD;
             'extra_type_type' => '',
             'extra_type_name' => '',
             'extra_type_description' => '',
+            'extra_type_option' => '',
             'extra_type_timestamp' => '0000-00-00 00:00:00'
         );
     }
@@ -154,7 +155,10 @@ EOD;
             $insert = array();
             foreach ($data as $key => $value) {
                 if (($key == 'extra_type_id') || ($key == 'extra_type_timestamp')) continue;
-                $insert[$this->app['db']->quoteIdentifier($key)] = is_string($value) ? $this->app['utils']->unsanitizeText($value) : $value;
+                $insert[$key] = is_string($value) ? $this->app['utils']->unsanitizeText($value) : $value;
+            }
+            if (!isset($insert['extra_type_description']) || ($insert['extra_type_description'] === null)) {
+                $insert['extra_type_description'] = '';
             }
             $this->app['db']->insert(self::$table_name, $insert);
             $type_id = $this->app['db']->lastInsertId();
@@ -176,7 +180,7 @@ EOD;
             $update = array();
             foreach ($data as $key => $value) {
                 if (($key == 'extra_type_id') || ($key == 'extra_type_timestamp') || ($key == 'extra_type_name')) continue;
-                $update[$this->app['db']->quoteIdentifier($key)] = is_string($value) ? $this->app['utils']->sanitizeText($value) : $value;
+                $update[$key] = is_string($value) ? $this->app['utils']->sanitizeText($value) : $value;
             }
             if (!empty($update)) {
                 $this->app['db']->update(self::$table_name, $update, array('extra_type_id' => $type_id));
@@ -187,7 +191,7 @@ EOD;
     }
 
     /**
-     * Return a array with all tags, prepared for usage with TWIG
+     * Return a array with all extra fields, prepared for usage with TWIG
      *
      * @throws \Exception
      * @return array
@@ -199,7 +203,7 @@ EOD;
             $results = $this->app['db']->fetchAll($SQL);
             $types = array();
             foreach ($results as $type) {
-                $types[$type['extra_type_name']] = ucfirst(str_replace('_', ' ', strtolower($type['extra_type_name'])));
+                $types[$type['extra_type_name']] = $this->app['utils']->humanize($type['extra_type_name']);
             }
             return $types;
         } catch (\Doctrine\DBAL\DBALException $e) {

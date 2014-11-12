@@ -1,0 +1,37 @@
+{#
+  TemplateTools
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/TemplateTools
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+
+{# check for the Browsers and Versions - adapt this to your needs! #}
+{% if ((browser_name() == BROWSER_IE) and (browser_version(true) < 9)) %}
+  {% set BROWSER_UPDATE = true %}
+{% elseif ((browser_name() == BROWSER_FIREFOX) and (browser_version(true) < 15)) %}
+  {% set BROWSER_UPDATE = true %}
+{% elseif ((browser_name() == BROWSER_OPERA) and (browser_version(true) < 12)) %}
+  {% set BROWSER_UPDATE = true %}
+{% elseif ((browser_name() == BROWSER_SAFARI) and (browser_version(true) < 5)) %}
+  {% set BROWSER_UPDATE = true %}
+{% else %}
+  {# nothing to do ... #}
+  {% set BROWSER_UPDATE = false %}
+{% endif %}
+
+{% if BROWSER_UPDATE %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="browser-update">
+    {% if PAGE_LOCALE in ['de','en'] %}
+      {# you can add every language which is supported by browser-update.org - please also update the language files! #}
+      {% set BROWSER_UPDATE_URL = 'http://www.browser-update.org/' ~ PAGE_LOCALE ~ '/update.html' %}
+    {% else %}
+      {# use the english spoken target page #}
+      {% set BROWSER_UPDATE_URL = 'http://www.browser-update.org/en/update.html' %}
+    {% endif %}
+    {{ 'Your browser (%name% %version%) is <strong>out of date</strong>. It has known <strong>security flaws</strong> and may <strong>not display all features</strong> of this and other websites. <strong><a href="%update%">Please update your browser</a></strong>.'|trans({
+      '%name%':browser_name(),'%version%':browser_version(),'%update%':BROWSER_UPDATE_URL}) }}
+  </div>
+{% endif %}

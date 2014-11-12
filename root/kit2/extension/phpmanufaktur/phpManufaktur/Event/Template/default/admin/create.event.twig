@@ -1,0 +1,61 @@
+{# 
+  Event
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de/Event
+  @link https://github.com/phpManufaktur/kitFramework/wiki  
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Event/Template' %}
+  {% set template_file = 'admin/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/css/admin.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Event/Template/default/css/admin.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock stylesheet %}
+{% block title %}{{ 'Event Administration - About'|trans }}{% endblock %}
+  
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->  
+  <div class="container{% if usage != 'framework'%}-fluid{% endif %}">
+    {% include '@phpManufaktur/Event/Template/default/admin/toolbar.twig' %}
+    
+    <div class="height-15"></div>
+    
+    {{ alert }}
+    
+    <form action="{{ FRAMEWORK_URL }}/admin/event/edit?usage={{ usage }}" method="post" role="form">
+      {{ form_errors(form) }}
+      {{ form_row(form._token) }}
+      {{ form_row(form.event_id) }}
+
+      <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          {{ form_label(form.create_by) }}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6">
+          {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/form/radio.twig' 
+            with {childrens:form.create_by.vars.form.children} only %}
+        </div>
+      </div>
+      
+      <div class="height-15"></div>
+      <div class="row">
+        <div class="col-lg-offset-4 col-md-offset-4 col-sm-offset-4 col-lg-6 col-md-6 col-sm-6">
+          <input class="btn btn-default" type="submit" value="{{ 'Submit'|trans }}" />
+        </div>
+      </div>
+      
+    </form>
+  </div>
+{% endblock content %}

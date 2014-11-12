@@ -1,0 +1,24 @@
+<div class="media extension">
+  <img class="pull-left" src="{% if item.logo_blob|length > 0 %}data:image/{{ item.logo_type }};charset=utf-8;base64,{{ item.logo_blob }}{% else %}{{ item.logo_url }}{% endif %}" width="{{ item.logo_width }}" height="{{ item.logo_height }}" alt="{{ item.description.title }}" />
+  <div class="media-body">
+    <h3 class="media-heading">{{ item.name }}</h3>
+    {% if item.info.release is defined %}
+      <div class="release"><strong>{{ item.info.release.number }}</strong>&nbsp;<small class="text-muted">({{ item.info.release.date|date('DATE_FORMAT'|trans) }})</small></div>
+    {% endif %}
+    {% if item.info.license is defined %}
+      <div class="license"><a href="{{ item.info.license.url }}" target="_blank">{{ item.info.license.name }}</a></div>
+    {% endif %}
+    {% if item.info.download.url is not defined %}
+      <div class="usage">{{ item.info.download.availability|humanize|trans }}</div>
+    {% endif %}
+    <div class="description">
+      {{ item.description.long }}    
+    </div>
+  </div>
+  <div class="media-control">
+    <a href="{{ item.description.url }}" target="_blank" class="btn btn-primary" role="button">{{ 'More information ...'|trans }}</a>
+    {% if item.info.download.github is defined %}
+      <a href="{{ FRAMEWORK_URL }}/admin/updater/install/{{ item.id }}?usage={{ usage }}" class="btn btn-success" role="button">{{ 'Install extension'|trans }}</a>
+    {% endif %}
+  </div>
+</div>

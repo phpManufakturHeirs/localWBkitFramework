@@ -1,0 +1,24 @@
+{
+  "fields":{
+    "gender":{
+      "type":"person_gender",
+      "required":false
+    },
+    "vorname":{
+      "type":"person_first_name",
+      "required":false
+    },
+    "nachname":{
+      "type":"person_last_name"
+    },
+    "mail":{
+      "type":"communication_email"
+    },
+    "message":{
+      "type":"textarea",
+      "name":"message",
+      "label":"Message",
+      "required":true
+    }
+  }
+}

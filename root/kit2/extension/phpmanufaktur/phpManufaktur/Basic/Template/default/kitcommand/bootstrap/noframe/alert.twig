@@ -1,0 +1,25 @@
+{#
+  kitFramework:Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @link https://github.com/phpManufaktur/kitFramework/wiki
+  @copyright 2013 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% extends getTemplateFile('@phpManufaktur/Basic/Template', 'kitcommand/bootstrap/noframe/body.twig') %}
+{% block title %}{{ 'kitCommand - Alert'|trans }}{% endblock %}
+{% block description %}{{ 'General alert container for kitCommands'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/kitcommand/bootstrap/css/kitcommand.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/kitcommand/bootstrap/css/kitcommand.min.css' }}" media="screen, projection" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/default/kitcommand/bootstrap/css/kitcommand.min.css' }}" media="screen, projection" />
+  {% endif %}
+{% endblock stylesheet %}
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="height-15"></div>  
+  {% include '@phpManufaktur/Basic/Template/default/pattern/bootstrap/alert.twig' %}
+{% endblock %}

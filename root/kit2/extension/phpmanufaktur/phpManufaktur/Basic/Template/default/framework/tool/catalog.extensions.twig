@@ -1,0 +1,60 @@
+{#
+  kitFramework::Basic
+
+  @author Team phpManufaktur <team@phpmanufaktur.de>
+  @link https://kit2.phpmanufaktur.de
+  @copyright 2014 Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+  @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+#}
+{% if usage == 'framework' %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/body.twig' %}
+{% else %}
+  {% set template_namespace = '@phpManufaktur/Basic/Template' %}
+  {% set template_file = 'framework/tool/body.twig' %}
+{% endif %}
+{% extends getTemplateFile(template_namespace, template_file) %}
+{% block title %}{{ 'kitFramework - Installed extensions'|trans }}{% endblock %}
+{% block stylesheet %}
+  {{ parent() }}
+  {% if fileExists(MANUFAKTUR_PATH ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css') %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/' ~ FRAMEWORK_TEMPLATES.0 ~ '/framework/css/framework.min.css' }}" />
+  {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ MANUFAKTUR_URL ~ '/Basic/Template/default/framework/css/framework.min.css' }}" />
+  {% endif %}
+{% endblock stylesheet %}
+
+{% block content %}
+  <!-- {{ _self.getTemplateName() }} -->
+  <div class="container">
+    {% if usage != 'framework' %}
+      {% include '@phpManufaktur/Basic/Template/default/framework/tool/toolbar.twig' %}
+    {% endif %}
+    
+    {% include '@phpManufaktur/Basic/Template/default/framework/tool/extensions.toolbar.twig' with {'toolbar': toolbar_extensions} %}
+    
+    <div class="page-header">
+      <h1>{{ 'Extensions catalog'|trans }} <small>kitFramework</small></h1>
+    </div>
+    
+    {{ alert }}
+    
+    {% set counter = 1 %}
+    {% for item in catalog_items %}
+      {% if counter == 1 %}
+        <div class="row">
+      {% endif %}
+      <div class="col-sm-6">
+        {% include '@phpManufaktur/Basic/Template/default/framework/tool/extension.catalog.twig' %}
+      </div>
+      {% if counter == 2 %}
+        </div>
+        {% set counter = 1 %}
+      {% else %}
+        {% set counter = counter + 1 %}
+      {% endif %}
+    {% endfor %}
+    {% if counter != 1 %}</div>{% endif %}
+    
+  </div>
+{% endblock content %}

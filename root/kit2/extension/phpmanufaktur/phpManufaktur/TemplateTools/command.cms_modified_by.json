@@ -1,0 +1,39 @@
+{
+  "command":"cms_modified_by",
+  "vendor": {
+    "name":"phpManufaktur",
+    "url":"https://phpmanufaktur.de"
+    },
+  "name": {
+    "en":"cms_modified_by",
+    "de":"cms_modified_by"
+  },
+  "description": {
+    "en":"Display name of user who has last modified a page of the Content Management System (CMS)",
+    "de":"Anzeigename des Benutzers, der zuletzt eine Seite des Content Management System (CMS) geändert hat"
+  },
+  "help": {
+    "en": {
+      "link":"https://gist.github.com/c105afa9e16796c8900e.git",
+      "gist_id":"c105afa9e16796c8900e",
+      "file": {
+        "help":"kitcommand_cms_modified_by_en.md"
+      }
+    }
+  },
+  "info": {
+    "en": {
+      "link":"https://kit2.phpmanufaktur.de"
+    }
+  },
+  "issues": {
+    "en": {
+      "link":"https://github.com/phpManufaktur/kfTemplateTools/issues"
+    }
+  },
+  "support": {
+    "en": {
+      "link":"https://support.phpmanufaktur.de"
+    }
+  }
+}
